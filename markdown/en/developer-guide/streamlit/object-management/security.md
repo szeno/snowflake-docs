@@ -21,7 +21,7 @@ By default, Streamlit apps run with owner’s rights, similar to stored procedur
 This model eliminates the need for service account tokens and integrates seamlessly with Snowflake’s authentication
 and access control features. For more information, see [Understanding owner’s rights and Streamlit in Snowflake apps](/developer-guide/streamlit/object-management/owners-rights).
 
-As an alternative, you can configure a container-runtime app to use restricted caller’s rights (Preview), which
+As an alternative, you can configure a container-runtime app to use restricted caller’s rights, which
 allows the app to run with the viewer’s privileges instead of the owner’s. For more information, see
 [Restricted caller’s rights and Streamlit in Snowflake](/developer-guide/streamlit/features/restricted-callers-rights).
 

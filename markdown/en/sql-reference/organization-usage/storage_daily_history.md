@@ -29,7 +29,7 @@ See also:
 | AVERAGE\_BYTES | NUMBER | Average number of bytes of database storage and stage storage used on this date, including data in Time Travel and Fail-safe. |
 | REGION | VARCHAR | ID of the Snowflake Region where the account is located. |
 | ACCOUNT\_LOCATOR | VARCHAR | Locator for the account (system-defined). |
-| CREDITS | NUMBER | Total number of storage credits used for the account on this date. (Calculated as AVERAGE\_BYTES, converted to tebibytes, divided by the number of days in the month.) |
+| CREDITS | NUMBER | Total storage amount that is billable for the account on this date. (Calculated as AVERAGE\_BYTES, converted to tebibytes (TiB), divided by the number of days in the month.) |
 
 Expand
 
@@ -37,7 +37,7 @@ Show lessSee more
 
 ## Usage notes
 
-- Latency for the view may be up to 120 minutes (2 hours).
+- Latency for the view may be up to 24 hours.
 - The data is retained for 365 days (1 year).
 - For the authoritative record of storage charges, refer to your invoice.
 - Other storage views, such as [DATABASE\_STORAGE\_USAGE\_HISTORY view](/sql-reference/account-usage/database_storage_usage_history) and [STORAGE\_USAGE view](/sql-reference/account-usage/storage_usage), use different measurement approaches and won’t match the values in this view.

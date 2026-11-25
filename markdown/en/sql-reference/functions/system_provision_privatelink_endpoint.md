@@ -130,6 +130,9 @@ Only account administrators (users with the ACCOUNTADMIN role) can call this fun
 - This function can take approximately 5 minutes to execute because it depends on the process to provision the private connectivity
   endpoint in the cloud platform (outside of Snowflake).
 - For details about private endpoint limits, see [Scaling considerations](/user-guide/private-connectivity-outbound#label-private-connect-external-service-limits).
+- **Regional restriction for Amazon S3:** When you provision a private connectivity endpoint for Amazon S3, the region in `provider_service_name`
+  (for example, `com.amazonaws.us-east-2.s3`) must match the AWS region of your Snowflake account. Cross-region outbound private connectivity
+  to S3 isn’t supported. If you try to access an S3 bucket in a different region through private connectivity, you get a `301 PermanentRedirect` error.
 
 ## Examples
 

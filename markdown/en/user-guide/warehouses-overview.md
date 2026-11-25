@@ -17,7 +17,7 @@ Size specifies the amount of compute resources available per cluster in a wareho
 | Small | 2 | 0.0006 |  |
 | Medium | 4 | 0.0011 |  |
 | Large | 8 | 0.0022 |  |
-| X-Large | 16 | 0.0044 | Default size for warehouses created using Snowsight. |
+| X-Large | 16 | 0.0044 |  |
 | 2X-Large | 32 | 0.0089 |  |
 | 3X-Large | 64 | 0.0178 |  |
 | 4X-Large | 128 | 0.0356 |  |

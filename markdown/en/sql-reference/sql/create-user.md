@@ -271,8 +271,8 @@ login name.
     any SQL action other than the execution of CREATE *<object>* statements. The permissions to perform these actions can be granted
     to the primary role, secondary roles, or any lower roles in the role hierarchies.
 
-    Note that specifying a default secondary role for a user does not grant the role to the user. The role must also be granted
-    explicitly to the user using the GRANT ROLE command.
+    Note that setting `DEFAULT_SECONDARY_ROLES` to `ALL` does not automatically grant any roles to the user. Each role must
+    still be granted explicitly to the user using the GRANT ROLE command before it is included among the user’s active secondary roles.
 
     The following values are supported:
 

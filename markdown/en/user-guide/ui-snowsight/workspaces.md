@@ -83,9 +83,10 @@ Workspaces is a new editor composed of six sections, or *panes*:
    The options available in the vertical ellipsis [![More actions for worksheet](/static/images/snowsight/snowsight-worksheet-vertical-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-vertical-ellipsis.png) (more actions) button vary by object type, but include features such as
    placing names in the editor, copying names, and viewing definitions. To open or close the **Database Explorer** or **File Explorer**, select the
    **File Explorer** icon [![File explorer](/static/images/snowsight/file-explorer-open-close.png)](/static/images/snowsight/file-explorer-open-close.png) in the bottom toolbar of the Workspaces window.
-4. **Editor:** Edit queries and split them side by side to view multiple files simultaneously. Use inline Copilot to get suggestions and
-   completions directly within the editor workspace.
-5. **Results:** Split results side-by-side or pin them for easy comparison.
+4. **Editor:** Edit queries and split the editor pane to view multiple files simultaneously. Use inline Copilot to get suggestions and
+   completions directly within the editor workspace. See [Split the editor pane](/user-guide/ui-snowsight/workspaces-working#label-workspaces-split-editor-pane).
+5. **Results:** View the output of the queries you run. Pin a result to keep it open while you run other queries, and view pinned
+   results side by side to compare them. See [Pin and compare query results](/user-guide/ui-snowsight/workspaces-working#label-workspaces-pin-compare-results).
 6. **Query History:** View the history of all queries you have run. **Current File** shows historical queries from the file currently open
    and selected in the editor. Filter to the current file or across all files. **All Files** displays all historical queries you have run
    across all files. To open or close this view, select the **Query History** icon [![Query history](/static/images/snowsight/query-history-open-close.png)](/static/images/snowsight/query-history-open-close.png) in the bottom toolbar of the Workspaces window.

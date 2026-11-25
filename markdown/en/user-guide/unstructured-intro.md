@@ -4,7 +4,7 @@ Unstructured data is information that does not fit into a predefined data model 
 social media conversations, unstructured data also encompasses images, video, and audio. Industry-specific file types such as VCF
 (genomics), KDF (semiconductors), or HDF5 (aeronautics) are included in this category.
 
-Snowflake supports the following actions:
+Snowflake supports the following actions for unstructured data:
 
 - Securely access data files located in cloud storage.
 - Share file access URLs with collaborators and partners.
@@ -15,7 +15,7 @@ This topic introduces key concepts and provides instructions for accessing, shar
 
 ## Cloud Storage service support
 
-Both external (external cloud storage) and internal (i.e. Snowflake) stages support unstructured data.
+Both external (external cloud storage) and internal (Snowflake) stages support unstructured data.
 
 External stages:
 :   Store files in external cloud storage: Amazon S3, Google Cloud Storage, or one of the supported Microsoft Azure cloud storage services:
@@ -32,7 +32,7 @@ The following types of URLs are available to access files in cloud storage:
 Scoped URL:
 :   Encoded URL that permits temporary access to a staged file without granting privileges to the stage.
 
-    The URL expires when the [persisted query result period](/user-guide/querying-persisted-results) ends (i.e. the results cache
+    The URL expires when the [persisted query result period](/user-guide/querying-persisted-results) ends (that is, when the results cache
     expires), which is currently 24 hours.
 
 File URL:
@@ -48,11 +48,11 @@ The following table describes key characteristics of these URL types:
 |  | Scoped URL | File URL | Pre-signed URL |
 | --- | --- | --- | --- |
 | Use cases | Recommended for file administrators to give scoped access to data files to specific roles in the same account. Provide access to the files with a view that retrieves scoped URLs. Only roles that have privileges on the view can access the files. Snowflake records information in the query history about who uses a scoped URL to access a file, and when. Ideal for use in custom applications, for providing unstructured data to other accounts through a share, or for downloading and analysis of unstructured data in Snowsight. | Permanent URL to a file on a stage. To download or access a file, users send the file URL in a GET request to the REST API endpoint along with the authorization token. Ideal for custom applications that require access to unstructured data files. | Used to download or access files without authenticating into Snowflake or passing an authorization token. Pre-signed URLs are open; any user or application can directly access or download the files. Ideal for business intelligence applications or reporting tools that need to display the unstructured file contents. |
-| How to generate | Query the [BUILD\_SCOPED\_FILE\_URL](/sql-reference/functions/build_scoped_file_url) function. | Either Query the directory table for the stage that references the staged files or call the [BUILD\_STAGE\_FILE\_URL](/sql-reference/functions/build_stage_file_url) function. | Query the [GET\_PRESIGNED\_URL](/sql-reference/functions/get_presigned_url) function. |
+| How to generate | Query the [BUILD\_SCOPED\_FILE\_URL](/sql-reference/functions/build_scoped_file_url) function. | The following options are available:   - Query the directory table for the stage that references the staged files. - Call the [BUILD\_STAGE\_FILE\_URL](/sql-reference/functions/build_stage_file_url) function. | Query the [GET\_PRESIGNED\_URL](/sql-reference/functions/get_presigned_url) function. |
 | Usage | The following options are available:   - In Snowsight, click on a scoped URL in the query results table. Snowsight retrieves the file only for the user who generated the   scoped URL. - Send a scoped URL in a GET request to the file support REST API endpoint. For information, see [REST API for unstructured data support](/user-guide/data-load-unstructured-rest-api). | The following options are available:   - In Snowsight, click on a file URL in the query results table. Snowsight retrieves the file only if the active role has sufficient   privileges. - Send a file URL in a GET request to the file support REST API endpoint. For information, see [REST API for unstructured data support](/user-guide/data-load-unstructured-rest-api). | The following options are available:   - In Snowsight, click on a pre-signed URL in the query results table. - Navigate to the pre-signed URL directly in a web browser. |
 | [Snowflake Secure Data Sharing](/guides-overview-sharing) | Unstructured data files can be accessed by data consumers via column values of this type in secure views shared by data providers. | Unstructured data files cannot be accessed by data consumers via column values of this type in secure views shared by data providers. | Unstructured data files can be accessed by data consumers via column values of this type in secure views shared by data providers. |
 | Authorization | Only the user who generates a scoped URL can use the URL to access the referenced file. | Role specified in the GET REST API call must have sufficient privileges on the stage: USAGE (external stage) or READ (internal stage). | Any person who has the pre-signed URL can access the referenced file for the life of the token. |
-| Expiration | Expiration period for the query results cache (currently 24 hours). | Permanent. | Length of time specified in the `expiration_time` argument. |
+| Expiration | Expiration period for the query results cache (currently 24 hours). | Doesn’t expire. | Length of time specified in the `expiration_time` argument. |
 
 Expand
 

@@ -61,7 +61,7 @@ invoice\_start\_date\_preference
 
     - `OFFER_ACCEPTED_DATE`: Use with flat-fee plans.
     - `SPECIFIC_DATE`: Use with flat-fee plans or (less commonly) with usage-based plans.
-    - `FIRST_DAY_NEXT_MONTH`: Use with flat fee plans or with new usage-based plans.
+    - `FIRST_DAY_NEXT_MONTH`: Use with flat-fee plans or with new usage-based plans.
     - `TWO_DAYS_AFTER_OFFER_ACCEPTED_DATE`: Use when allowing a consumer to accept a new usage-based plan that replaces an existing
       usage-based plan. In this case, it can take up to 2 days for the new usage-based pricing plan to take effect.
 

@@ -95,7 +95,7 @@ Show lessSee more
 | [`environment_variables`](#label-snowflake-apps-manifest-environment-variables) | Non-sensitive container environment variables |
 | [`secrets`](#label-snowflake-apps-manifest-secrets) | Snowflake secrets mounted under `/secrets/<name>/` |
 | [`external_access_integrations`](#label-snowflake-apps-manifest-external-access-integrations) | External access integrations for the running service |
-| [`compute_resource`](#label-snowflake-app-runtime-app-yml-serverless) | Compute the service runs on. Default `MANAGED_COMPUTE_POOL`. `SERVERLESS` is in preview |
+| [`compute_resource`](#label-snowflake-app-runtime-app-yml-serverless) | Compute the service runs on. Default `MANAGED_COMPUTE_POOL`. `SERVERLESS` is in Public Preview |
 | [`url_prefix`](#label-snowflake-app-runtime-app-yml-serverless-url), [`health_check`](#label-snowflake-app-runtime-app-yml-serverless-health-check) | Endpoint prefix and readiness path. Serverless only |
 | [`install`](#label-snowflake-apps-manifest-install) | Commands run before the build. Top-level only |
 | `runtime` | `python` or `node` (case-insensitive). Default `node`. Top-level only; ignored inside a target. Python runs on serverless compute (Public Preview) |
@@ -430,10 +430,6 @@ The compute the Application Service runs on:
 - `SERVERLESS` (Public Preview): the app starts on the first request and stops after
   the idle period in [`auto_suspend_secs`](#label-snowflake-apps-manifest-auto-suspend-secs).
 
-[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Copy code
 
 ```
@@ -450,6 +446,10 @@ different `name`. For how the two options differ, see
 [Move an existing app to serverless compute](/developer-guide/snowflake-app-runtime/serverless#label-snowflake-app-runtime-serverless-switch).
 
 ### url\_prefix
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
 
 Serverless only. The app-specific part of the endpoint:
 
@@ -475,6 +475,10 @@ Adding or changing `url_prefix` on an existing app changes its URL on the next
 deploy. Update links and bookmarks when you do.
 
 ### health\_check
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
 
 Serverless only. An HTTP path that Snowflake uses to determine whether the app
 is ready:
@@ -580,7 +584,7 @@ can’t pass a whole `app.yml` as a specification.
 | --- | --- | --- |
 | Deploy fields in `app.yml` have no effect; deploy uses old values | No top-level `version: 2` | Add `version: 2` |
 | `Unsupported app.yml version` | `version` is greater than 2 | Set `version: 2`, or upgrade the CLI if you intend a newer schema |
-| `--target is only supported ... version 2` | `--target` on a `snowflake.yml` project | Drop `--target`. See the migrate guide. |
+| `--target is only supported ... version 2` | `--target` on a `snowflake.yml` project | Drop `--target`. See [Migrate from snowflake.yml to app.yml](/developer-guide/snowflake-app-runtime/migrate-to-app-yml). |
 | `No target selected` | `targets` declared with no selection | Pass `--target`, or set `default_target` |
 | `Target '<x>' is not defined` | Typo, or no `targets` block | Check the listed available targets |
 | `Missing required field(s)` | `app.yml` doesn’t fill `database` from the CLI connection | Set `name`, `database`, `schema`, and  `query_warehouse` on the baseline or the target |

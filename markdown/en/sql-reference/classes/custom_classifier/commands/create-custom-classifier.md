@@ -60,9 +60,9 @@ For general information about roles and privilege grants for performing SQL acti
 
 You can call the following methods on the custom classification instance that you create:
 
-- [<code className=”samp”><em>custom\_classifier</em></code>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex)
-- [<code className=”samp”><em>custom\_classifier</em></code>!DELETE\_CATEGORY](/sql-reference/classes/custom_classifier/methods/delete_category)
-- [<code className=”samp”><em>custom\_classifier</em></code>!LIST](/sql-reference/classes/custom_classifier/methods/list)
+- [<custom\_classifier>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex)
+- [<custom\_classifier>!DELETE\_CATEGORY](/sql-reference/classes/custom_classifier/methods/delete_category)
+- [<custom\_classifier>!LIST](/sql-reference/classes/custom_classifier/methods/list)
 
 ## Usage notes
 

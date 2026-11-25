@@ -62,7 +62,7 @@ Show lessSee more
 | SIZE | VARCHAR | Current size of the warehouse at the time of the event. This value is only available for WAREHOUSE\_CONSISTENT events. Otherwise, this value is NULL. |
 | CLUSTER\_COUNT | VARCHAR | Number of warehouse clusters at the time of the event. This value is only available for WAREHOUSE\_CONSISTENT events. Otherwise, this value is NULL. |
 | WAREHOUSE\_TYPE | VARCHAR | One of `STANDARD` or `SNOWPARK-OPTIMIZED`. This value is only available for WAREHOUSE\_CONSISTENT events. Otherwise, this value is NULL. |
-| RESOURCE\_CONSTRAINT | VARCHAR | One of:   - `STANDARD_GEN_1`   - `STANDARD_GEN_2`   - `MEMORY_1X`   - `MEMORY_1X_x86`   - `MEMORY_16X`   - `MEMORY_16X_x86`   - `MEMORY_64X`   - `MEMORY_64X_x86`   This value is only available for WAREHOUSE\_CONSISTENT events. Otherwise, this value is NULL. It’s also NULL for standard warehouses created before the release of the STANDARD\_GEN\_2 feature. |
+| RESOURCE\_CONSTRAINT | VARCHAR | One of:   - `STANDARD_GEN_1`   - `STANDARD_GEN_2`   - `MEMORY_1X`   - `MEMORY_1X_x86`   - `MEMORY_16X`   - `MEMORY_16X_x86`   - `MEMORY_64X`   - `MEMORY_64X_x86`   This value is only available for WAREHOUSE\_CONSISTENT events. Otherwise, this value is NULL. It’s also NULL for standard warehouses created before the release of the STANDARD\_GEN\_2 feature. The `STANDARD_GEN_1` and `STANDARD_GEN_2` values appear only for events recorded before [BCR-2225](/release-notes/bcr-bundles/2026_02/bcr-2225). |
 
 Expand
 

@@ -82,7 +82,7 @@ federation:
 | --- | --- |
 | [Go](https://pkg.go.dev/github.com/snowflakedb/gosnowflake#hdr-Authenticator_values) | v1.16.0 |
 | [JDBC](/developer-guide/jdbc/jdbc-configure#label-jdbc-auth-wif) | v3.26.0 |
-| [.NET](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Connecting.md) | v4.8.0 |
+| [.NET](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Client/Connecting.md) | v4.8.0 |
 | [Node.js](/developer-guide/node-js/nodejs-driver-authenticate#label-nodejs-auth-wif) | v2.2.0 |
 | [ODBC](/developer-guide/odbc/odbc-parameters#label-odbc-auth-wif) | v3.11.0 |
 | [PHP PDO](https://github.com/snowflakedb/pdo_snowflake/blob/master/README.rst) | v3.6.0 |

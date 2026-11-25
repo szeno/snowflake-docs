@@ -15,6 +15,8 @@ the filter criteria.
 To use the Openflow Connectors Dashboard, the following prerequisites must be met:
 
 - You need at least read-only permissions on the event table.
+- For a deployment’s custom event table to appear in the **Event table** filter, your role also needs USAGE on the
+  Openflow deployment (gen 2) or on the data plane integration (gen 1). MONITOR isn’t enough.
 - You must have the following minimum Openflow versions:
 
   - BYOC deployment: 1.36.0

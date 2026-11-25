@@ -1,13 +1,16 @@
 # Power BI ingestion feature support
 
-You can upload a Power BI file to Semantic View Autopilot and have a semantic view created automatically from your existing data model. This preserves the business logic you’ve already built in Power BI, including metric definitions, table relationships, and column descriptions, and makes it available to Cortex Analyst and other Snowflake tools.
+You can upload a Power BI file to Semantic View Autopilot to generate a semantic view from your existing data model. This preserves the business logic you’ve already built in Power BI, including metric definitions, table relationships, and measure descriptions, and makes it available to Cortex Analyst and other Snowflake tools.
 
 You provide the Power BI file as [context in the Autopilot wizard](/user-guide/views-semantic/autopilot#label-semantic-view-autopilot-option-2-upload-power-bi-file).
+
+If you have a Horizon Catalog connector for Power BI, you can import a semantic model directly instead of uploading
+a file. See [Create a semantic view from a Horizon Catalog connector](/user-guide/views-semantic/autopilot#label-semantic-view-autopilot-connected-bi).
 
 ## Prerequisites
 
 In addition to the [Autopilot prerequisites](/user-guide/views-semantic/autopilot#label-semantic-view-autopilot-prerequisites),
-the Power BI ingestion feature requires:
+uploading a Power BI file requires:
 
 - A stage where you have write permissions.
 - Read access to the underlying tables and columns that your Power BI file references.
@@ -16,77 +19,81 @@ The file must be under 250 MB.
 
 ## How Power BI models map to Snowflake
 
-When you upload a Power BI file, Snowflake translates your Power BI semantic model into a semantic view:
+Snowflake translates your Power BI semantic model into a semantic view:
 
 - **Tables and columns** in your Power BI model are matched to the corresponding tables and columns in Snowflake. The table names, column names, and data types carry over directly.
-- **Relationships** (joins between tables) are preserved as semantic view relationships, except where a semantic view cannot represent one; those are removed and named in the response.
+- **Relationships** (joins between tables) are preserved as semantic view relationships.
 - **DAX measures** are registered as **metrics** in the semantic view. Single-table measures, cross-table measures, and derived metrics are all converted. For example, a DAX measure like `Total Revenue = SUM(Sales[Amount])` becomes a metric in the semantic view.
 - **Calculated columns** (DAX-defined virtual columns) are included as dimensions in the semantic view, for single-table calculations.
-- **Renamed tables and columns** from M query transformations (`Table.RenameColumns`) are honored. The semantic view uses the renamed display names.
-- **Primary keys** are detected automatically, including composite keys where two or more columns together have unique values.
+- **Power Query steps** are honored: renamed tables and columns (`Table.RenameColumns`), row filters (`Table.SelectRows`), and added columns (`Table.AddColumn`) whose expression can be written in SQL.
+- **Keys** that you marked in Power BI, and the column on the one side of each one-to-many relationship, become unique keys, including composite keys.
+- **Descriptions** that you wrote for measures in Power BI are carried over. For an uploaded file, descriptions are generated for metrics that don’t have one.
 
-**Exceptions**: Measures saved in the report rather than in the data model are not read, and some DAX does not convert — time intelligence, statistical aggregates, and anything that depends on what the report reader selected. A measure can also convert and still be rejected as a metric. See the feature tables below, and [Why a measure was not converted](#label-power-bi-ingestion-measure-not-converted).
+Autopilot lists each measure and table that it couldn’t convert, with the reason. See
+[Why a measure was not converted](#label-power-bi-ingestion-measure-not-converted) and
+[Why a table was not imported](#label-power-bi-ingestion-table-not-imported).
 
 ## Supported features
 
-The following table describes the Power BI features that are fully supported:
+The following table describes the Power BI features that Semantic View Autopilot supports:
 
 | Feature | Details |
 | --- | --- |
 | `.pbit` files | Template files without embedded data. |
 | `.pbix` files | Report files with embedded data. |
-| Table relationships | Mapped to semantic view relationships. |
+| Table relationships | Active relationships are mapped to semantic view relationships. |
 | Single-table DAX measures | Converted to semantic view metrics. Most single-table measures are supported. |
-| Cross-table measures | Emitted as top-level metrics on the semantic view. For example, `SUMX(ORDERS, ORDERS[AMT] * RELATED(CUSTOMERS[SPEND]))` works. |
-| Derived metrics | Metrics that reference other metrics resolve recursively, with cycle detection. |
+| Cross-table measures | Converted to metrics on the semantic view. For example, `SUMX(ORDERS, ORDERS[AMT] * RELATED(CUSTOMERS[SPEND]))` is converted. |
+| Derived metrics | Metrics that reference other metrics are converted. |
+| Filter context in measures | `CALCULATE` with `FILTER`, `KEEPFILTERS`, and `ALL` or `REMOVEFILTERS` on a column is converted. Removing filters on a column becomes a window metric. |
 | Calculated columns | DAX-defined virtual columns, single-table only. |
-| Renamed tables and columns | M query `Table.RenameColumns` transformations are honored. |
-| Parameterized Snowflake connections | Supported. A table whose parameters are left null is named in the response rather than dropped silently. |
-| Primary key detection | Primary keys are detected automatically, including cases where two or more columns have unique values. |
-| Metric descriptions | Generated automatically for up to 60 metrics. A model with more keeps the rest without a generated description. |
-| Columns added in Power Query | A `Table.AddColumn` step becomes a dimension when its expression can be expressed in SQL, and is named in the response when it cannot. |
+| Power Query steps | Renamed tables and columns, row filters, and added columns whose expression can be written in SQL. |
+| Parameterized Snowflake connections | Supported. A table whose parameters have no values is listed as `UNBOUND_PARAMETERS`, so you can supply the values. |
+| Hidden tables and columns | Imported the same way as visible tables and columns, if they read from Snowflake. |
+| Keys | Key columns and the column on the one side of each one-to-many relationship become unique keys, including composite keys. |
+| Descriptions | Measure descriptions from Power BI are carried over. For an uploaded file, descriptions are generated for metrics that don’t have one. |
 
 Expand
 
 Show lessSee more
 
-## Partially supported features
+## Import from a Horizon Catalog connector
 
-| Feature | Details |
-| --- | --- |
-| Window function metrics | Filter functions (CALCULATE, FILTER, ALL, ALLEXCEPT, REMOVEFILTERS) are supported. KEEPFILTERS and the time intelligence functions (PREVIOUSMONTH, SAMEPERIODLASTYEAR, TOTALYTD) are not. |
-| DAX measures | Most single-table and cross-table measures convert, but not every DAX function has a SQL equivalent, and not every valid DAX expression is valid as a semantic view metric. See the two sections below. |
-| Relationships | A many-to-many relationship is kept only when one side has the unique key a semantic view requires. Without it the relationship is removed and the response says so. |
+[Preview Feature](/release-notes/preview-features) — Open
 
-Expand
+Available to all accounts in AWS deployments.
 
-Show lessSee more
+When you import a semantic model from a Horizon Catalog connector instead of uploading a file, Autopilot reads the
+same model from Horizon Catalog, and native queries (`Value.NativeQuery`) are used directly as table definitions.
 
-## Unsupported features
+DAX measures, native queries, and Power Query steps are available only when the Power BI tenant setting **Enhance admin
+APIs responses with DAX and mashup expressions** is turned on, as described in
+.
 
-The following features are not yet supported:
+To import a model, see
+[Create a semantic view from a Horizon Catalog connector](/user-guide/views-semantic/autopilot#label-semantic-view-autopilot-connected-bi).
 
-- **Report-level measures**: Measures saved in the report rather than in the data model, as happens with a live connection. Ingestion reads the data model (DataModelSchema/DataModel), not the report layer (Report/Layout). This is about where the measure is stored in Power BI; measures that read more than one table are still converted, as top-level metrics on the semantic view.
-- **Time intelligence functions**: Functions like PREVIOUSMONTH, SAMEPERIODLASTYEAR, and TOTALYTD require report-level date context that is not available during ingestion.
-- **Other functions that depend on report or selection context**: SELECTEDVALUE, ALLSELECTED, and ISFILTERED describe what the reader clicked, which a stored query cannot know.
-- **Statistical aggregates**: MEDIAN, PERCENTILE, and the STDEV and VAR families.
-- **Table-valued functions used inside a measure**: SUMMARIZE, TOPN, RANKX, CONTAINS, ISEMPTY, and COUNTROWS over VALUES.
-- **RELATEDTABLE**: RELATED is supported; RELATEDTABLE is not.
-- **DAX calculated tables and calculation groups**: These have no Snowflake table behind them, so they are dropped along with any measure that reads them.
-- **Tables whose rows are stored in the file**: Data entered directly in Power BI, rather than read from Snowflake, has no table to point at.
-- **Dashboard-scoped ingestion**: Currently, the full Power BI semantic model is ingested rather than only the tables and columns used by a specific dashboard or report.
+## Limitations
+
+- Only tables that read from Snowflake are imported. DAX calculated tables, calculation groups, and data entered
+  directly in Power BI have no Snowflake table behind them.
+- Some DAX functions have no SQL equivalent, such as time intelligence functions, statistical aggregates, and table
+  functions. Measures that use them aren’t converted.
+- Inactive relationships, and measures that use `USERELATIONSHIP`, aren’t converted.
+- Measures saved in the report rather than in the data model, as happens with a live connection, aren’t read.
+- A many-to-many relationship is kept only when one side has a unique key.
 
 ## Why a measure was not converted
 
-When some measures do not convert, the response names them and groups them by cause. There are five causes, and they call for different fixes:
+When some measures don’t convert, Autopilot lists them grouped by cause. Each cause calls for a different fix:
 
 | Cause | What it means | What to do |
 | --- | --- | --- |
-| `missing table or column` | The measure reads a table or column that is not in the imported model, usually because that table was itself dropped. | Fix the table first; the measures that read it convert on the next import. |
-| `unsupported DAX` | The expression uses a function with no SQL equivalent. | Rewrite the measure using supported functions, or add it to the semantic view by hand. |
+| `missing table or column` | The measure reads a table or column that is not in the imported model, usually because that table wasn’t imported. | Resolve the issue with that table; the measures that read it convert on the next import. |
+| `unsupported DAX` | The expression uses a function with no SQL equivalent. | Rewrite the measure using supported functions, or add it to the semantic view manually. |
 | `not valid as a semantic-view metric` | The DAX converted, but the resulting SQL is not a valid metric. A metric must be a single aggregate over its own table’s rows, so an expression with no aggregate at all (for example `TODAY()`), with one aggregate nested inside another, with a subquery, or with a column left outside the aggregate is rejected. | Express the value as a metric over one table, or model it as a dimension instead. |
 | `metric table could not be determined` | The expression does not name a table clearly enough to attach the metric to one. | Qualify the columns the measure reads. |
-| `DAX transpilation failed` | The expression could not be read at all. | Report it; this one is ours to fix. |
+| `DAX transpilation failed` | The expression couldn’t be parsed. | Add the measure to the semantic view manually, or contact Snowflake Support. |
 
 Expand
 
@@ -94,15 +101,17 @@ Show lessSee more
 
 ## Why a table was not imported
 
-Tables that do not reach the semantic view are named in the response with a reason:
+Autopilot lists each table that doesn’t reach the semantic view, with a reason:
 
 | Reason | What to do |
 | --- | --- |
-| `UNBOUND_PARAMETERS` | The connection uses parameters for the database or schema and they have no values. Fill them in and export again. |
+| `UNBOUND_PARAMETERS` | The connection uses parameters for the database or schema and they have no values. Fill them in, and then upload the file again. |
 | `NON_SNOWFLAKE_SOURCE` | The table reads from something other than Snowflake. Only Snowflake-backed tables can be mapped. |
-| `NO_SNOWFLAKE_REFERENCE` | The table does not read from Snowflake directly. Either it is built inside Power BI — combined, entered, or derived from another query — or it is a composite model chained to another dataset, which is the most common case. |
+| `NO_SNOWFLAKE_REFERENCE` | The table doesn’t read from Snowflake directly. It’s built inside Power BI: combined or derived from another query. |
+| `EMBEDDED_ROWS` | The table’s rows are entered directly in Power BI, so there’s no Snowflake table behind it. |
+| `MISSING_IN_SNOWFLAKE` | For an import from a Horizon Catalog connector, the Snowflake table doesn’t exist or your role can’t read it. Check the table and your privileges. |
 | `CALCULATED_TABLE` | A DAX calculated table or calculation group, which has no Snowflake table behind it. |
-| `PARSER_FAILURE` | A Snowflake connection we could not read. This is a gap on our side, not something to change in the file. Report it with the request ID. |
+| `PARSER_FAILURE` | Semantic View Autopilot couldn’t read the table’s Snowflake connection. Contact Snowflake Support. |
 
 Expand
 
@@ -128,4 +137,4 @@ You can also upload a `.pbix` file directly. This is the standard Power BI Deskt
 
 Caution
 
-If your Power BI semantic model uses parameters for database or schema names, make sure those parameter values are filled in before exporting. Snowflake uses these values to match tables in your account. Tables whose parameters are blank are dropped and listed in the response as `UNBOUND_PARAMETERS`; if that leaves no tables at all, generation fails.
+If your Power BI semantic model uses parameters for database or schema names, make sure those parameter values are filled in before exporting. Snowflake uses these values to match tables in your account. Tables whose parameters are blank aren’t imported and are listed as `UNBOUND_PARAMETERS`; if that leaves no tables at all, generation fails.

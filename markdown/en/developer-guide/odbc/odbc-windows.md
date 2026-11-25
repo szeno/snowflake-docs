@@ -80,6 +80,8 @@ To configure the ODBC driver in a Windows environment, create a DSN for the driv
       - The ODBC driver supports additional parameters that are not displayed in the dialog. These parameters can only be set in the Windows registry using **regedit**.
 
         For descriptions of all the parameters, see [ODBC configuration and connection parameters](/developer-guide/odbc/odbc-parameters).
+      - Windows stores DSNs in the registry. If your organization’s policy blocks registry writes, you might not be able to create or change a DSN in the dialog. In that case, use a DSN-less connection string instead. For key pair authentication, see the `PRIV_KEY_FILE` parameter in [ODBC configuration and connection parameters](/developer-guide/odbc/odbc-parameters).
+      - Avoid saving a private key passphrase (`PRIV_KEY_FILE_PWD`) in a DSN, because DSN values are stored in the registry as plain text. Instead, supply the passphrase in the connection string when you connect.
       - Set **Authenticator** to the value for your authentication method. To authenticate with a password and multi-factor authentication (MFA) with MFA token caching, set **Authenticator** to `username_password_mfa`. For other methods, such as federated authentication or OAuth, see the `authenticator` parameter description in [ODBC configuration and connection parameters](/developer-guide/odbc/odbc-parameters). For MFA configuration and token-caching requirements, see [Using multi-factor authentication](/developer-guide/odbc/odbc-parameters#using-multi-factor-authentication).
    4. Click **OK** to create the DSN.
 

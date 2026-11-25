@@ -95,7 +95,7 @@ Linking
 :   Importing a resource into a collaboration. See [Resources](/user-guide/cleanrooms/resources).
 
 Local data offering
-:   Local data offerings let standard edition accounts use their own tables in a collaboration. These offerings are not visible to any other collaborator, and template policies are not enforced. See [Run an analysis with your own data when you use Standard Edition](/user-guide/cleanrooms/demo-flows/basic-multiparty-collab#label-dcr-using-local-data).
+:   Local data offerings let standard edition accounts use their own tables in a collaboration. These offerings are not visible to any other collaborator, and template policies are not enforced. See [Use your own data on Snowflake Standard Edition](/user-guide/cleanrooms/resources-data-offerings#label-dcr-using-local-data).
 
 Linking
 :   Importing a protected view of data into a clean room. The provider and consumer can both link their own data into

@@ -69,6 +69,10 @@ Remote Development works in two Snowflake-supported editors that share the Visua
 1. In the **Remote Environments** panel, select **Create Remote Development Environment**.
 2. Enter a **Service name**. Use a Snowflake-compatible identifier and choose a name that doesn’t conflict with an existing local SSH host alias.
 3. Select one or more **Workspaces** to associate with the remote service. During SSH setup, you’re prompted separately to mount workspaces into the running environment.
+
+   Note
+
+   The **Workspaces** picker lists only private workspaces, which are stored in your [personal database](/user-guide/personal-databases) (`USER$<username>`). [Shared workspaces](/user-guide/ui-snowsight/workspaces-shared) and workspaces created with SQL in a standard database don’t appear in the picker. To mount a workspace into a remote development environment, create it as a private workspace in Snowsight.
 4. Optional: select **External access integrations** if your notebooks need outbound network access, for example to install packages from PyPI or to reach your Git provider’s host.
 5. Optional: select **Secrets** to make Snowflake secrets available inside the remote environment, for example a Git credential. Selecting secrets works much like selecting external access integrations.
 6. Optional: expand **Service settings** and adjust the compute and runtime settings, including **Enable persistent storage**.
@@ -350,6 +354,10 @@ Show lessSee more
 ### Workspace picker is slow to appear
 
 If you have many workspaces, the extension can take a moment to prepare the picker after you select **Setup SSH** or create a service. The extension doesn’t show progress during this step. Wait for the picker to appear rather than selecting the action again.
+
+### Workspace doesn’t appear in the picker
+
+The **Workspaces** picker lists only private workspaces, which are stored in your [personal database](/user-guide/personal-databases) (`USER$<username>`). [Shared workspaces](/user-guide/ui-snowsight/workspaces-shared) and workspaces created with SQL in a standard database aren’t listed. To use a workspace with a remote development environment, create it as a private workspace in Snowsight.
 
 ### Notebook kernel doesn’t appear
 

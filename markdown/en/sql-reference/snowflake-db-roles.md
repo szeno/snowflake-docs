@@ -72,6 +72,11 @@ views in the shared SNOWFLAKE database. Use the following table to determine whi
 | [APPLICATION\_SPECIFICATIONS view](/sql-reference/account-usage/application_specifications) | SECURITY\_VIEWER |
 | [ARCHIVE\_STORAGE\_DATA\_RETRIEVAL\_USAGE\_HISTORY view](/sql-reference/account-usage/archive_storage_data_retrieval_usage_history) | USAGE\_VIEWER |
 | [AUTOMATIC\_CLUSTERING\_HISTORY view](/sql-reference/account-usage/automatic_clustering_history) | USAGE\_VIEWER |
+| [BACKUP\_OPERATION\_HISTORY view](/sql-reference/account-usage/backup_operation_history) | OBJECT\_VIEWER |
+| [BACKUP\_POLICIES view](/sql-reference/account-usage/backup_policies) | OBJECT\_VIEWER |
+| [BACKUP\_SETS view](/sql-reference/account-usage/backup_sets) | OBJECT\_VIEWER |
+| [BACKUP\_STORAGE\_USAGE view](/sql-reference/account-usage/backup_storage_usage) | OBJECT\_VIEWER |
+| [BACKUPS view](/sql-reference/account-usage/backups) | OBJECT\_VIEWER |
 | [BLOCK\_STORAGE\_HISTORY view](/sql-reference/account-usage/block_storage_history) | USAGE\_VIEWER |
 | [BLOCK\_STORAGE\_SNAPSHOTS view](/sql-reference/account-usage/block_storage_snapshots) | OBJECT\_VIEWER |
 | [CATALOG\_LINKED\_DATABASE\_USAGE\_HISTORY view](/sql-reference/account-usage/catalog_linked_database_usage_history) | USAGE\_VIEWER |
@@ -93,7 +98,6 @@ views in the shared SNOWFLAKE database. Use the following table to determine whi
 | [CORTEX\_FINE\_TUNING\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_fine_tuning_usage_history) | USAGE\_VIEWER |
 | [CORTEX\_FUNCTIONS\_QUERY\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_functions_query_usage_history) | USAGE\_VIEWER |
 | [CORTEX\_FUNCTIONS\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_functions_usage_history) | USAGE\_VIEWER |
-| [CORTEX\_PROVISIONED\_THROUGHPUT\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_provisioned_throughput_usage_history) | USAGE\_VIEWER |
 | [CORTEX\_REST\_API\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_rest_api_usage_history) | USAGE\_VIEWER |
 | [CORTEX\_SEARCH\_BATCH\_QUERY\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_search_batch_query_usage_history) | USAGE\_VIEWER |
 | [CORTEX\_SEARCH\_DAILY\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_search_daily_usage_history) | USAGE\_VIEWER |

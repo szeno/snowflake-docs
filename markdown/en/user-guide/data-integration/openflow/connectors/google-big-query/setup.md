@@ -203,7 +203,7 @@ Show lessSee more
 
 ## Run the flow
 
-1. Right-click on the plane and select **Enable all Controller Services**.
+1. Right-click the canvas and select **Enable all Controller Services**.
 2. Right-click on the imported process group and select **Start**. The connector starts the data ingestion.
 
 ## Next steps

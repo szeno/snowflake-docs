@@ -20,7 +20,7 @@ a Snowflake Native App with Snowpark Container Services is determined by the fol
 
 A provider may monetize a Snowflake Native App using any of the
 [paid listing pricing models](/collaboration/provider-becoming#label-monetization-provider-onboarding)
-that are available in the Snowflake Marketplace. These models include subscription based and usage based plans.
+that are available in the Snowflake Marketplace. These models include flat-fee and usage-based plans.
 
 This cost to the consumer is determined by the provider. Consumers pay for provider software via the Snowflake Marketplace in addition to costs associated with running Snowflake
 infrastructure, including warehouses and compute pools.

@@ -14,6 +14,9 @@ For more recent releases and feature updates, see [Snowflake server release note
   - [Native App Framework updates](/release-notes/2026/10_41#native-app-framework-updates)
 
     - [Larger application package versions on AWS and Azure](/release-notes/2026/10_41#larger-application-package-versions-on-aws-and-azure)
+  - [Data integration updates](/release-notes/2026/10_41#data-integration-updates)
+
+    - [Openflow BYOC: entity IDs in Account Usage views](/release-notes/2026/10_41#openflow-byoc-entity-ids-in-account-usage-views)
   - [Release notes change log](/release-notes/2026/10_41#release-notes-change-log)
 - [10.40 Release Notes: Oct 31, 2026 - Nov 08, 2026](/release-notes/2026/10_40)
 
@@ -285,10 +288,16 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Nov 23, 2026: CoCo Desktop v2.1.0](/release-notes/2026/other/2026-11-23-coco-desktop-v2-1-0)
+- [Nov 23, 2026: Support for multiple tag-based row access policies (Preview)](/release-notes/2026/other/2026-11-23-multiple-tag-based-row-access-policies)
 - [Nov 20, 2026: AI\_COMPLETE adds support for Snowflake Decision (Preview)](/release-notes/2026/other/2026-11-20-ai-complete-snowflake-decision-public-preview)
 - [Nov 20, 2026: AI\_EXTRACT accuracy improvements (Preview)](/release-notes/2026/other/2026-11-20-ai-extract-accuracy)
 - [Nov 20, 2026: AUTO refresh mode for dynamic tables resolves to ADAPTIVE](/release-notes/2026/other/2026-11-20-dynamic-tables-auto-resolves-to-adaptive)
+- [Nov 20, 2026: Simplify selective data replacement with DELETING WHERE in SQL and Dynamic Tables with custom incrementalization](/release-notes/2026/other/2026-11-20-insert-overwrite-deleting-where)
 - [Nov 20, 2026: Postgres access roles for token authentication (General availability)](/release-notes/2026/other/2026-11-20-postgres-token-access-roles-ga)
+- [Nov 20, 2026: Semantic View Autopilot import from Horizon Catalog connectors (Preview)](/release-notes/2026/other/2026-11-20-semantic-view-autopilot-connected-bi-import-preview)
+- [Nov 20, 2026: Failover group refreshes continue when a stream has an unsupported source object](/release-notes/2026/other/2026-11-20-stream-replication-unsupported-source-objects)
+- [Nov 20, 2026: Container runtime for Streamlit apps in Snowflake Native Apps (General availability)](/release-notes/2026/other/2026-11-20-streamlit-container-runtime-native-apps-ga)
 - [Nov 19, 2026: AI Governance (Preview)](/release-notes/2026/other/2026-11-19-ai-governance-preview)
 - [Nov 19, 2026: Code Bundles (General availability)](/release-notes/2026/other/2026-11-19-code-bundles-ga)
 - [Nov 19, 2026: Error logging and CHECK constraint enforcement for COPY INTO and Snowpipe (General availability)](/release-notes/2026/other/2026-11-19-copy-snowpipe-error-logging-check-constraints-ga)
@@ -301,8 +310,10 @@ For more recent releases and feature updates, see [Snowflake server release note
 - [Nov 18, 2026: Log mode for prompt injection guardrails](/release-notes/2026/other/2026-11-18-prompt-injection-guardrails-log-mode)
 - [Nov 18, 2026: Spark Monitoring UI (General availability)](/release-notes/2026/other/2026-11-18-spark-monitoring-ui-ga)
 - [Nov 18, 2026: Schema detection and evolution for structured types (General availability)](/release-notes/2026/other/2026-11-18-structured-type-inference)
+- [Nov 17, 2026: Auto mode in Snowflake CoCo (Preview)](/release-notes/2026/other/2026-11-17-coco-auto-mode-preview)
 - [Nov 17, 2026: CoCo Desktop v2.0.0](/release-notes/2026/other/2026-11-17-coco-desktop-v2-0-0)
 - [Nov 17, 2026: Data governance policy inheritance for Cortex Search (Public Preview)](/release-notes/2026/other/2026-11-17-cortex-search-data-governance-inheritance-preview)
+- [Nov 17, 2026: Cross-Cloud Auto-Fulfillment for Native Apps that share Iceberg tables](/release-notes/2026/other/2026-11-17-native-apps-iceberg-laf)
 - [Nov 16, 2026: AI\_COMPLETE adds support for Twelve Labs Pegasus 1.5 (General availability)](/release-notes/2026/other/2026-11-16-ai-complete-pegasus-1-5-preview)
 - [Nov 16, 2026: Cortex AI Function Optimization for more efficient AI implementations (General availability)](/release-notes/2026/other/2026-11-16-ai-function-optimization-ga)
 - [Nov 16, 2026: Create, evaluate, and optimize Cortex AI Functions with Cortex AI Function Studio (General availability)](/release-notes/2026/other/2026-11-16-cortex-ai-function-studio-ga)

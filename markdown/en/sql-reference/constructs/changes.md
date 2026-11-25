@@ -44,14 +44,14 @@ FROM ...
     :   Returns appended rows only; therefore no join is performed. As a result, querying append-only changes can be much more performant than querying standard (default) changes for extract, load, transform (ELT) and similar scenarios that depend exclusively on row inserts.
 
 `TIMESTAMP => timestamp`
-:   Specifies an exact date and time to use for Time Travel. Note that the value must be explicitly cast to a TIMESTAMP.
+:   Specifies the starting point of the change tracking interval. Changes from this timestamp to the current time, or to the END timestamp if specified, are returned. Note that the value must be explicitly cast to a TIMESTAMP.
 
 `OFFSET => time_difference`
-:   Specifies the difference in seconds from the current time to use for Time Travel, in the form `-N` where `N` can be an integer or arithmetic expression (e.g. `-120` is 120 seconds, `-30*60`
+:   Specifies the difference in seconds from the current time that sets the starting point of the change tracking interval, in the form `-N` where `N` can be an integer or arithmetic expression (e.g. `-120` is 120 seconds, `-30*60`
     is 1800 seconds or 30 minutes).
 
 `STATEMENT => id`
-:   Specifies the query ID of a statement to use as the reference point for Time Travel. This parameter supports any statement of one of the following types:
+:   Specifies the query ID of a statement to use as the starting point of the change tracking interval. This parameter supports any statement of one of the following types:
 
     - DML (e.g. INSERT, UPDATE, DELETE)
     - TCL (BEGIN, COMMIT transaction)

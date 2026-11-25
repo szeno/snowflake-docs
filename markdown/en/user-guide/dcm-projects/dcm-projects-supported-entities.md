@@ -124,10 +124,6 @@ DEFINE ALERT MY_DB.MY_SCHEMA.ALRT_CHECK_ORDER_VOLUME
 
 ### Code Bundle
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 You can define [Code Bundles](/developer-guide/code-bundles/code-bundles) directly in DCM Projects. Code Bundles package and run
 non-SQL jobs, such as Python, on Snowflake compute. DCM Projects manages the bundle lifecycle (`CREATE`, `ALTER`, and `DROP`) across
 environments using Jinja templating. For syntax and examples, see
@@ -866,10 +862,6 @@ DCM Projects supports defining warehouses. For syntax, see
 - INITIALLY\_SUSPENDED
 
 ## Project assets
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
 
 To create or update Streamlit apps (`DEFINE STREAMLIT`) and Code Bundles (`DEFINE CODE BUNDLE`) with DCM Projects, declare their
 source files as named entries in the manifest’s `assets` section. Assets let you place `manifest.yml` alongside existing code

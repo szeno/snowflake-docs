@@ -171,7 +171,7 @@ mode menu below the message box:
 | Mode | Behavior |
 | --- | --- |
 | **Manual** | CoCo asks you to approve tool calls. This is the default. |
-| **Auto** (*Preview*) | CoCo approves commands that it rates as safe and asks you before it runs risky ones. This mode is available only in accounts where it’s enabled. |
+| **Auto** (*Preview*) | CoCo runs routine actions without asking and asks you only when an action looks risky or doesn’t match your intent. See [Auto mode](#label-coco-mode-auto-mode). |
 | **Bypass** | CoCo runs every tool call without asking. Account administrators can turn off this mode. |
 
 Expand
@@ -179,6 +179,57 @@ Expand
 Show lessSee more
 
 To set the approval mode for new sessions, use the **Approvals** setting.
+
+### Auto mode
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+Auto mode runs routine actions without a prompt and checks each remaining action against what you asked for. You see a
+prompt only when an action looks risky or doesn’t match your intent. You get most of the speed of bypass mode with much
+of the safety of default approvals. Auto mode is opt-in currently and isn’t the default mode.
+
+Each action that CoCo proposes passes through these checks before it runs:
+
+1. **Routine actions run without a prompt.** Reading files, editing files in your workspace, and running read-only SQL
+   (such as `SELECT`, `SHOW`, and `DESCRIBE`) are approved automatically.
+2. **An LLM classifier reviews everything else.** The classifier checks each action against your requests and earlier
+   actions in the session.
+
+Auto mode fails safe. If the classifier errors or times out, CoCo shows the normal approval prompt.
+
+Auto mode adds checks. It doesn’t replace your existing controls:
+
+- Deny and ask rules, and administrator-managed settings, still apply.
+- Snowflake role-based access control (RBAC) still applies to every query.
+
+Note the following limitations:
+
+- **Auto mode isn’t a security boundary.** It reduces risk, but its decisions are probabilistic, and the classifier can
+  make mistakes. Don’t use it as your only control for sensitive environments.
+- **Local code isn’t sandboxed in CoCo CLI and CoCo Desktop.** Scripts and Python that run on your machine aren’t
+  confined. If you need confined execution, use CoCo in Snowsight, which runs in a sandboxed environment.
+
+Snowflake recommends the following setup:
+
+- **Turn on AI\_GUARDRAILS for production or sensitive environments.** Auto mode checks what the agent does.
+  [AI\_GUARDRAILS](/user-guide/snowflake-cortex/cortex-ai-guardrails) checks what the agent reads, such as tool outputs
+  that might contain prompt-injected instructions. Auto mode doesn’t turn on AI\_GUARDRAILS. Only account administrators
+  can enable it.
+- **Use managed settings to set policy.** Administrators can block bypass mode with the
+  `permissions.dangerouslyAllowAll` setting. Auto mode never relaxes managed settings. See
+  [Managed settings](/user-guide/cortex-code/managed-settings).
+
+Auto mode is in preview, and its behavior will change based on your feedback. Send us cases where:
+
+- CoCo prompted you too often for routine work.
+- CoCo blocked an action that you wanted it to run.
+- CoCo ran an action that you expected it to block.
+
+To send feedback, contact your Snowflake account team, who will relay it to Product and Engineering.
+
+To turn on Auto mode, open the approval mode menu below the message box and select **Auto**.
 
 ## Settings
 

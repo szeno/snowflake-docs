@@ -275,6 +275,11 @@ For additional help, contact your internal Google Cloud administrator.
    Snowsight and the Snowflake Marketplace using private connectivity. However, there is additional configuration if you want to enable
    URL redirects. For information, see [Snowsight & Private Connectivity](/user-guide/ui-snowsight-gs#label-ui-snowsight-gs-private-connectivity).
 
+   If your account name contains an underscore, also add a DNS entry that uses a hyphen in place of each underscore in the account URL. For
+   example, if your organization is `myorg` and your account name is `account_dev`, add an entry like
+   `myorg-account-dev.privatelink.snowflakecomputing.com`. Without this entry, connections that use the hyphenated URL might fail. For more
+   information, see [Multi-factor authentication: New Duo interface](/release-notes/bcr-bundles/2025_01/bcr-1875).
+
    Note
 
    A full explanation of DNS configuration is beyond the scope of this procedure. For example, you can choose to integrate a private DNS
@@ -283,9 +288,9 @@ For additional help, contact your internal Google Cloud administrator.
 
 ## Connect to Snowflake
 
-Before connecting to Snowflake, you can optionally leverage SnowCD (Snowflake Connectivity Diagnostic tool) to evaluate the
+Before connecting to Snowflake, you can optionally use [snow connection test](/developer-guide/snowflake-cli/connecting/configure-connections#test-and-diagnose-a-connection) to evaluate the
 network connection with Snowflake and Private Service Connect. For more information, see
-[SnowCD](/user-guide/snowcd) and [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink).
+[SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink).
 
 To connect to Snowflake with your private connectivity account, see [Connecting with a URL](/user-guide/organizations-connect#label-connecting-via-url).
 

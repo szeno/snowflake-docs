@@ -167,6 +167,8 @@ schemaObjectPrivileges ::=
      { MONITOR | OPERATE | USAGE } [ , ... ]
   -- For ARTIFACT REPOSITORY
      READ [ , ... ]
+  -- For CODE BUNDLE
+     { MONITOR | USAGE } [ , ... ]
   -- For CONTACT
      { APPLY | MODIFY } [ , ... ]
   -- For CORTEX EXTENSION
@@ -251,6 +253,7 @@ For more details about the privileges supported for each object type, see [Acces
     - `AGGREGATION POLICY`
     - `ALERT`
     - `AUTHENTICATION POLICY`
+    - `CODE BUNDLE`
     - `CORTEX EXTENSION`
     - `CORTEX SEARCH SERVICE`
     - `DATA METRIC FUNCTION`

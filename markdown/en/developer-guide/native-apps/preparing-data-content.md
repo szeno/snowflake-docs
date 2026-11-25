@@ -46,7 +46,9 @@ The following restrictions apply to tables and views shared in an application pa
 - View definitions or virtual columns associated with them such as policies cannot
   contain calls to Java, Python, or JavaScript.
 - Shared tables cannot be temporary, volatile, or transient tables.
-- Cross-Cloud Auto-Fulfillment is not supported for apps that contain external or Apache Iceberg™ tables.
+- Cross-Cloud Auto-Fulfillment is not supported for apps that share external tables.
+  Apps that share Apache Iceberg™ tables can use Cross-Cloud Auto-Fulfillment when Snowflake
+  can auto-fulfill each Iceberg table the app exposes.
 
 ### Restrictions on sharing data content that contains policies
 
@@ -248,32 +250,63 @@ privileges on these views to an application role.
 Caution
 
 External and Apache Iceberg™ tables might incur additional egress or ingress costs to the provider or consumer
-if the backing object store is not in the same region as the app listing.
+if the backing object store is not in the same region as the app listing. If you enable
+[Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment) for Iceberg
+tables, you also pay for the Snowflake-managed replica in each consumer region, including
+egress, storage, and compute. For more information, see
+[Auto-fulfillment costs](/collaboration/provider-understand-cost-auto-fulfillment).
 
 The following restrictions and requirements apply when sharing an external or Iceberg table:
 
 - External and Iceberg tables and views that access them are read-only for the app.
-- Cross-Cloud Auto-Fulfillment is [not supported for apps](#label-native-apps-ext-table-laf)
-  that share external or Iceberg tables.
-- Consumers must allow the app to use an external or Iceberg table in the provider account before it
-  is available to the app.
+- Cross-Cloud Auto-Fulfillment support depends on the table type. See
+  [Cross-Cloud Auto-Fulfillment for external and Iceberg tables](#label-native-apps-ext-table-laf).
+- Consumers must allow the app to use an external or Iceberg table before it is available to
+  the app, including when they install the app in an auto-fulfilled region. For more
+  information, see [Request access to external and Apache Iceberg™ tables](/developer-guide/native-apps/requesting-external-tables).
 
-### Cross-Cloud Auto-Fulfillment is not supported
+### Cross-Cloud Auto-Fulfillment for external and Iceberg tables
 
-External and Iceberg tables are not supported for apps that have listings that enable
-[Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment).
+You can enable [Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment)
+on a listing for an app that shares Apache Iceberg™ tables when every Iceberg table the app
+exposes can be auto-fulfilled, including tables reached through the `REFERENCE_USAGE` privilege.
+Snowflake applies the same Iceberg auto-fulfillment rules that apply to listings. For those
+rules, see
+[Limitations](/collaboration/use-auto-fulfillment-with-open-table-formats#label-auto-fulfillment-open-formats-limitations).
+
+You can configure auto-fulfillment in Snowsight or with SQL. Snowsight uses the same
+check as SQL. For an app that shares only Iceberg tables that those listing rules allow, you
+can enable auto-fulfillment in Snowsight.
+
+External tables aren’t supported for Cross-Cloud Auto-Fulfillment in a Native App. If a listing
+for an app includes an external table, Snowsight disables the option. If the app shares an
+external table, or an Iceberg table that those rules don’t allow, enabling auto-fulfillment
+fails with error `093323`. That error names the application package, not the table. To find
+the table, list Iceberg and external tables as shown in the following example.
+
+Before you enable auto-fulfillment, list every Iceberg table and external table the app
+exposes, including tables in databases granted `REFERENCE_USAGE` to the package:
+
+Copy code
+
+```
+SHOW ICEBERG TABLES IN DATABASE <app_package_name>;
+SHOW EXTERNAL TABLES IN DATABASE <app_package_name>;
+```
+
+Repeat those commands in each database granted `REFERENCE_USAGE` to the package.
+
+If a provider adds a version or patch that introduces an unsupported table to an application
+package that is the data product of a listing with Cross-Cloud Auto-Fulfillment configured,
+Snowflake returns error `093324`. Granting `REFERENCE_USAGE` on a database after
+auto-fulfillment is already enabled does not fail immediately. The next version or patch
+create or release fails with `093324` if that database exposes an unsupported table.
 
 Note
 
-To publish an app that uses external or Iceberg tables to multiple Snowflake regions, providers
-must publish the listing to each region.
-
-If a provider creates a listing for an app that includes an external or Iceberg table,
-the ability to configure Cross-Cloud Auto-Fulfillment is disabled in Snowsight.
-
-If a provider attempts to add a version or patch to an application package that is the
-data product of a listing that has Cross-Cloud Auto-Fulfillment configured, Snowflake
-returns an error.
+To publish an app that shares external tables to multiple Snowflake regions, providers must
+publish the listing to each region. Apps that share only Iceberg tables that those listing
+rules allow can use Cross-Cloud Auto-Fulfillment instead.
 
 ### Add an external or Iceberg table to an app
 

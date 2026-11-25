@@ -125,19 +125,14 @@ For details, see [Replication and secrets](#label-account-replication-considerat
 
 ### Dangling references and streams
 
-Dangling references for streams cause replication to fail with the following error message:
+If a stream in a failover group has a source object in a database that isn’t in the same failover group, the stream is replicated as an
+unreadable stream, and the refresh operation doesn’t fail. For more information, see [Unreadable streams in a secondary account](#label-replication-streams-unreadable).
 
-```
-Primary database: the source object ''<object_name>'' for this stream ''<stream_name>'' is not included in the replication group.
-Stream replication does not support replication across databases in different replication groups. Please see Streams Documentation
-https://docs.snowflake.com/en/user-guide/account-replication-considerations#replication-and-streams for options.
-```
+To replicate the stream so that it can be read in the secondary account:
 
-To avoid dangling reference errors:
-
-- The primary database must include both the stream and its base object or
-- The database that contains the stream and the database that contains the base object referenced by the stream must be included in the
-  same replication or failover group.
+- The primary database must include both the stream and its source object or
+- The database that contains the stream and the database that contains the source object referenced by the stream must be included in the
+  same failover group.
 
 ## Replication and read-only secondary objects
 
@@ -695,16 +690,68 @@ Replicated streams can successfully track the change data for tables and views i
 
 Currently, the following source object types are not supported:
 
-- External tables
 - Tables or views in databases separate from the stream databases, unless both the stream database and the database that stores the source object are included in the same
   [replication or failover group](/user-guide/account-replication-intro#label-replication-and-failover-groups).
 - Tables or views in a shared databases (i.e. databases shared from provider accounts to your account)
+- External tables
+- Event tables
 
 Replicating streams on directory tables is supported when you enable [Stage, pipe, and load history replication](/user-guide/account-replication-stages-pipes-load-history).
 
-A database replication or refresh operation fails if the primary database includes a stream with an unsupported source object. The operation also fails if the source object for any stream has been dropped.
+When a primary failover group includes a stream on one of these unsupported source objects, the refresh operation doesn’t fail. Instead,
+the stream is replicated as an unreadable stream, and all other objects in the failover group are replicated as usual. For more
+information, see [Unreadable streams in a secondary account](#label-replication-streams-unreadable).
+
+The refresh operation fails if the source object for any stream has been dropped.
 
 Append-only streams are not supported on replicated source objects.
+
+## Unreadable streams in a secondary account
+
+A stream on an unsupported source object is replicated to the secondary account, but you can’t query the stream or consume its change
+data in the secondary account.
+The source object isn’t replicated, so the secondary account has nothing for the stream to track. Querying the stream returns an error
+similar to the following:
+
+```
+Replicated stream is not readable: Stream <stream_name> is not readable because a base table of this stream is not in the same failover group and is not replicated.
+```
+
+The end of the message gives the reason, which is one of the following:
+
+| Reason in the error message | Source object of the stream |
+| --- | --- |
+| `a base table of this stream is not in the same failover group and is not replicated.` | A table in a database that isn’t in the same failover group as the stream |
+| `the source view of this stream is not in the same failover group and is not replicated.` | A view in a database that isn’t in the same failover group as the stream |
+| `a base table of this stream is shared from another account and is not replicated.` | A table in a database shared from another account |
+| `the source view of this stream is shared from another account and is not replicated.` | A view in a database shared from another account |
+| `a base table of this stream is an external table and is not replicated.` | An external table |
+| `a base table of this stream is an event table and is not replicated.` | An event table |
+
+Expand
+
+Show lessSee more
+
+The stream in the primary account isn’t affected and can still be queried there.
+
+To replicate a stream on a table or view in another database in your account so that it can be read in the secondary account, include
+both the stream database and the database that contains the source object in the same failover group. Streams on external tables, event
+tables, and objects shared from another account can’t be read in a secondary account.
+
+### Unreadable streams after failover and failback
+
+If you fail over to the secondary account, an unreadable stream remains unreadable in the new primary account. To use the stream in that
+account, recreate it on a source object that exists there.
+
+When you fail back, the original primary account is refreshed from the account you failed over to. During that refresh, the original
+primary account receives the unreadable stream, so after failback the stream also can’t be queried in the original primary account. To
+read from it again, recreate the stream in the original primary account by using
+[CREATE OR REPLACE STREAM](/sql-reference/sql/create-stream).
+The offset for a recreated stream is the current table version by default, so change data that the stream hadn’t consumed before the
+failover isn’t returned.
+
+Before you fail over, including for a test, identify streams in the primary account that are on unsupported source objects, and plan to
+recreate them after failover and failback.
 
 ## Avoiding Data Duplication
 

@@ -28,7 +28,10 @@ core behavior and requirements:
   connector instances of the same type on one runtime; see
   [Runtime sizing](/user-guide/data-integration/openflow/connectors/sql-server-cdc/setup#label-sql-server-cdc-runtime-sizing).
 - Both support only username and password authentication with SQL Server.
-- Both replicate only tables that have a primary key.
+- Both require a replication key for every table. The Openflow Connector for SQL Server uses only
+  the table’s primary key. The Openflow Connector for SQL Server (CDC) uses the primary key by default,
+  or a [logical key](/user-guide/data-integration/openflow/connectors/sql-server-cdc/setup#label-sqlserver-cdc-logical-key)
+  you specify, including on tables that have no primary key.
 
 ## How change detection differs
 
@@ -154,3 +157,5 @@ Choose the Openflow Connector for SQL Server (CDC) if you:
   live tables.
 - Can run on SQL Server Standard or Enterprise and can operate the SQL Server
   Agent capture job.
+- Need to replicate a table that has no primary key, or to use a replication
+  key other than the primary key.

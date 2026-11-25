@@ -54,12 +54,13 @@ CREATE ORGANIZATION LISTING [ IF NOT EXISTS ] <name>
 
 ## Access control requirements
 
-A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
+A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this SQL command must have at least one of the following
 [privileges](/user-guide/security-access-control-overview#label-access-control-overview-privileges) at a minimum:
 
 | Privilege | Object | Notes |
 | --- | --- | --- |
-| CREATE ORGANIZATION LISTING or CREATE LISTING | Account | To create and alter organization listings. |
+| CREATE ORGANIZATION LISTING or CREATE LISTING | Account | Required. Either privilege lets you create organization listings. |
+| OWNERSHIP or ATTACH LISTING | Application package | Required in addition to the account privilege, but only when attaching an application package (Snowflake Native App Framework) instead of a share. |
 
 Expand
 
@@ -67,17 +68,7 @@ Show lessSee more
 
 You can’t create a listing by using the GLOBALORGADMIN role, which is used for organization administration.
 
-A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this SQL command must have at least one of the following
-[privileges](/user-guide/security-access-control-overview#label-access-control-overview-privileges) at a minimum:
-
-| Privilege | Object | Notes |
-| --- | --- | --- |
-| CREATE ORGANIZATION LISTING | ACCOUNT | To attach the specified share or the specified Snowflake Native App Framework to a listing. When specifying a Snowflake Native App Framework, OWNERSHIP or ATTACH LISTING are also required. |
-| IMPORT ORGANIZATION LISTING | ACCOUNT | To mount a listing or to execute a query that uses a Uniform Listing Locator (ULL) to reference an organizational listing. |
-
-Expand
-
-Show lessSee more
+To mount an organization listing, or to query one by using its Uniform Listing Locator (ULL), consumers need the IMPORT ORGANIZATION LISTING privilege. This privilege isn’t required to create a listing. See [Reference organizational listings in queries](/user-guide/collaboration/listings/organizational/org-listing-query).
 
 ## Usage notes
 

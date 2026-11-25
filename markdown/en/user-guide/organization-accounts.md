@@ -153,11 +153,20 @@ concerned about the costs associated with [premium views](/user-guide/organizati
 
 ## Move the organization account to a different region
 
+[Business Critical Feature](/user-guide/intro-editions)
+
+This feature requires Business Critical (or higher).
+
+To inquire about upgrading, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
+
 You can move an organization account between regions as long as those regions are in either the PUBLIC region group or a VPS region group.
 
 Snowflake uses replication groups to move objects from the organization account in the source region to the organization account in the new
 region. As a result, only objects that can be replicated are moved with the organization account and there are replication costs associated
 with the move. For a list of objects that can be moved with the organization account, see [Replicated objects](/user-guide/account-replication-intro#label-replicated-objects).
+
+Because moving the organization account requires replicating account objects, the organization account must be Business Critical Edition
+(or higher). To check or change the edition of the organization account, see [Working with account editions](/user-guide/organizations-manage-accounts-editions).
 
 Note
 

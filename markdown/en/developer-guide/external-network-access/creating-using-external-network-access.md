@@ -192,6 +192,9 @@ For security, Snowflake requires that when creating an external access integrati
 
 - The CREATE INTEGRATION privilege on the account.
 - The USAGE privilege on any secret the integration uses, as well as the USAGE privilege on the secret’s schema.
+- The owner role of each network rule the integration references in its role hierarchy. If the role that creates the integration
+  doesn’t have the owner role, the CREATE statement succeeds, but users of the integration get an error when they use it. For more
+  information, see [Error: Insufficient privileges on network rule](/developer-guide/external-network-access/external-network-access-troubleshooting#label-ena-troubleshooting-insufficient-privileges-network-rule).
 
 ### Example
 

@@ -150,7 +150,7 @@ follow the link for the driver:
 
 - [Go](https://pkg.go.dev/github.com/snowflakedb/gosnowflake#hdr-Binding_Parameters)
 - [JDBC](/developer-guide/jdbc/jdbc-using#label-jdbc-binding)
-- [.NET](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/QueryingData.md#bind-parameter)
+- [.NET](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Client/QueryingData.md#bind-parameter)
 - [Node.js](/developer-guide/node-js/nodejs-driver-execute#label-nodejs-binding)
 - [ODBC](/developer-guide/odbc/odbc-using#label-odbc-using-binding-parameters)
 - [Python](/developer-guide/python-connector/python-connector-example#label-python-connector-binding-data)
@@ -204,7 +204,7 @@ follow the link for the driver:
 
 - [Go](https://pkg.go.dev/github.com/snowflakedb/gosnowflake#hdr-Batch_Inserts_and_Binding_Parameters)
 - [JDBC](/developer-guide/jdbc/jdbc-using#label-jdbc-batch-updates)
-- [.NET](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/QueryingData.md#bind-array-variables)
+- [.NET](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Client/QueryingData.md#bind-array-variables)
 - [Node.js](/developer-guide/node-js/nodejs-driver-execute#label-nodejs-array-binding)
 - [ODBC](/developer-guide/odbc/odbc-using#label-odbc-using-binding-parameters)
 - [Python](/developer-guide/python-connector/python-connector-example#label-python-connector-binding-batch-inserts)

@@ -289,3 +289,7 @@ For more details, see [Working with Materialized Views](/user-guide/views-materi
   the table back so that it matches the view definition again, you don’t need to recreate the view. For example, if you drop a column and
   then add a column with the same name back to the table, or you drop the table and then create a new table with the same name and
   columns, queries on the view succeed again.
+- You can’t enable change tracking on a view (for example, with `ALTER VIEW ... SET CHANGE_TRACKING = TRUE`) if the view’s query uses
+  operations that change tracking doesn’t support, such as `GROUP BY`, `DISTINCT`, or `LIMIT` clauses. For example, enabling change tracking on
+  a view whose definition uses a `LIMIT` clause fails with the error `Change tracking is not supported on queries with LIMIT.` For the full
+  list of requirements, see [Streams on views](/user-guide/streams-intro#label-streams-views).

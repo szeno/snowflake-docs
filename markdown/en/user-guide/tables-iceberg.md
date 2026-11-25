@@ -614,9 +614,15 @@ Consider the following items when you write to Iceberg tables with an external q
 > Be aware of the following restrictions:
 >
 > - Iceberg tables shared through a Native App are read-only for consumers.
-> - Cross-Cloud Auto-Fulfillment is not supported for apps that share Iceberg tables.
+> - Cross-Cloud Auto-Fulfillment is supported only when every Iceberg table the app exposes
+>   can be auto-fulfilled. External tables in a Native App aren’t supported for
+>   Cross-Cloud Auto-Fulfillment. For more information, see
+>   [Cross-Cloud Auto-Fulfillment for external and Iceberg tables](/developer-guide/native-apps/preparing-data-content#label-native-apps-ext-table-laf)
+>   and
+>   [Limitations](/collaboration/use-auto-fulfillment-with-open-table-formats#label-auto-fulfillment-open-formats-limitations).
 > - Consumers must explicitly enable the `EXTERNAL_DATA` restricted feature to the app
->   before it can resolve Iceberg tables. For more information, see
+>   before it can resolve Iceberg tables, including when they install the app in an
+>   auto-fulfilled region. For more information, see
 >   [Request access to external and Apache Iceberg™ tables](/developer-guide/native-apps/requesting-external-tables).
 
 **Collation**

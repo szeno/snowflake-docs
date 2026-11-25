@@ -31,6 +31,12 @@ The following notification types are sent by Snowflake:
   - Operational status notifications, such as notifications related to [Snowflake’s operational status](https://status.snowflake.com/).
   - Time-sensitive notifications, such as notifications that might require immediate attention or action.
 
+Important
+
+Email addresses that you specify for **Product Notifications** don’t automatically receive behavior change notifications.
+To receive behavior change notifications at a specific email address, add that address under **Behavior Change Notifications**.
+By default, behavior change notifications are also sent to users with the ACCOUNTADMIN role and to Community-enabled users.
+
 Emails are sent in accordance with the [Snowflake Privacy Notice](https://www.snowflake.com/privacy-policy/).
 
 ## Set up notification contacts for Snowflake
@@ -67,9 +73,9 @@ Only the time-sensitive notifications are sent to the on-call administrators.
 
 Alternatively, if you want different groups to get different types of notifications, you could set up notification contacts differently:
 
-- For **Product Notifications**, enter the email address: `snowflake-admin-info@example.com` to get all product
-  notifications including the Behavior Change notifications, Driver Support notifications, Operational Status notifications, and Time
-  Sensitive notifications.
+- For **Product Notifications**, enter the email address: `snowflake-admin-info@example.com` to get product
+  notifications, including the Driver Support notifications, Operational Status notifications, and Time Sensitive notifications.
+  This address doesn’t receive behavior change notifications unless you also add it under **Behavior Change Notifications**.
 - For **Behavior Change Notifications**, enter the email address: `snowflake-admin-testing@example.com` to send behavior change
   emails to the administrators responsible for testing Snowflake.
 - For **Driver Support Notifications**, enter the email address: `snowflake-admin-connect@example.com` to send client version and
@@ -91,5 +97,5 @@ something like the following example:
 - As a user signed in to the other account that is granted the ACCOUNTADMIN role, go to the **Account** tab. In the
   **Behavior Change Notifications** section, enter the email address: `snowflake-admin-testing@example.com`.
 
-In this example, the administrators for the entire Snowflake organization get all product notifications for all accounts in the organization,
-and the testing groups for each account get the behavior change notifications for the accounts that they manage.
+In this example, the administrators for the entire Snowflake organization get product notifications, other than behavior change notifications,
+for all accounts in the organization, and the testing groups for each account get the behavior change notifications for the accounts that they manage.

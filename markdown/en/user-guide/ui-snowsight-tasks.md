@@ -57,6 +57,9 @@ Task history data is only available if the task has been executed in the last 7 
 
 ## View task history
 
+The **Tasks** page has two tabs for viewing task history: **Task Graphs** and **Task Runs**. For the privileges that each tab requires,
+see [Privileges for the Task Graphs tab](#label-task-graphs-tab-privs) and [Privileges for the Task Runs tab](#label-task-runs-tab-privs).
+
 To view task history, perform the following steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
@@ -73,7 +76,11 @@ view [TASK\_HISTORY view](/sql-reference/account-usage/task_history).
 
 ### Required privileges for viewing task history
 
-To view task history in Snowsight, you need the same privileges required to run the
+The privileges that you need depend on the **Tasks** page tab or the page that you use to view task history.
+
+#### Privileges for the Task Graphs tab
+
+To view task graph history on the **Task Graphs** tab, you need the same privileges required to run the
 [TASK\_HISTORY](/sql-reference/functions/task_history) function. That is, you must use a role that includes one of the following roles or privileges on the task:
 
 > - The ACCOUNTADMIN role.
@@ -81,21 +88,33 @@ To view task history in Snowsight, you need the same privileges required to run 
 > - The MONITOR or OPERATE privilege on the task.
 > - The global MONITOR EXECUTION privilege.
 
-The role that you use must be able to query the Account Usage [TASK\_HISTORY](/sql-reference/account-usage/task_history) view. You can grant the USAGE\_VIEWER database role in the shared SNOWFLAKE database to the role that you use.
+The role must also have the USAGE privilege on the database and schema that store the task. Otherwise, the DATABASE\_NAME and SCHEMA\_NAME values in the output are NULL.
 
-For example, to view the history for a specific task `mytask`, you can grant OWNERSHIP privileges on the task and the USAGE\_VIEWER database role on the shared Snowflake database by running the following SQL commands:
+#### Privileges for the Task Runs tab
+
+The **Task Runs** tab uses the Account Usage [TASK\_HISTORY](/sql-reference/account-usage/task_history) and
+[COMPLETE\_TASK\_GRAPHS](/sql-reference/account-usage/complete_task_graphs) views. The role that you use must be able to query these views.
+To grant this access, grant the USAGE\_VIEWER and OBJECT\_VIEWER database roles in the shared SNOWFLAKE database to the role that you use.
+
+For example, to let `myrole` view task runs, run the following SQL commands:
 
 Copy code
 
 ```
-GRANT OWNERSHIP ON TASK mytask TO ROLE myrole;
-GRANT DATABASE ROLE USAGE_VIEWER TO ROLE myrole;
+GRANT DATABASE ROLE SNOWFLAKE.USAGE_VIEWER TO ROLE myrole;
+GRANT DATABASE ROLE SNOWFLAKE.OBJECT_VIEWER TO ROLE myrole;
 ```
 
 For details, see:
 
 - [ACCOUNT\_USAGE schema SNOWFLAKE database roles](/sql-reference/account-usage#label-account-usage-snowflake-db-roles)
 - [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role)
+
+#### Privileges for the individual task run history page
+
+From the **Task Graphs** and **Task Runs** tabs, you can open the run history for an individual task in Catalog Explorer.
+That page requires the privileges for the **Task Graphs** tab if you view 7 days of history or less. It requires the privileges
+for the **Task Runs** tab if you view more than 7 days of history.
 
 ### Review the run history for a task
 
@@ -208,18 +227,11 @@ With this preview, you can also access the **Task Graph** page from a specific r
 
 ### Considerations and limitations
 
-- To view a task graph within this function, you’ll need a role with at least one of the following privileges:
-
-  - OWNERSHIP privilege on the task (that is, the task owner).
-  - MONITOR or OPERATE privileges on the task.
-  - The global MONITOR EXECUTION privilege.
-  - The ACCOUNTADMIN role.
-
-  The role must also have the USAGE privilege on the database and schema that store the task, otherwise the DATABASE\_NAME and SCHEMA\_NAME values in the output are NULL.
+- To view a task graph on the **Task Graphs** tab, you need the privileges described in [Privileges for the Task Graphs tab](#label-task-graphs-tab-privs).
 
 ## Retry failed tasks
 
-In Snowsight, you can see previous task run attempts and retry failed and canceled task graphs. You must have the OPERATE privilege on the task to retry failed and canceled tasks. To view previous task run attempts, you also need the same privileges as [viewing task history](#label-run-history-task-snowsight).
+In Snowsight, you can see previous task run attempts and retry failed and canceled task graphs. You must have the OPERATE privilege on the task to retry failed and canceled tasks. To view previous task run attempts, you also need the [privileges for the Task Graphs tab](#label-task-graphs-tab-privs).
 
 This is particularly useful for ensuring that data workflows or pipelines are successfully completed without having to restart the entire process, saving time and resources.
 
@@ -233,7 +245,7 @@ Using retry attempts instead of new runs is particularly helpful for completing 
 Note
 
 - A graph can only be retried if it hasn’t been recreated or altered since the last run.
-- You must have the OWNERSHIP or OPERATE privilege on the task to retry failed and canceled tasks. To view previous task run attempts, you also need the same privileges as [viewing task history](#label-run-history-task-snowsight).
+- You must have the OWNERSHIP or OPERATE privilege on the task to retry failed and canceled tasks. To view previous task run attempts, you also need the [privileges for the Task Graphs tab](#label-task-graphs-tab-privs).
 
 Take the following steps to manually retry failed and canceled tasks. The following steps work only when the [Viewing task graphs](#label-snowsight-task-graph-run-history) preview feature is enabled.
 

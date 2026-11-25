@@ -540,6 +540,20 @@ Snowsight:
 SQL:
 :   Execute a [CREATE NETWORK POLICY](/sql-reference/sql/create-network-policy) statement.
 
+    To use a custom role to create a network policy, grant the global CREATE NETWORK POLICY privilege to the role:
+
+    Copy code
+
+    ```
+    USE ROLE ACCOUNTADMIN;
+    GRANT CREATE NETWORK POLICY ON ACCOUNT TO ROLE network_admin;
+    USE ROLE network_admin;
+
+    CREATE NETWORK POLICY allow_vpceid_block_public_policy
+      ALLOWED_NETWORK_RULE_LIST = ('allow_vpceid_access')
+      BLOCKED_NETWORK_RULE_LIST = ('block_public_access');
+    ```
+
 ### Identify network policies in your account
 
 You can identify the network policies in your account using Snowsight or SQL.

@@ -7,7 +7,7 @@ following Snowflake objects:
 - Tables
 - Dynamic tables
 - External tables
-- Externally managed and managed Apache Iceberg™ tables
+- Externally managed and Snowflake-managed Apache Iceberg™ tables
 - Externally managed Delta Lake tables (with Delta Direct and catalog-linked databases)
 - Views
 

@@ -26,10 +26,10 @@ For step-by-step examples, see the following developer guides:
 
 Available to all accounts.
 
-[Pipeline Builder](/user-guide/pipeline-builder/pipeline-builder-overview) is a visual, AI-assisted designer in Workspaces for
-defining the scheduling and orchestration of data pipelines. You add notebooks, Python files, ML Jobs, and SQL to a canvas, connect
-them to set the order they run in, and configure schedules and compute. Pipeline Builder then generates the tasks, task graphs, and
-Code Bundles for you. Pipeline Builder currently supports task-based pipelines that execute notebooks, Python files, ML Jobs, and SQL.
+[Pipeline Builder](/user-guide/pipeline-builder/pipeline-builder-overview) is a visual, AI-assisted designer in Workspaces for defining the
+scheduling and orchestration of data pipelines. You add notebooks, Python files, ML Jobs, SQL, and dbt projects to a canvas, connect them to
+set the order they run in, and configure schedules and compute. Pipeline Builder then generates the tasks, task graphs, and Code Bundles for
+you. Pipeline Builder currently supports task-based pipelines that execute notebooks, Python files, ML Jobs, SQL, and dbt projects.
 
 Each pipeline that you build in Pipeline Builder is a DCM project, so you can start with Pipeline Builder to simplify creating and
 configuring the project, and then switch to the DCM Projects interface to extend and configure the same project manually. For example, you
@@ -61,7 +61,7 @@ plan and deploy all of its objects together:
 - **Orchestration:** Define [tasks](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-task) and task
   graphs that schedule and run the following:
   - [Procedures](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-procedure).
-  - [Code Bundles](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-code-bundle) (preview), which
+  - [Code Bundles](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-code-bundle), which
     package notebooks and other non-SQL code that the DCM project defines and deploys.
   - dbt models or entire dbt projects, by running [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project).
   - Manual refreshes of dynamic tables.

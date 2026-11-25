@@ -95,7 +95,6 @@ still in progress.
 | To be determined | Data pipelines | [Completed rollout of BYTES\_BILLED column in history views (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-2241) | None |
 | Most of this change will occur gradually across all regions in June - July 2026. | Security | [Wider variety of Certificate Authorities and shorter certificate lifetimes](/release-notes/bcr-bundles/un-bundled/bcr-2255) |  |
 | This change is planned for February 2026. | Network connectivity | [GCP PSC propagated connection limit set to 0](/release-notes/bcr-bundles/un-bundled/bcr-2193) |  |
-| This change is planned for September 2026. | SQL Changes - General | [SQL general: New default column sizes for string and binary data types (Postponed)](/release-notes/bcr-bundles/un-bundled/bcr-2118) |  |
 | This change will occur gradually. | Worksheets to Workspaces upgrade | [Defaulting accounts from Worksheets to Workspaces](/release-notes/bcr-bundles/un-bundled/bcr-2117) | This change will roll out gradually beginning the week of September 22, 2025. |
 | This change is planned for September 2025. | New VNET subnet IDs required for rules that filter based on subnet ID | [Azure access: New VNET subnet IDs required for rules that filter based on subnet ID (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-1955-2078) |  |
 | This change will occur gradually across all AWS regions from January 5 to January 31, 2025. | Change of Certificate Authority & OCSP Allowlist for AWS Customers | [Change of Certificate Authority and OCSP Allowlist for AWS Customers](/release-notes/bcr-bundles/un-bundled/bcr-1657) |  |
@@ -106,6 +105,7 @@ still in progress.
 |  | Data Loading / Unloading Changes. | [Data loading, data unloading, and file staging DML commands: Single-character pattern matches (Postponed)](/release-notes/bcr-bundles/un-bundled/bcr-209969) | This change was originally planned for February 2021; however, it has been postponed and a new release date has not been determined.  This change is not available for testing. |
 |  | Information Schema: TABLE\_PRIVILEGES view. | [TABLE\_PRIVILEGES View: Update GRANTOR column value in the consumer account (Postponed)](/release-notes/bcr-bundles/un-bundled/bcr-1321) | This behavior change was originally planned for **September 2023**; however, it has been postponed and a new release date has not been determined.  This change is not available for testing. |
 |  | Cloning: Table history. | [Cloning: Table history not preserved on clone (Postponed)](/release-notes/bcr-bundles/2023_07/bcr-908) | This behavior change was originally in the 2023\_07 bundle and intended to become enabled by default in the 2023\_08 bundle. However, it has been postponed and a new release date has not been determined.  This change is not available for testing. |
+|  | SQL Changes - General | [SQL general: New default column sizes for string and binary data types (Postponed)](/release-notes/bcr-bundles/un-bundled/bcr-2118) | This behavior change was originally planned for **September 2026**; however, it has been postponed and a new release date has not been determined.  This change is not available for testing. |
 
 Expand
 

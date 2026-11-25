@@ -1,4 +1,4 @@
-# <code className=”samp”><em>custom\_classifier</em></code>!ADD\_REGEX
+# <custom\_classifier>!ADD\_REGEX
 
 [Enterprise Edition Feature](/user-guide/intro-editions)
 

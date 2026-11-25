@@ -25,7 +25,7 @@ Show lessSee more
 | Platform | Best for | Framework | Deployment target |
 | --- | --- | --- | --- |
 | **Streamlit in Snowflake** | Python dashboards, KPI monitors, data exploration tools, analyst utilities | Streamlit, a Python framework | Snowflake Streamlit Apps |
-| **Snowflake App Runtime** | Full-stack web apps with custom UI, multi-step forms, role-based routing, customer-facing tools | Next.js by default; Python apps are also supported | Application Service |
+| **Snowflake App Runtime** | Full-stack web apps with custom UI, multi-step forms, role-based routing, customer-facing tools | Next.js by default; Python apps on serverless compute (Public Preview) are also supported | Application Service |
 
 Expand
 

@@ -809,7 +809,7 @@ Schema:
 
 Use this procedure to link your own data into a collaboration if you are using Snowflake Standard Edition. You must first register your data offerings by calling REGISTER\_DATA\_OFFERING. These offerings will not be visible to any other collaborator, and template policies will not be enforced. Tables submitted here propagate the `my_table` array in the template.
 
-For more information, see [Run an analysis with your own data when you use Standard Edition](/user-guide/cleanrooms/demo-flows/basic-multiparty-collab#label-dcr-using-local-data).
+For more information, see [Use your own data on Snowflake Standard Edition](/user-guide/cleanrooms/resources-data-offerings#label-dcr-using-local-data).
 
 #### Syntax
 
@@ -860,7 +860,7 @@ If you’re not using the SAMOOHA\_APP\_ROLE role, you must use a role that was 
 Schema:
 :   COLLABORATION
 
-Use this procedure to unlink your own local data from a collaboration. After unlinking, the data offering will no longer be available to use in analyses within this collaboration. For more information about local data offerings, see [Run an analysis with your own data when you use Standard Edition](/user-guide/cleanrooms/demo-flows/basic-multiparty-collab#label-dcr-using-local-data).
+Use this procedure to unlink your own local data from a collaboration. After unlinking, the data offering will no longer be available to use in analyses within this collaboration. For more information about local data offerings, see [Use your own data on Snowflake Standard Edition](/user-guide/cleanrooms/resources-data-offerings#label-dcr-using-local-data).
 
 #### Syntax
 

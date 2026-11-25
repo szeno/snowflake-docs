@@ -1,23 +1,24 @@
 # Analyze Workload Performance with CoCo
 
-The **`workload-performance-analysis`** bundled skill in [Cortex Code](/user-guide/cortex-code/cortex-code) analyzes
+The **`workload-performance-analysis`** bundled skill in [CoCo](/user-guide/cortex-code/cortex-code) analyzes
 Snowflake SQL query execution using [ACCOUNT\_USAGE](/sql-reference/account-usage) views. You ask questions in natural
 language; the skill queries historical performance data, summarizes what it finds, and can suggest next steps.
 
-The skill is built into Cortex Code. You don’t install or configure it separately.
+The skill is built into CoCo. You don’t install or configure it separately.
 
 ## Overview
 
 Use this skill when you need to understand **how queries ran** and **what to tune next**: spilling, partition pruning,
-cache efficiency, clustering, and eligibility for [Search Optimization Service](/user-guide/search-optimization-service)
-(SOS) or [Query Acceleration Service](/user-guide/performance-query-warehouse-qas) (QAS).
+cache efficiency, clustering, eligibility for [Search Optimization Service](/user-guide/search-optimization-service)
+(SOS) or [Query Acceleration Service](/user-guide/performance-query-warehouse-qas) (QAS), and the impact of
+[Snowflake Optima](/user-guide/snowflake-optima).
 
 The skill is a single entry point for performance analysis. Depending on what you ask, it focuses on a specific query,
 warehouse, table, query pattern, stored procedure run, a set of queries, or a broad account health scan.
 
 ## When the skill applies
 
-Cortex Code selects **workload-performance-analysis** when your request matches performance analysis topics such as:
+CoCo selects **workload-performance-analysis** when your request matches performance analysis topics such as:
 
 - Spilling, memory pressure, or spill to local or remote storage
 - Partition pruning, scan volume, or tables that prune poorly
@@ -27,16 +28,17 @@ Cortex Code selects **workload-performance-analysis** when your request matches 
 - Query Acceleration Service (QAS) or acceleration eligibility
 - Slow SQL diagnosis, bottlenecks, root cause, or concurrency issues
 - Per-warehouse spill, prune, or cache metrics
+- Snowflake Optima impact, such as what Optima has done for your account or whether Optima helped pruning or clustering
 
 ## What this skill is not for
 
-Use other Cortex Code skills for the following topics:
+Use other CoCo skills for the following topics:
 
 | Topic | Use instead |
 | --- | --- |
 | Cost, credits, or spend analysis | [`cost-intelligence`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-cost-intelligence) |
 | Access audit or data governance | [`data-governance`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-data-governance) |
-| Writing, editing, or debugging your SQL | General Cortex Code assistance outside this skill |
+| Writing, editing, or debugging your SQL | General CoCo assistance outside this skill |
 
 Expand
 
@@ -55,6 +57,7 @@ The skill analyzes SQL query performance using [ACCOUNT\_USAGE](/sql-reference/a
 - **Predicate analysis:** Relate filter columns to clustering or SOS opportunities.
 - **Stored procedure runs:** Analyze a parent `CALL` and its child queries as one run.
 - **Query sets and patterns:** Compare multiple queries, recurring patterns, or filtered workloads.
+- **Snowflake Optima impact:** Summarize partitions pruned by Optima Indexing and Optima Metadata, tables maintained by Optima Clustering, and queries optimized by Optima Planning over a time window. See [Snowflake Optima impact](#label-analyze-workload-performance-coco-optima).
 
 Results are summarized with top findings first, not raw dumps of every row.
 
@@ -67,6 +70,7 @@ Results are summarized with top findings first, not raw dumps of every row.
 - What happened inside this stored procedure run, including child queries?
 - Are there SOS or QAS candidates in my recent workload?
 - Give me a quick account-level performance health check (spilling, pruning, cache, QAS).
+- What has Snowflake Optima done for my account in the last 7 days?
 
 Be specific when you can: a query ID, warehouse name, fully qualified table name, time range, or symptom (for example
 “remote spilling on ANALYTICS\_WH last 7 days”) helps the skill scope the analysis.
@@ -90,17 +94,17 @@ If you don’t specify depth, the skill starts with a summary and offers deeper 
 ## Where you can use the skill
 
 The skill is available in four places. In Snowsight, select **Analyze with CoCo** to pass page context to the skill.
-In [Cortex Code CLI](/user-guide/cortex-code/cortex-code-cli), [Cortex Code Desktop](/user-guide/cortex-code/cortex-code-desktop),
-or the [Cortex Code panel in Snowsight](/user-guide/cortex-code/cortex-code-snowsight), describe what to analyze or
+In [CoCo CLI](/user-guide/cortex-code/cortex-code-cli), [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop),
+or the [CoCo panel in Snowsight](/user-guide/cortex-code/cortex-code-snowsight), describe what to analyze or
 invoke `/workload-performance-analysis`.
 
 ### Query Details
 
-From a single query’s detail view in Snowsight, select **Analyze with CoCo**. Cortex Code receives that
+From a single query’s detail view in Snowsight, select **Analyze with CoCo**. CoCo receives that
 query’s context and analyzes that execution (including stored procedure runs when the query is a `CALL`). For more
 information, see [Review details and profile of a specific query](/user-guide/ui-snowsight-activity#label-snowsight-specific-query-details).
 
-![Query Details page with Analyze with CoCo selected and Cortex Code summarizing query profile metrics such as partitions scanned and cache hit rate](/static/images/user-guide/analyze-workload-performance-coco/query-details-analyze-with-coco.png)
+![Query Details page with Analyze with CoCo selected and CoCo summarizing query profile metrics such as partitions scanned and cache hit rate](/static/images/user-guide/analyze-workload-performance-coco/query-details-analyze-with-coco.png)
 
 ### Query History
 
@@ -108,7 +112,7 @@ From **Query History**, select **Analyze with CoCo** when you have one or more q
 list context from the page to summarize or compare those queries. For more information, see
 [Query history in Snowsight](/user-guide/ui-snowsight-activity).
 
-![Query History page with Analyze with CoCo selected and Cortex Code summarizing query status and key findings for the visible queries](/static/images/user-guide/analyze-workload-performance-coco/query-history-analyze-with-coco.png)
+![Query History page with Analyze with CoCo selected and CoCo summarizing query status and key findings for the visible queries](/static/images/user-guide/analyze-workload-performance-coco/query-history-analyze-with-coco.png)
 
 ### Performance Explorer
 
@@ -116,16 +120,16 @@ From the Performance Explorer dashboard, select **Analyze with CoCo** to interpr
 changes over time in the context of the charts and filters you already applied. For more information, see
 [Analyzing query workloads with Performance Explorer](/user-guide/performance-explorer).
 
-![Performance Explorer dashboard with Analyze with CoCo selected and Cortex Code presenting a health metrics summary and key takeaways](/static/images/user-guide/analyze-workload-performance-coco/performance-explorer-analyze-with-coco.png)
+![Performance Explorer dashboard with Analyze with CoCo selected and CoCo presenting a health metrics summary and key takeaways](/static/images/user-guide/analyze-workload-performance-coco/performance-explorer-analyze-with-coco.png)
 
-### Cortex Code (CLI, Desktop, Snowsight panel)
+### CoCo (CLI, Desktop, Snowsight panel)
 
-Open Cortex Code directly and describe what to analyze, or type `/workload-performance-analysis` to invoke the skill.
-This path also applies when you open the Cortex Code panel in Snowsight without using a page-specific **Analyze**
+Open CoCo directly and describe what to analyze, or type `/workload-performance-analysis` to invoke the skill.
+This path also applies when you open the CoCo panel in Snowsight without using a page-specific **Analyze**
 action. For more information, see
-[Cortex Code CLI bundled skills](/user-guide/cortex-code/bundled-skills#label-bundled-skill-workload-performance-analysis).
+[CoCo CLI bundled skills](/user-guide/cortex-code/bundled-skills#label-bundled-skill-workload-performance-analysis).
 
-![Cortex Code panel showing the workload-performance-analysis skill description and analysis type options](/static/images/user-guide/analyze-workload-performance-coco/coco-workload-performance-analysis-skill.png)
+![CoCo panel showing the workload-performance-analysis skill description and analysis type options](/static/images/user-guide/analyze-workload-performance-coco/coco-workload-performance-analysis-skill.png)
 
 Snowsight entry points pass page context so you don’t need to copy query IDs or re-enter filters. In CLI, Desktop, or
 the general Snowsight panel, include the scope in your prompt (warehouse name, query ID, table name, time range, and so on).
@@ -137,6 +141,7 @@ These outcomes match common workloads the skill is designed for:
 - Identify queries with excessive disk spilling and get concrete fix recommendations.
 - Analyze partition pruning ratios and suggest better clustering keys for large tables.
 - Find queries eligible for Search Optimization Service or Query Acceleration Service.
+- Review what Snowflake Optima did for your account: partitions pruned, tables maintained, and queries optimized.
 
 Example prompts:
 
@@ -150,18 +155,32 @@ Which tables have the worst partition pruning? Recommend clustering keys for the
 Are any of my recurring query patterns good QAS candidates?
 
 Health check: spilling, pruning, cache, and QAS eligibility account-wide for the last week.
+
+What has Snowflake Optima done for my account over the last 30 days?
 ```
 
-In [Cortex Code CLI](/user-guide/cortex-code/cortex-code-cli), you can also run `/workload-performance-analysis`
+In [CoCo CLI](/user-guide/cortex-code/cortex-code-cli), you can also run `/workload-performance-analysis`
 and then describe your question.
+
+## Snowflake Optima impact
+
+Ask the skill what Snowflake Optima has done for your account, and it summarizes three measures over a time window
+(the last 7 days by default):
+
+- **Partitions pruned** by Optima Indexing and Optima Metadata, with the tables that benefited most.
+- **Tables maintained** by Optima Clustering, with rows reclustered and bytes reclustered for the top tables.
+- **Queries optimized** by Optima Planning.
+
+The skill omits any measure that has no data in the window. For what each measure means, the source views, and the roles
+you need, see [Review Optima impact with CoCo](/user-guide/snowflake-optima#label-snowflake-optima-coco-impact).
 
 ## Prerequisites and access
 
 You need:
 
-- Access to [Cortex Code](/user-guide/cortex-code/cortex-code) in your account. See
-  [Cortex Code in Snowsight](/user-guide/cortex-code/cortex-code-snowsight#label-cortex-code-snowsight-access-control)
-  and [Cortex Code CLI](/user-guide/cortex-code/cortex-code-cli).
+- Access to [CoCo](/user-guide/cortex-code/cortex-code) in your account. See
+  [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight#label-cortex-code-snowsight-access-control)
+  and [CoCo CLI](/user-guide/cortex-code/cortex-code-cli).
 - Privileges to read the ACCOUNT\_USAGE views the skill queries. Many analyses require the
   `SNOWFLAKE.USAGE_VIEWER` database role (or related usage or governance roles for specific views). An administrator
   can grant access, for example:
@@ -199,5 +218,5 @@ tailor guidance; for credit and spend analysis, use the
 - [Analyzing query workloads with Performance Explorer](/user-guide/performance-explorer): Interactive workload
   dashboards in Snowsight.
 - [Optimizing query performance](/user-guide/performance-query-options): Manual tuning strategies and reference material.
-- [Cortex Code CLI bundled skills](/user-guide/cortex-code/bundled-skills#label-bundled-skill-workload-performance-analysis):
+- [CoCo CLI bundled skills](/user-guide/cortex-code/bundled-skills#label-bundled-skill-workload-performance-analysis):
   Bundled skill reference entry.

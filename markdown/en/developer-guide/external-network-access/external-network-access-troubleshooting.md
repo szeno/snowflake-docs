@@ -27,3 +27,14 @@ Cause:
 
 Resolution:
 :   A user with the ACCOUNTADMIN role can add the IP address to the network rule included in the external access integration.
+
+## Error: Insufficient privileges on network rule
+
+Cause:
+:   The role that created the external access integration doesn’t have the network rule owner’s role in its role hierarchy. The CREATE
+    statement succeeds, but users of the integration get an error about a missing privilege on the network rule when they use it.
+
+Resolution:
+:   Grant the network rule owner’s role to the role that created the integration, or recreate the integration with a role that has the
+    owner’s role in its hierarchy. For more information, see
+    [Access control](/developer-guide/external-network-access/creating-using-external-network-access#label-creating-using-external-access-integration-access-control).

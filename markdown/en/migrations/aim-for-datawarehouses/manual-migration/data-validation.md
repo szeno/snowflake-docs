@@ -83,8 +83,11 @@ scai data validate create-workflow --config my-validation.yaml --connection my-s
 scai data validate status DATA_VALIDATION_WORKFLOW_xx_yy_zz --watch
 scai data validate list --status running --limit 20
 
-# Re-run only the failed partitions and levels of a finished workflow:
+# Retry failed validation work from a finished or failed workflow:
 scai data validate revalidate DATA_VALIDATION_WORKFLOW_xx_yy_zz
+
+# Force schema re-check and the full pipeline for schema-failed tables:
+scai data validate revalidate DATA_VALIDATION_WORKFLOW_xx_yy_zz --recheck-schema
 ```
 
 Migrate data first with [Data migration (CLI)](./data-migration) if targets aren’t loaded yet.
@@ -102,7 +105,8 @@ Migrate data first with [Data migration (CLI)](./data-migration) if targets aren
 | `scai data validate pause <WORKFLOW_NAME>` | Pause a running workflow |
 | `scai data validate resume <WORKFLOW_NAME>` | Resume a paused workflow |
 | `scai data validate cancel <WORKFLOW_NAME>` | Cancel a workflow |
-| `scai data validate revalidate <WORKFLOW_NAME>` | Create a child workflow that re-runs only the failed partitions and levels of a finished workflow. See [Re-validating what failed](/migrations/aim-for-datawarehouses/data-migration-validation/data-validation#re-validating-what-failed) |
+| `scai data validate revalidate <WORKFLOW_NAME>` | Create a child workflow that retries failed validation work from a finished or failed workflow. See [Re-validating what failed](/migrations/aim-for-datawarehouses/data-migration-validation/data-validation#re-validating-what-failed) |
+| `scai data validate revalidate <WORKFLOW_NAME> --recheck-schema` | Force a schema re-check and full pipeline for schema-failed tables |
 | `scai data worker generate-config <path>` | Generate shared Worker TOML |
 | `scai data worker start --local <config.toml>` | Run a local Worker |
 | `scai data orchestrator setup --compute-pool <POOL>` | Deploy Orchestrator on SPCS |

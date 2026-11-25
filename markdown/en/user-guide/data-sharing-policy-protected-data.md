@@ -194,6 +194,8 @@ For example:
 
   You must group the table and the database role, `analyst_dbrole`, in the same database.
 
+The database that contains the masking policy (`mydb1`) doesn’t need its own share. The policy is enforced when the consumer queries the shared table.
+
 The provider follows the same procedure as the previous example in terms of creating a share, granting privileges to the share, and
 granting the database role to the share.
 
@@ -201,13 +203,12 @@ The consumer follows the same procedure as the previous example in terms of crea
 have the database containing the protected table in use to activate the database role. Then the consumer can query the protected table by
 specifying the fully qualified name of the table.
 
-1. In the provider account, execute the [CREATE SHARE](/sql-reference/sql/create-share) command to create a share for each database:
+1. In the provider account, execute the [CREATE SHARE](/sql-reference/sql/create-share) command to create a share for the database that contains the protected table:
 
    Copy code
 
    ```
    USE ROLE r1;
-   CREATE SHARE analyst_policy_share;
    CREATE SHARE analyst_table_share;
    ```
 2. Grant privileges to the share named `analyst_table_share`:
@@ -216,6 +217,7 @@ specifying the fully qualified name of the table.
 
    ```
    USE ROLE r1;
+   GRANT USAGE ON DATABASE mydb2 TO SHARE analyst_table_share;
    GRANT USAGE ON SCHEMA mydb2.tables TO SHARE analyst_table_share;
    GRANT SELECT ON TABLE mydb2.tables.empl_info TO SHARE analyst_table_share;
    GRANT DATABASE ROLE mydb2.analyst_dbrole TO SHARE analyst_table_share;

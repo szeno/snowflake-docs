@@ -3,6 +3,11 @@
 Snowflake supports standard SQL, including a subset of ANSI SQL:1999 and the SQL:2003 analytic extensions.
 Snowflake also supports common variations for a number of commands where those variations do not conflict with each other.
 
+To write and run queries, you can use [Snowsight](/user-guide/ui-snowsight), the Snowflake web interface, including
+[Workspaces](/user-guide/ui-snowsight/workspaces). You can also use a command-line client such as
+[Snowflake CLI](/developer-guide/snowflake-cli/index), or a driver or third-party tool. For the full list of ways to connect, see
+[Applications and tools for connecting to Snowflake](/guides-overview-connecting).
+
 Tip
 
 You can use the search optimization service to improve query performance.

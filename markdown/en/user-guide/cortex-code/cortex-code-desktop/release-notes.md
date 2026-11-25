@@ -13,6 +13,7 @@ For information about CoCo Desktop, see [CoCo Desktop](/user-guide/cortex-code/c
 
 | Version | Date | Highlights |
 | --- | --- | --- |
+| [v2.1.0](/user-guide/cortex-code/cortex-code-desktop/release-notes/v2-1-0) | November 2026 | Plan mode without a confirmation, a model and effort for each subagent, a lighter Agentic Browser, and broader Snowflake object discovery |
 | [v2.0.0](/user-guide/cortex-code/cortex-code-desktop/release-notes/v2-0-0) | November 2026 | A redesigned interface, a separate Agent Window, split panes for side-by-side sessions, a new session search palette, and pull request status in chat |
 | [v1.25.4](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-25-4) | November 2026 | Browser tools that stay with their chat, artifacts in the Files preview, the Project Action Bar as the only dbt view, and signed Windows updates |
 | [v1.25.0](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-25-0) | November 2026 | Anchored dbt lineage, a faster dbt Action Bar, one timeout for dbt runs, update status in the app menu, and Windows update fixes |

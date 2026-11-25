@@ -187,8 +187,8 @@ Use the [DESCRIBE SERVICE](/sql-reference/sql/desc-service) command to get overa
 - If all instances complete successfully, the job status is DONE.
 - If any instance is currently running, the job status is RUNNING.
 - Otherwise, the job service status is PENDING.
-- If [SYSTEM$CANCEL\_JOB](/sql-reference/functions/system_cancel_job) has been called but the job has not yet fully stopped, the job status is CANCELLING.
-- If the job has been successfully cancelled via [SYSTEM$CANCEL\_JOB](/sql-reference/functions/system_cancel_job), the job status is CANCELLED.
+- If [<service\_name>!SPCS\_CANCEL\_JOB](/sql-reference/functions/spcs_cancel_job) has been called but the job has not yet fully stopped, the job status is CANCELLING.
+- If the job has been successfully cancelled via [<service\_name>!SPCS\_CANCEL\_JOB](/sql-reference/functions/spcs_cancel_job), the job status is CANCELLED.
 
 ### Using specification templates
 

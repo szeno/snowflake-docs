@@ -4,4 +4,4 @@ In Snowsight, you can use the database object explorer to create and manage sema
 
 This is a [preview feature](/release-notes/preview-features).
 
-For information, see .
+For information, see [Semantic View Autopilot](/user-guide/views-semantic/autopilot).

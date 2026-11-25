@@ -25,8 +25,8 @@ Show lessSee more
 
 ## Usage notes
 
-- In the ACCOUNT\_USAGE schema, latency for the view is up to 180 minutes (3 hours), except for the CREDITS\_USED\_CLOUD\_SERVICES column. Latency for
-  CREDITS\_USED\_CLOUD\_SERVICES is up to 6 hours.
+- In the ACCOUNT\_USAGE schema, latency for the view is up to 180 minutes (3 hours), except for the CREDITS\_USED\_CLOUD\_SERVICES and
+  CREDITS\_ATTRIBUTED\_COMPUTE\_QUERIES columns. Latency for these columns is up to 6 hours.
 - In the READER\_ACCOUNT\_USAGE schema, latency for the view is up to 24 hours.
 - Warehouse idle time is not included in the CREDITS\_ATTRIBUTED\_COMPUTE\_QUERIES column.
 

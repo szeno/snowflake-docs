@@ -101,7 +101,7 @@ datasets:                       # Required: Tables to share
 
         - `template_only`: The analysis runner can query this table only by using a template listed in the collaboration specification.
         - `template_and_freeform_sql`: The analysis runner can query this table by using either a template listed in the collaboration
-          specification, or by using [free-form SQL queries](/user-guide/cleanrooms/demo-flows/basic-multiparty-collab#label-dcr-collab-enable-free-form-queries) in a code environment.
+          specification, or by using [free-form SQL queries](/user-guide/cleanrooms/free-form-sql#label-dcr-collab-enable-free-form-queries) in a code environment.
 
     `object_class` (*Optional*)
     :   The type of object. One of the following values:

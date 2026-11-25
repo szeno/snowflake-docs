@@ -11,15 +11,15 @@ Build the way you work:
 - **[Snowsight Workspaces](/developer-guide/snowflake-app-runtime/workspaces)**
   (Public Preview): build and preview an app in your browser, with no local
   tools.
-- **[Cortex Code](/developer-guide/snowflake-app-runtime/getting-started)**:
+- **[Cortex Code](/developer-guide/snowflake-app-runtime/getting-started#label-getting-started-cortex-code-path)**:
   describe what you want to build in Cortex Code CLI or Cortex Code Desktop,
   Snowflake’s AI coding agents. The agent scaffolds the project, wires up your
   Snowflake data, and deploys to a live URL.
-- **[Snowflake CLI](/developer-guide/snowflake-app-runtime/getting-started)**:
+- **[Snowflake CLI](/developer-guide/snowflake-app-runtime/getting-started#label-getting-started-cli-path)**:
   deploy code you already have with `snow app` commands.
 
 Snowflake App Runtime supports **Node.js** apps (with a focus on **Next.js**) and
-**Python** apps. It’s available in Amazon Web Services (AWS), Microsoft Azure,
+**Python** apps (Public Preview, serverless compute only). It’s available in Amazon Web Services (AWS), Microsoft Azure,
 and Google Cloud commercial regions. It isn’t available in government regions or
 on [trial accounts](/user-guide/admin-trial-account).
 

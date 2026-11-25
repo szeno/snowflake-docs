@@ -786,6 +786,36 @@ Note
 
 Before version 5.0, the connector sent each certificate to an OCSP responder. `ocsp_fail_open` selected fail-open or fail-close, and `ocsp_response_cache_filename` set the OCSP response cache file.
 
+## Setting a minimum TLS version
+
+Version 4.7.5 and later.
+
+Set the `SNOWFLAKE_MIN_TLS_VERSION` environment variable to control the minimum TLS version that the connector accepts for outbound connections.
+
+Copy code
+
+```
+export SNOWFLAKE_MIN_TLS_VERSION=1.3
+```
+
+- Accepted values are `1.2`, `1.3`, `TLSv1.2`, and `TLSv1.3`. The connector rejects an unrecognized value when you connect.
+- The default is TLS 1.2.
+- The setting applies to these outbound connections:
+
+  - Snowflake API requests
+  - Stage transfers
+  - OCSP and CRL fetches
+  - Platform detection
+  - Identity provider (IdP) requests
+  - AWS SDK requests, including workload identity federation STS calls and the platform-detection identity probe
+  - Azure AD token requests made by `azure-identity`
+
+Note
+
+Asynchronous connections (`snowflake.connector.aio`) don’t use this setting.
+
+The JDBC Driver supports a similar setting. See [MIN\_TLS\_VERSION](/developer-guide/jdbc/jdbc-parameters#label-jdbc-connection-parameters-tls-min). The Go Driver also supports the `SNOWFLAKE_MIN_TLS_VERSION` environment variable.
+
 ## Running connectivity tests and diagnostics
 
 Note

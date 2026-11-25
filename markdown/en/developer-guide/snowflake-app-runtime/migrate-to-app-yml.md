@@ -17,7 +17,8 @@ the project behaves:
 
 - **Deploys become declarative.** Every deploy applies the full
   manifest. A field you leave out is cleared, including a value set with
-  `ALTER APPLICATION SERVICE`. See
+  `ALTER APPLICATION SERVICE`. The exceptions are `compute_resource` and
+  `execute_as_role`. See
   [Declarative deploys](#label-migrate-to-app-yml-declarative).
 - **`profile:` stops being read.** A leftover `profile:` block is
   ignored, so label, description, and icon are cleared on the next
@@ -191,7 +192,9 @@ description, and icon are cleared. A change you make with
 `ALTER APPLICATION SERVICE` (query warehouse, integrations,
 and similar) is reverted the next time anyone deploys.
 
-The exception is
+The exceptions are
+[`execute_as_role`](/developer-guide/snowflake-app-runtime/app-yml#label-snowflake-apps-manifest-validation),
+which you can’t change after the app is created, and
 [`compute_resource`](/developer-guide/snowflake-app-runtime/app-yml#label-snowflake-app-runtime-app-yml-serverless),
 which keeps its current value when omitted and which only `app.yml` can set.
 

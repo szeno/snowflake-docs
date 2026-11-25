@@ -875,7 +875,7 @@ the connection pool.
 ### Handling errors
 
 When handling errors and exceptions for a JDBC application, you can use the
-[ErrorCode.java](https://github.com/snowflakedb/snowflake-jdbc/blob/master/src/main/java/net/snowflake/client/jdbc/ErrorCode.java)
+[ErrorCode.java](https://github.com/snowflakedb/snowflake-jdbc/blob/master/src/main/java/net/snowflake/client/api/exception/ErrorCode.java)
 file that Snowflake provides to determine the cause of the problems.
 Error codes specific to the JDBC driver start with **2**, in the form: 2\_NNNNN\_.
 

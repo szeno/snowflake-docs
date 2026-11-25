@@ -56,8 +56,10 @@ forward it. See
 An app is a shared container that serves all users who have
 access to it. This introduces two isolation risks:
 
-- **Cross-caller leakage:** A bug in session isolation could expose query results
+- **Cross-caller leakage:** A bug in the app’s session handling (for example, request
+  data stored in module-level variables) could expose query results
   from one user’s session to another user who’s using the app at the same time.
+  See [Isolate per-user session state](/developer-guide/snowflake-app-runtime/secure-development#label-snowflake-app-runtime-secure-development-session-isolation).
 - **Data movement from caller to owner:** Caller’s rights queries run through the
   developer’s code. The developer can log, store, or forward results, moving data
   from the caller’s access scope to the owner’s, without the caller’s knowledge.
@@ -106,7 +108,7 @@ The approach has two steps:
 1. **Restrict which databases allow app creation** using feature
    policies so services can only be deployed to databases the administrator owns
    and manages, not to arbitrary personal databases or ad-hoc schemas. See
-   [Governing app deployment](#label-snowflake-app-runtime-security-deployment).
+   [Govern app deployment](#label-snowflake-app-runtime-security-deployment).
 2. **Grant `CREATE APPLICATION SERVICE` only to approved roles** on the target
    schema. This ensures that only pre-approved, appropriately scoped roles can
    create services (and therefore become execution roles).
@@ -334,7 +336,7 @@ holds:
 - **Restricted deployment:** Access to the development toolchain is already
   tightly controlled so that only an approved set of roles can create apps. The grant is broad, but the set of roles that can act on it is narrow.
   See [Scoping the execution role](#label-snowflake-app-runtime-security-owners-rights-controls)
-  and [Governing app deployment](#label-snowflake-app-runtime-security-deployment).
+  and [Govern app deployment](#label-snowflake-app-runtime-security-deployment).
 
 ## Govern app deployment
 
@@ -347,7 +349,7 @@ governed deployment controls three things:
   on the target schema. Privilege grants enforce this.
 - **What the app executes as:** the execution role’s scope of access, which
   determines what data is reachable through the app. This is addressed in
-  [Governing execution scope](#label-snowflake-app-runtime-security-execution-scope).
+  [Govern execution scope](#label-snowflake-app-runtime-security-execution-scope).
 
 The controls below address the first two. Used together, they ensure that only
 pre-approved roles can deploy, and only to databases the administrator owns and manages.
@@ -429,7 +431,7 @@ has no automatic veto.
 #### Database or schema-scoped restrictions
 
 The deployment controls described in
-[Governing app deployment](#label-snowflake-app-runtime-security-deployment)
+[Govern app deployment](#label-snowflake-app-runtime-security-deployment)
 do more than restrict where apps are created. When apps are
 confined to administrator-owned databases and schemas, the standard Snowflake
 privilege hierarchy becomes a second layer of access control.

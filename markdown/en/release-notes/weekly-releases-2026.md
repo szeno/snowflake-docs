@@ -9,6 +9,9 @@ For more recent releases, see [Snowflake server release notes and feature update
   - [Native App Framework updates](/release-notes/2026/10_41#native-app-framework-updates)
 
     - [Larger application package versions on AWS and Azure](/release-notes/2026/10_41#larger-application-package-versions-on-aws-and-azure)
+  - [Data integration updates](/release-notes/2026/10_41#data-integration-updates)
+
+    - [Openflow BYOC: entity IDs in Account Usage views](/release-notes/2026/10_41#openflow-byoc-entity-ids-in-account-usage-views)
   - [Release notes change log](/release-notes/2026/10_41#release-notes-change-log)
 - [10.40 Release Notes: Oct 31, 2026 - Nov 08, 2026](/release-notes/2026/10_40)
 

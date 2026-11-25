@@ -224,6 +224,7 @@ The values are case-sensitive. `onUntranslatable` doesn’t apply to `CLOB` or `
 - **Server-side export (`write_nos`)**: Prefer **`write_nos`** for all tables when Teradata NOS and a Snowflake external stage aligned with the target bucket or container are in place. Use **`regular`** or **`tpt`** when volume is genuinely small, or when WRITE\_NOS prerequisites aren’t set up yet.
 - **Worker parallelism**: Teradata systems are often CPU and BYNET sensitive. Keep Worker parallelism moderate and coordinate with your DBA.
 - **Anti-locking**: AIM DMV adds `LOCKING ROW FOR ACCESS` automatically on every Teradata source scan. No configuration is required. See [Anti-locking and query modifiers](../manual-migration/data-migration-configuration-reference#anti-locking-and-query-modifiers).
+- **AIM for Virtualization tables**: To load into tables that AIM for Virtualization already created, set `targetProfile: "aimv"` in the migration workflow. The migration then loads into the existing tables without creating them, and writes `INTERVAL` and unbounded `NUMBER` values in the types those tables use. See [Loading into AIM for Virtualization tables](../manual-migration/data-migration-configuration-reference#aim-for-virtualization-target-profile).
 
 ## Related content
 

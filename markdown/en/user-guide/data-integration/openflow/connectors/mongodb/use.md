@@ -44,9 +44,12 @@ another cluster node. To ensure data consistency, the connector tracks the resum
 the last processed document. Upon reconnection, it uses this token to retrieve only changes
 that occurred after the disconnection.
 
-The MongoDB Oplog must be large enough to retain change history during downtime. If the
-connector remains offline longer than the Oplog retention period, the resume token might
-expire, which requires a full data re-sync.
+If MongoDB has already removed the entries for those changes, the affected collections
+require a full reload. For the retention period, see
+[Set the oplog retention period](/user-guide/data-integration/openflow/connectors/mongodb/connect#label-mongodb-oplog-retention).
+
+If the saved change-stream position has expired, contact [Snowflake Support](/user-guide/contacting-support)
+before dropping or re-adding collections.
 
 ## Remove and re-add a collection to replication
 
@@ -60,10 +63,6 @@ To re-add a collection to replication:
 1. Drop the corresponding destination table in Snowflake.
 2. Add the collection back to the `Included Collection Names` or `Included Collection Regex`
    parameters.
-
-This ensures that the replication process starts fresh for the collection.
-
-You can also use this remove-and-re-add procedure to recover from a failed replication.
 
 ## Check the replication status of a collection
 

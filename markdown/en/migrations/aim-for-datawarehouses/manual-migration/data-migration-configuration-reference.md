@@ -24,6 +24,7 @@ Names that require quoting (or brackets) must be manually quoted. For example: `
 | `tables` | `TableConfiguration[]` | Yes | An array of table-specific configurations defining which tables to migrate and how. Must contain at least one entry. |
 | `defaultTableConfiguration` | `TableConfiguration` |  | Shared settings inherited by all tables in the `tables` array. Table-specific values override these defaults. |
 | `affinity` | `String` |  | Optional affinity tag that routes this workflow’s tasks to matching Workers. See [Affinity](#affinity). |
+| `targetProfile` | `String` (`"aimv"`) |  | Teradata only. Set `"aimv"` to load into tables that AIM for Virtualization already created. Case-insensitive. When omitted, the default type mappings apply. See [Loading into AIM for Virtualization tables](#aim-for-virtualization-target-profile). |
 | `intervalHandling` | `String` (`"interval"`, `"varchar"`) |  | Default handling for source `INTERVAL` columns across all tables. Defaults to `"interval"`. See [INTERVAL data type handling](#interval-data-type-handling). |
 | `preflight` | `Boolean` |  | When `true`, caps each table to a single partition and loads it into a transient copy of the target table in a `PREFLIGHT_<workflowId>` schema, instead of the configured target. The real target tables must already exist. Defaults to `false`. See [Preflight: a bounded dry run](#preflight-bounded-dry-run). |
 | `preflightKeepSchema` | `Boolean` |  | When `preflight` is `true`, skips cleanup so the transient schema survives for inspection. You then drop it yourself. Defaults to `false`. See [Keeping the preflight schema](#keeping-the-preflight-schema). |
@@ -171,6 +172,7 @@ Defines the settings for migrating a single table.
 | `loadSegmentation` | `LoadSegmentation` |  | Splits a single `COPY INTO` into multiple parallel statements, each targeting a subset of staged files. Useful when many files are staged for one partition (common with Redshift UNLOAD). See [Load segmentation](#load-segmentation). |
 | `queryModifiers` | `QueryModifiers` |  | Optional SQL hints appended to source queries to reduce locking on busy source tables. Default is unset (no hints). See [Anti-locking and query modifiers](#anti-locking-and-query-modifiers). |
 | `intervalHandling` | `String` (`"interval"`, `"varchar"`) |  | Per-table override of the workflow-level `intervalHandling` setting. See [INTERVAL data type handling](#interval-data-type-handling). |
+| `targetProfile` | `String` (`"aimv"`) |  | Teradata only. Per-table override of the workflow-level `targetProfile` setting. See [Loading into AIM for Virtualization tables](#aim-for-virtualization-target-profile). |
 | `onUntranslatable` | `String` (`"substitute"`, `"fail"`) |  | Teradata only. How untranslatable characters in non-Latin Teradata character sets (`KANJISJIS`, `KANJI1`, `GRAPHIC`) are handled during extraction. `"substitute"` (default) replaces each one with U+FFFD; `"fail"` fails the table’s extraction. See [Character set handling](../data-migration-validation/migrate-teradata#character-set-handling). |
 | `continueIdentityColumns` | `Boolean` |  | When `true`, continues each target identity and sequence-default column past the migrated keys after the final load. Native targets only. Defaults to `false`. See [Identity columns and sequences](#identity-columns-and-sequences). |
 | `resetPartitions` | `String` (`"disabled"`, `"enabled"`, `"enabledWithDedup"`) |  | Discards the partitions a previous workflow created for the table and repartitions it. Defaults to `"disabled"`. `true` and `false` work as aliases for `"enabled"` and `"disabled"`. Neither enabled value empties the target. Set it for one run, then remove it. See [Resetting partitions](#resetting-partitions). |
@@ -235,6 +237,8 @@ defaultTableConfiguration:
 Apache Iceberg™ targets are the most common reason to need this. Iceberg has no equivalent for Snowflake `VARIANT`, `OBJECT`, `ARRAY`, `GEOGRAPHY`, or `GEOMETRY`, so map any source type that would land on one of those to `VARCHAR` or `STRING`. See [Iceberg configuration](#iceberg-configuration-targeticebergconfig).
 
 ### QueryModifiers model
+
+Both modifier properties are available across source platforms. Oracle is the only platform that automatically supplies a `selectModifier`: a `PARALLEL` optimizer hint for large tables.
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -302,7 +306,7 @@ Warning
 
 Note
 
-Iceberg targets don’t support a native `INTERVAL` type. Source `INTERVAL` columns are coerced to `VARCHAR` regardless of `intervalHandling`. See [INTERVAL data type handling](#interval-data-type-handling).
+Iceberg targets don’t support a native `INTERVAL` type. Source `INTERVAL` columns are coerced to `VARCHAR` regardless of `intervalHandling`. See [INTERVAL data type handling](#interval-data-type-handling). The exception is Teradata with `targetProfile: "aimv"`, which writes `INTERVAL` values as numbers. See [Loading into AIM for Virtualization tables](#aim-for-virtualization-target-profile).
 
 ### Partition size
 
@@ -757,7 +761,53 @@ tables:
     intervalHandling: varchar
 ```
 
-Iceberg targets always coerce `INTERVAL` columns to `VARCHAR`, regardless of `intervalHandling`, because Iceberg has no native interval type. See platform-specific notes on the [Migrating Data from …](../data-migration-validation/data-migration) pages for interval support by source platform.
+By default, Iceberg targets coerce `INTERVAL` columns to `VARCHAR`, regardless of `intervalHandling`, because Iceberg has no native interval type. The exception is Teradata with `targetProfile: "aimv"`, which writes `INTERVAL` values as `NUMBER(19,0)` totals instead. See [Loading into AIM for Virtualization tables](#aim-for-virtualization-target-profile). See platform-specific notes on the [Migrating Data from …](../data-migration-validation/data-migration) pages for interval support by source platform.
+
+### Loading into AIM for Virtualization tables
+
+When AIM for Virtualization has already created your target tables in Snowflake, set `targetProfile: "aimv"` so the migration loads into those tables and writes values in the types they declare. This setting applies to Teradata sources only. Set it at the workflow root, under `defaultTableConfiguration`, or on an individual table. A per-table value wins over `defaultTableConfiguration`, which wins over the workflow root.
+
+Copy code
+
+```
+targetProfile: aimv
+tables:
+  - source:
+      databaseName: SALES_DB
+      schemaName: SALES_DB
+      tableName: orders
+    target:
+      databaseName: TARGET_DB
+      schemaName: PUBLIC
+      tableName: ORDERS
+```
+
+With `targetProfile: "aimv"` set:
+
+- **The target table must already exist.** The migration never creates or alters it. If it’s missing, that table fails with `Target '<table>' does not exist`. Create the table first, then rerun the migration.
+- **Every migrated source column needs a target column.** A source column with no matching column in the target fails the table and names the missing columns. Add the columns to the table, map them with `columnNameMappings`, or exclude them with `excludeSourceColumns`.
+- **The target table’s types win.** When a source type differs from the target column’s type, the migration keeps the target column’s type.
+- **Some values are written in a different form:**
+
+  | Teradata source type | Written to the target as |
+  | --- | --- |
+  | `INTERVAL` year-month types | `NUMBER(19,0)` holding the total number of months |
+  | `INTERVAL` day-time types | `NUMBER(19,0)` holding the total number of microseconds |
+  | `NUMBER`, `NUMBER(*)`, `NUMBER(*,m)` (no declared precision) | `FLOAT` |
+  | `NUMBER(p)`, `NUMBER(p,s)`, `DECIMAL`, and all other types | The default Teradata extraction |
+
+  Expand
+
+  Show lessSee more
+- **Apache Iceberg™ targets** are supported for spec v2 and spec v3 tables in `compatible` storage mode. The staged Parquet files use the types of the existing Iceberg table, so it can add them.
+
+Setting `targetProfile` on a workflow whose source isn’t Teradata is rejected with `targetProfile 'aimv' is not supported for source '<source>'; it supports only 'teradata'`.
+
+Note
+
+Set the same `targetProfile` on the data validation workflow for these tables. Nothing checks that the two workflows match, and validating without it reports false schema and row mismatches. See [Validating AIM for Virtualization tables](./data-validation-configuration-reference#aim-for-virtualization-target-profile).
+
+The SnowConvert AI CLI has no option for `targetProfile`, and generated workflow files don’t include it. Add it to the workflow file yourself.
 
 ## Extraction strategies
 
@@ -1651,10 +1701,23 @@ Source platforms fall into two groups:
 | **Amazon Redshift** | No automatic hint | Opt-in pass-through via `queryModifiers` |
 | **PostgreSQL** | No automatic hint | Opt-in pass-through via `queryModifiers` |
 | **IBM DB2** | No automatic hint | Opt-in pass-through via `queryModifiers` |
+| **BigQuery** | No automatic hint | Configure `queryModifiers` for customer-table scans |
 
 Expand
 
 Show lessSee more
+
+For BigQuery, `objectModifier` and `selectModifier` apply to extraction and partition-boundary queries, and to the inner `SELECT` of `EXPORT DATA`. Checksum queries apply `objectModifier` only. BigQuery doesn’t sample during partition-boundary discovery. In data validation, both modifiers apply to row, cell, column-metrics, and row-count scans. Catalog-only queries against `__TABLES__` and `INFORMATION_SCHEMA.COLUMNS` don’t use modifiers. The data validation table-metadata query applies modifiers to its inner customer-table `COUNT(*)` scan, but not to its outer `INFORMATION_SCHEMA` query. When no modifiers are configured, AIM DMV doesn’t change the generated SQL.
+
+### Configuration precedence
+
+Query modifiers can come from Worker TOML, `defaultTableConfiguration`, and an individual table. AIM DMV applies them in the following order, with each later non-null property overriding the corresponding earlier property:
+
+1. `[connections.source.<platform>.query_modifiers]` in Worker TOML.
+2. `defaultTableConfiguration.queryModifiers` in the workflow.
+3. Per-table `queryModifiers`.
+
+Therefore, per-table values have the highest priority, followed by workflow defaults, then Worker TOML. Data validation workflows also accept `queryModifiers` at the workflow root, which sits between Worker TOML and `defaultTableConfiguration.queryModifiers`. See [Data validation configuration reference](./data-validation-configuration-reference#anti-locking-and-query-modifiers).
 
 ### Pros and cons
 

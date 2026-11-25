@@ -39,14 +39,26 @@ You can export a model from Tableau and use it to automatically generate a seman
 prerequisites, the Tableau ingestion feature requires:
 
 - A stage where you have write permissions.
-- If your Tableau file contains Custom SQL, you must also have the CREATE VIEW privilege on the schema because the SQL is
-  parsed into a regular Snowflake view.
+- The `CREATE VIEW` privilege on the schema, if your Tableau file contains Custom SQL or unions. Autopilot creates a
+  regular Snowflake view for each one.
 
 You can also upload a Power BI file (.pbit or .pbix) to automatically generate a semantic view. In addition to the
 preceding prerequisites, the Power BI ingestion feature requires:
 
 - A stage where you have write permissions.
 - Read access to the underlying tables and columns that your Power BI file references.
+
+You can also import a model from a Horizon Catalog connector, without exporting a file. This option is in preview and
+is available to all accounts in AWS deployments. In addition to the preceding prerequisites for creating a semantic
+view, importing from a Horizon Catalog connector requires:
+
+- A [Horizon Catalog connector](/user-guide/snowflake-horizon/connectors) for a supported BI tool that has completed at
+  least one full ingestion.
+- A role with `READ EXTERNAL METADATA` or `USAGE` on the connector, and `USAGE` on the database and schema that contain
+  it. For details, see [View metadata and lineage](/user-guide/snowflake-horizon/connectors/access-control#view-metadata-and-lineage).
+- Lineage in Horizon Catalog from Snowflake tables to the model. At least one of the model’s tables must read from a
+  single Snowflake table. Models without this lineage are marked **No Snowflake source** and can’t be imported.
+- Read access to the Snowflake tables and columns that the model uses.
 
 ## Creating a semantic view
 
@@ -97,6 +109,8 @@ To create a semantic view with the generator:
 
    You can also provide context by uploading a Tableau file, a Power BI file, or a YAML specification. For details on
    each option, see [Options for providing context](#label-semantic-view-autopilot-options-for-providing-context).
+   To import a model from a Horizon Catalog connector instead, see
+   [Create a semantic view from a Horizon Catalog connector](#label-semantic-view-autopilot-connected-bi).
 7. For **Select tables**, provide the data source that you’re using to create the semantic view.
    You must provide at least one table or view. For your first semantic view, Snowflake recommends using fewer than 10
    tables or views to keep it easy to understand and use. This is not a hard limit.
@@ -118,6 +132,57 @@ columns.
 
 Cortex Analyst automatically generates suggestions to improve the semantic view after creation. After the suggestions
 appear, which might take several minutes, you can review them and apply them to the view as needed.
+
+### Create a semantic view from a Horizon Catalog connector
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts in AWS deployments.
+
+If you have a [Horizon Catalog connector](/user-guide/snowflake-horizon/connectors) for a BI tool, you can create a
+semantic view directly from one of the models that the connector ingests. You don’t export or upload a file, and you
+don’t select tables and columns, because Autopilot reads the model’s tables, relationships, and measures from Horizon
+Catalog. Before you start, check the
+[prerequisites for importing from a Horizon Catalog connector](#label-semantic-view-autopilot-prerequisites).
+
+You can start an import from Semantic View Autopilot or from Horizon Catalog.
+
+#### Start from Semantic View Autopilot
+
+1. [Open Semantic View Autopilot](#label-semantic-view-autopilot-entry-point).
+2. Select your BI tool.
+3. On the **Import from connected** tab, which is selected by default, select the model to import. To upload a file
+   instead, select **Upload file**. The list contains the models from every connector for that tool that your role can
+   see, and you can search it by name. Select a model to see its details, such as its project and when
+   it was last updated.
+
+   By default, the list shows only models that Autopilot can import. A model can’t be imported if none of its tables
+   reads from a single Snowflake table. To see those models too, clear **Only show importable models**. Models that can’t
+   be imported are marked **No Snowflake source** and can’t be selected.
+4. Select **Next**.
+5. On **Name your semantic view**, select a location to store the semantic view. The name is filled in from the model;
+   change it if needed.
+6. Complete the last step of the wizard to generate the semantic view. Generation can take a few minutes.
+
+#### Start from Horizon Catalog
+
+To open Semantic View Autopilot from Horizon Catalog with a connector or model already selected, do one of the
+following:
+
+- In the navigation menu, select **Catalog** » **Connections**. In the **Metadata connections** list, for a connector
+  that has completed a full ingestion, select **Import with Cortex**. Autopilot opens with only
+  that connector’s models listed.
+- On the page for a model in Horizon Catalog, or on its node in a lineage graph, select **Create semantic view**. Autopilot opens with that model selected. **Create semantic view** is
+  disabled for a model that has no lineage to Snowflake tables.
+
+Then finish the import as described in [Start from Semantic View Autopilot](#label-semantic-view-autopilot-connected-bi-from-autopilot).
+
+#### How models are converted
+
+Autopilot converts a model from a Horizon Catalog connector with similar rules to an uploaded file. For the supported BI
+tools, what is converted, and how an import from a connector differs, see
+[Tableau](/user-guide/views-semantic/tableau-ingestion#label-tableau-ingestion-connected) and
+[Power BI](/user-guide/views-semantic/power-bi-ingestion#label-power-bi-ingestion-connected).
 
 ### Using CoCo to create a semantic view
 
@@ -147,7 +212,7 @@ view conversationally.
 
 ### Options for providing context
 
-While providing context is optional, it’s extremely useful in creating a high-quality semantic view. Without it, the
+Providing context is optional, but it improves the quality of the semantic view. Without it, the
 generator only uses the database schema information, which might lack business nuance. Snowflake supports the following
 options for providing context:
 
@@ -158,8 +223,11 @@ migrate your existing business logic and metadata directly into Snowflake. Autop
 and `TDSX` formats, and extracts tables, columns, relationships, calculated fields, parameters, filters, and Custom SQL.
 The tables in the file must resolve to a direct Snowflake connection.
 
-For supported formats, file constraints, how to export from Tableau Desktop or Tableau Online, how published data
-sources work, and the full list of extracted metadata, see [Tableau ingestion feature support](/user-guide/views-semantic/tableau-ingestion).
+For supported formats, file size, how to export a file from Tableau, how published data sources work, and the full
+list of supported features, see [Tableau ingestion feature support](/user-guide/views-semantic/tableau-ingestion).
+
+If you have a Horizon Catalog connector for Tableau, you can import a data source without exporting a file. See
+[Create a semantic view from a Horizon Catalog connector](#label-semantic-view-autopilot-connected-bi).
 
 #### Option 2: Upload Power BI file
 
@@ -167,14 +235,17 @@ Semantic View Autopilot supports using a Power BI file to automatically generate
 your existing DAX measures, table relationships, and column definitions directly into Snowflake. Autopilot supports the
 `.pbit` and `.pbix` formats.
 
-For supported formats, file constraints, how to export from Power BI Desktop, and detailed feature support, see
+For supported formats, file size, how to export from Power BI Desktop, and detailed feature support, see
 [Power BI ingestion feature support](/user-guide/views-semantic/power-bi-ingestion).
+
+If you have a Horizon Catalog connector for Power BI, you can import a semantic model without exporting a file.
+See [Create a semantic view from a Horizon Catalog connector](#label-semantic-view-autopilot-connected-bi).
 
 #### Option 3: Provide SQL queries
 
 You can add example natural language questions and their corresponding SQL queries. This helps the model learn your specific business logic and create relationships.
 
-Snowflake uses these queries to pre-select tables and columns in subsequent steps, and will also auto-add these queries as “verified queries” in the semantic view. Additionally, if valid relationships can be inferred, these will get added to the semantic view.
+Snowflake uses these queries to pre-select tables and columns in later steps, and adds them to the semantic view as verified queries. Snowflake also adds any relationships that it can infer from the queries.
 
 To provide queries as a file, use `.csv` format with two columns: a natural language question and its corresponding SQL query.
 
@@ -209,6 +280,10 @@ that view by selecting [![More options](/static/images/snowsight/snowsight-works
 ## Troubleshooting
 
 - If your semantic view is not listed in the list of views, refresh the list of models (not the page itself).
+- If no models are listed when you import from a Horizon Catalog connector, check that the connector has completed a full ingestion and that your role has `READ EXTERNAL METADATA` or `USAGE` on it. To
+  continue without a connector, select **Upload file**.
+- If a model is marked **No Snowflake source**, none of its tables reads from a single Snowflake table, so it
+  can’t be imported. Check that the model connects to Snowflake directly.
 - If errors occur with the relationships in the semantic view, ensure that these relationships match the actual data structure.
 - If queries are slow, reduce the number of tables or columns.
 - If Cortex Analyst produces unexpected results when using your semantic view, review the facts, dimensions, and metrics in the

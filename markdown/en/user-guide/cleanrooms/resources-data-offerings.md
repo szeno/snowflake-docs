@@ -25,7 +25,7 @@ If you move, rename, or change access permissions to the underlying tables, the 
 registered links.
 
 If you use Snowflake Standard Edition, you can’t share data through a data clean room with policy enforcement. As a result, you are not able to share data with other parties or leverage the data clean room policies specified in the offerings even for users in your own account.
-However, you can access data offerings from other collaborators, or [use your own data as a local data offering](/user-guide/cleanrooms/demo-flows/basic-multiparty-collab#label-dcr-using-local-data) without policies.
+However, you can access data offerings from other collaborators, or [use your own data as a local data offering](#label-dcr-using-local-data) without policies.
 
 **Data offering requirements:**
 
@@ -57,7 +57,7 @@ Data offerings support the following object types as data sources:
 
 Note
 
-†External and Iceberg tables [must be enabled](/user-guide/cleanrooms/collaboration-api-reference#enable_external_table_analysis_for_collaboration) before they can be used in a data offering. A data offering that references external or Iceberg tables can be shared only with collaborators in the same cloud and region as the collaboration owner, even in a [collaboration that uses Cross-Cloud Auto-Fulfillment](/user-guide/cleanrooms/laf#label-dcr-collab-laf-limitations).
+†External and Iceberg tables [must be enabled](/user-guide/cleanrooms/collaboration-api-reference#enable_external_table_analysis_for_collaboration) before they can be used in a data offering. A data offering that references external tables can be shared only with collaborators in the same cloud and region as the collaboration owner, even in a [collaboration that uses Cross-Cloud Auto-Fulfillment](/user-guide/cleanrooms/laf#label-dcr-collab-laf-limitations).
 
 ## Register a data offering
 
@@ -94,7 +94,7 @@ Tip
 
 Data offerings aren’t visible in a collaboration until the user who registered the data offering joins the collaboration.
 
-See [Run an analysis](/user-guide/cleanrooms/demo-flows/basic-multiparty-collab#label-dcr-collab-run-an-analysis) to learn how to run an analysis.
+See [Running analyses and activations](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collab-run-an-analysis) to learn how to run an analysis.
 
 ## Source column renaming
 
@@ -278,3 +278,59 @@ datasets:
 ```
 
 The analysis runner references these tables as `user_alias.offering_id.AL`, `user_alias.offering_id.NY`, and `user_alias.offering_id.CA`.
+
+## Use your own data on Snowflake Standard Edition
+
+If you use Standard Edition, you can run an analysis [in the standard way](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-run-reference). However,
+you can’t link data into the collaboration to share with other users. The only way to pass your own datasets into a template is to use the
+technique described here.
+
+**To use your own data in a collaboration on Snowflake Standard Edition:**
+
+1. Register your data offering by calling REGISTER\_DATA\_OFFERING.
+2. Call LINK\_LOCAL\_DATA\_OFFERING to link your data into the collaboration for you to use. No other collaborators can see or access data
+   linked locally.
+3. Use the local data offerings when you call [RUN](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-run-reference) to use your data in an analysis.
+
+> - If you are using the parameterized version of RUN, pass your template view names to the `local_template_view_names` parameter
+> - If you are using the YAML version of RUN, provide your template view names in the `local_view_mappings.my_tables` section of the request
+>
+> Tip
+>
+> `local_template_view_names` and `local_view_mappings.my_tables` populate the `my_table` parameter in the template.
+
+The following example shows how to run a template using the YAML format version of the run procedure. This example includes the
+`my_tables` field, which is populated by calling LINK\_LOCAL\_DATA\_OFFERING.
+
+Copy code
+
+```
+-- See what data offerings are available. Your own local data will be listed here as well.
+CALL SAMOOHA_BY_SNOWFLAKE_LOCAL_DB.COLLABORATION.VIEW_DATA_OFFERINGS($collaboration_name);
+
+-- Pass in the arguments in analysis YAML format.
+CALL SAMOOHA_BY_SNOWFLAKE_LOCAL_DB.COLLABORATION.RUN(
+  $collaboration_name,
+  $$
+    api_version: 2.0.0
+    spec_type: analysis
+    name: my_analysis
+    description: Cross-purchase results for Q4 2025
+    template: mytemplate_v1
+
+    template_configuration:
+      view_mappings:
+        source_tables:
+          - ADVERTISER1.ADVERTISER_DATA_V1.CUSTOMERS
+          - PUBLISHER.ADVERTISER_DATA_V1.CUSTOMERS
+      local_view_mappings:
+        my_tables:
+          - PARTNER.MY_DATA_V1.MY_CUSTOMERS # Populate my_table array with my own table.
+      arguments:  # Template arguments, as name: value pairs
+         conv_purchase_id: PURCHASE_ID
+         conv_purchase_amount: PURCHASE_AMOUNT
+         publisher_impression_id: IMPRESSION_ID
+         publisher_campaign_name: CAMPAIGN_NAME
+         publisher_device_type: DEVICE_TYPE
+  $$ );
+```

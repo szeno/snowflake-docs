@@ -26,7 +26,6 @@ For specific syntax, usage notes, and examples, see:
 > - [CREATE NOTIFICATION INTEGRATION](/sql-reference/sql/create-notification-integration)
 > - [CREATE ORGANIZATION PROFILE](/sql-reference/sql/create-organization-profile)
 > - [CREATE POSTGRES INSTANCE](/sql-reference/sql/create-postgres-instance)
-> - [CREATE PROVISIONED THROUGHPUT](/sql-reference/sql/create-provisioned-throughput)
 > - [CREATE REPLICATION GROUP](/sql-reference/sql/create-replication-group)
 > - [CREATE RESOURCE MONITOR](/sql-reference/sql/create-resource-monitor)
 > - [CREATE ROLE](/sql-reference/sql/create-role)

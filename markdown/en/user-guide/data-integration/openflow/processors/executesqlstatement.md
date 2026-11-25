@@ -14,6 +14,24 @@ com.snowflake.openflow.runtime | runtime-database-processors-nar
 
 Executes a SQL DDL or DML Statement against a database. This Processor allows Expression Language to be evaluated against FlowFile attributes in order to parameterize the SQL for each FlowFile.
 
+## Choosing between ExecuteSQLStatement and ExecuteSQL
+
+Openflow includes two processors with similar names that run SQL in different ways:
+
+- **ExecuteSQLStatement** (Snowflake, `runtime-database-processors-nar`): Runs the statement in the **SQL** property
+  as a parameterized statement. When the statement references Expression Language, the processor rewrites it to use
+  bind parameters, which helps protect against SQL injection. The processor passes each evaluated value to the database
+  separately from the SQL text, so the database treats it as data. A value that contains quotes or SQL keywords can’t
+  change the structure of the statement. Each expression must be the entire value of a parameter.
+  For example, `VALUES ('${name}')` is valid, but `VALUES ('Mr. ${name}')` is not.
+- **[ExecuteSQL](/user-guide/data-integration/openflow/processors/executesql)** (Apache NiFi, `nifi-standard-nar`): Runs
+  SQL text as written, either from its **SQL Query** property or from the content of the incoming FlowFile.
+
+Note
+
+If you want to run arbitrary SQL text that your flow already contains, use ExecuteSQL. Use ExecuteSQLStatement when you
+want to build a statement from FlowFile attributes or content with parameter binding.
+
 ## Tags
 
 database, delete, insert, jdbc, openflow, sql, update

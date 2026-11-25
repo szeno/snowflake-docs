@@ -90,7 +90,7 @@ your Snowflake representative. See
 
    To check the resolved manifest first, run `snow app validate`.
 
-   The first serverless deploy in an account can stop while Snowflake issues
+   The first serverless deploy in an account might stop while Snowflake issues
    the TLS certificate, which can take up to three hours. See
    [Serverless deploy stops while the TLS certificate is issued](/developer-guide/snowflake-app-runtime/troubleshooting#label-snowflake-app-runtime-troubleshooting-serverless-certificate).
 

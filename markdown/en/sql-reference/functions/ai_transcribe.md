@@ -116,7 +116,7 @@ See [Cortex LLM privileges](/user-guide/snowflake-cortex/aisql-privileges-and-ac
   file too large to process if they are too high. Internally, AI\_TRANSCRIBE uses monophonic audio at 16 kHz, and
   resamples input files when they are not already in this format
 - The maximum audio file size is 700 MB.
-- The maximum audio file duration is 60 minutes when timestamp granularity is set to “word” or “speaker”.
+- The maximum audio file duration is 90 minutes when timestamp granularity is set to “word” or “speaker”.
   If timestamp granularity is not used, the maximum duration is 120 minutes.
 
 ## Supported languages
@@ -615,7 +615,7 @@ If the function fails, it raises an error. Common error messages include:
 | File too large. Maximum size is 734,003,200 Bytes, file exceeds this limit. | The provided audio file exceeds the maximum file size. |
 | Invalid file format. Only [‘flac’, ‘mp3’, ‘ogg’, ‘wav’, ‘webm’] files are supported, or WebM file does not contain an audio stream. | The audio file is not one of the supported formats, which are listed in the error message. WebM files support multiple media types, so make sure the file contains an audio stream. If the file is in a supported format, check that it is not corrupted. |
 | File will be too large after resampling it to 16000 Hertz. Expected size is 3,355,444,448,000.0 Bytes. | The provided audio file is too large after resampling to 16 kHz. If the provided audio has a lower sample rate, its resampled size is larger than the original, and could potentially exceed the maximum allowed file size. |
-| Audio duration too long: 6052.10 seconds. Maximum allowed: 3600 seconds. or Audio duration too long: 7335.28 seconds. Maximum allowed: 7200 seconds. | The provided audio file is too long. If you are using timestamp granularity, the maximum duration is 60 minutes (3600 seconds). |
+| Audio duration too long: 6052.10 seconds. Maximum allowed: 5400 seconds. or Audio duration too long: 7335.28 seconds. Maximum allowed: 7200 seconds. | The provided audio file is too long. If you are using timestamp granularity, the maximum duration is 90 minutes (5400 seconds). |
 | Unsupported detected language | The audio file contains a language that is not supported by AI\_TRANSCRIBE. |
 
 Expand

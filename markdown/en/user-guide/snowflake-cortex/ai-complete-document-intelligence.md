@@ -27,7 +27,7 @@ with a FILE object reference for each document you want to process. See [Example
 AI\_COMPLETE is optimized for documents both digital-born and scanned. The following table lists the limitations and
 requirements of input documents:
 
-| Supported file type | All models: .txt, .md, .pdf Claude models: .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml |
+| Supported file type | Gemini models: .txt, .md, .pdf Claude models: .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml Other models do not accept document inputs. See [Supported models and limitations](#supported-models-and-limitations). |
 | --- | --- |
 | Stage encryption | Server-side encryption |
 | Data type | [FILE](/sql-reference/functions/to_file) object |
@@ -224,6 +224,12 @@ model’s context window.
 Expand
 
 Show lessSee more
+
+Tip
+
+For the most reliable results with Microsoft Word and Excel files (.doc, .docx, .xls, .xlsx) on Claude models, convert
+them to PDF before processing, or extract their text with [AI\_PARSE\_DOCUMENT](/sql-reference/functions/ai_parse_document)
+and pass the extracted text to AI\_COMPLETE.
 
 File size is the maximum size of each document. Max pages is the maximum number of pages in each document, not the
 total across all documents in a request. All documents in a request, together with the prompt, must also fit within the

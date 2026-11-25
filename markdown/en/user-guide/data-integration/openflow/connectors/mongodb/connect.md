@@ -84,6 +84,19 @@ To configure the MongoDB environment, perform the following steps:
 
    When configuring the connector, set **MongoDB Authentication Source** to `admin`.
    For more information, see [MongoDB source parameters](setup#label-mongodb-source-parameters).
+4. [Set the oplog retention period](#label-mongodb-oplog-retention).
+
+### Set the oplog retention period
+
+Snowflake recommends retaining at least 72 hours of oplog at your peak change rate. Use
+time-based retention so you can recover from an interruption, such as a paused connector or
+a network outage, without a full reload. If MongoDB removes oplog entries before the
+connector reads them, the affected collections require a full reload. A longer retention
+period uses more storage.
+
+For self-managed MongoDB, configure [storage.oplogMinRetentionHours](https://www.mongodb.com/docs/manual/reference/configuration-options/#mongodb-setting-storage.oplogMinRetentionHours)
+on each data-bearing replica set member. For MongoDB Atlas, see
+[Set Minimum Oplog Window](https://www.mongodb.com/docs/atlas/cluster-additional-settings/#set-minimum-oplog-window).
 
 ## Set up the target Snowflake account
 

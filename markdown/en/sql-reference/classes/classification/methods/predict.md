@@ -1,4 +1,4 @@
-# model\_name!PREDICT
+# <model\_name>!PREDICT
 
 [Preview Feature](/release-notes/preview-features) — Open
 

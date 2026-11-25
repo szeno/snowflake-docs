@@ -160,7 +160,7 @@ Show lessSee more
 
 To set up pricing, go to the **Pricing** section and configure the following:
 
-- **Pricing plan.** The pricing model that determines how consumers are charged, such as a usage-based plan (for example, a monthly access fee plus per-query charges) or a flat fee. A pricing plan is required for **Self-serve** offers, where consumers see the price and purchase directly, but optional for **Sales-led** offers, where consumers contact you to complete the purchase.
+- **Pricing plan.** The pricing model that determines how consumers are charged, such as a usage-based plan (for example, a monthly access fee plus per-query charges) or a flat-fee plan. A pricing plan is required for **Self-serve** offers, where consumers see the price and purchase directly, but optional for **Sales-led** offers, where consumers contact you to complete the purchase.
 - **Standard offer (required).** The offer that publishes your listing for purchase. It ties the pricing plan to the purchase terms, including the purchase type (**Self-serve** so consumers see the price and buy directly, or **Sales-led** so they contact you first), the contract type and duration, payment options, and the price and description consumers see.
 
 For the available pricing models and the detailed steps to create a pricing plan and offer, see [Paid listings pricing models](/collaboration/provider-listings-pricing-model) and [Create and publish a listing](/collaboration/provider-listings-creating-publishing).

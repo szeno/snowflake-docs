@@ -42,6 +42,14 @@ Show lessSee more
 
 This command requires a role with the relevant privilege on the entities returned. For example, if the application package contains a shared table, the role must have the USAGE privilege on the database and schema containing the table, and the SELECT privilege on the table.
 
+## Usage notes
+
+- User-defined functions (UDFs) and stored procedures are copied into the installed application and
+  aren’t listed by this command. An empty result doesn’t mean that the manifest contains no logic objects.
+- For an automated inventory check, [download the manifest](/developer-guide/declarative-sharing/package#download-a-file-from-the-application-package)
+  for the version you’re inspecting and parse the `functions`, `procedures`, and role declarations.
+  These declarations describe the intended shared content, not whether a consumer can run it.
+
 ## Examples
 
 The following example shows how to use the SHOW SHARED CONTENT IN APPLICATION PACKAGE command to list all of the objects in a specific version of a Declarative Share application package.

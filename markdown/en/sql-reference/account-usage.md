@@ -138,7 +138,6 @@ The ACCOUNT\_USAGE schema contains the following views. The **Type** column iden
 | [CORTEX\_FINE\_TUNING\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_fine_tuning_usage_history) | Historical | 1 hour |  | Data retained for 1 year. |
 | [CORTEX\_FUNCTIONS\_QUERY\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_functions_query_usage_history) | Historical |  |  | Data retained for 1 year. |
 | [CORTEX\_FUNCTIONS\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_functions_usage_history) | Historical |  |  | Data retained for 1 year. |
-| [CORTEX\_PROVISIONED\_THROUGHPUT\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_provisioned_throughput_usage_history) | Historical |  |  | Data retained for 1 year. |
 | [CORTEX\_REST\_API\_RATE\_LIMIT\_POLICIES](/sql-reference/account-usage/cortex_rest_api_rate_limit_policies) | Object | 6 hours |  |  |
 | [CORTEX\_REST\_API\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_rest_api_usage_history) | Historical |  |  | Data retained for 1 year. |
 | [CORTEX\_SEARCH\_BATCH\_QUERY\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_search_batch_query_usage_history) | Historical | 1 hour |  | Data retained for 1 year. |
@@ -224,7 +223,7 @@ The ACCOUNT\_USAGE schema contains the following views. The **Type** column iden
 | [REPLICATION\_GROUPS](/sql-reference/account-usage/replication_groups) | Object | 2 hours |  |  |
 | [REPLICATION\_USAGE\_HISTORY](/sql-reference/account-usage/replication_usage_history) | Historical | 3 hours |  | Data retained for 1 year. |
 | [RESOURCE\_MONITORS](/sql-reference/account-usage/resource_monitors) | Object | 2 hours |  |  |
-| [ROLES](/sql-reference/account-usage/roles) | Object | 2 hours |  |  |
+| [ROLES](/sql-reference/account-usage/roles) | Object | 2 hours |  | Data retained for 1 year. |
 | [ROW\_ACCESS\_POLICIES](/sql-reference/account-usage/row_access_policies) | Object | 2 hours |  |  |
 | [SCHEMATA](/sql-reference/account-usage/schemata) | Object | 2 hours |  |  |
 | [SEARCH\_OPTIMIZATION\_BENEFITS](/sql-reference/account-usage/search_optimization_benefits) | Historical | 6 hours | Enterprise Edition (or higher) | Data retained for 1 year. |
@@ -243,11 +242,11 @@ The ACCOUNT\_USAGE schema contains the following views. The **Type** column iden
 | [SESSION\_POLICIES](/sql-reference/account-usage/session_policies) | Object | 2 hours |  |  |
 | [SESSIONS](/sql-reference/account-usage/sessions) | Historical | 3 hours |  | Data retained for 1 year. |
 | [SHARES](/sql-reference/account-usage/shares) | Object | 3 hours |  |  |
-| [SNAPSHOT\_OPERATION\_HISTORY](/sql-reference/account-usage/snapshot_operation_history) | Historical | 6 hours |  | Data retained for 1 year. This view is deprecated. Use the [BACKUP\_OPERATION\_HISTORY](/sql-reference/account-usage/backup_operation_history) view instead. |
-| [SNAPSHOT\_POLICIES](/sql-reference/account-usage/snapshot_policies) | Object | 6 hours |  | This view is deprecated. Use the [BACKUP\_POLICIES](/sql-reference/account-usage/backup_policies) view instead. |
-| [SNAPSHOT\_SETS](/sql-reference/account-usage/snapshot_sets) | Object | 6 hours |  | This view is deprecated. Use the [BACKUP\_SETS](/sql-reference/account-usage/backup_sets) view instead. |
-| [SNAPSHOT\_STORAGE\_USAGE](/sql-reference/account-usage/snapshot_storage_usage) | Historical | 6 hours |  | Data retained for 1 year. This view is deprecated. Use the [BACKUP\_STORAGE\_USAGE](/sql-reference/account-usage/backup_storage_usage) view instead. |
-| [SNAPSHOTS](/sql-reference/account-usage/snapshots) | Object | 6 hours |  | This view is deprecated. Use the [BACKUPS](/sql-reference/account-usage/backups) view instead. |
+| [SNAPSHOT\_OPERATION\_HISTORY view — Deprecated](/sql-reference/account-usage/snapshot_operation_history) | Historical | 6 hours |  | Data retained for 1 year. This view is deprecated. Use the [BACKUP\_OPERATION\_HISTORY](/sql-reference/account-usage/backup_operation_history) view instead. |
+| [SNAPSHOT\_POLICIES view — Deprecated](/sql-reference/account-usage/snapshot_policies) | Object | 6 hours |  | This view is deprecated. Use the [BACKUP\_POLICIES](/sql-reference/account-usage/backup_policies) view instead. |
+| [SNAPSHOT\_SETS view — Deprecated](/sql-reference/account-usage/snapshot_sets) | Object | 6 hours |  | This view is deprecated. Use the [BACKUP\_SETS](/sql-reference/account-usage/backup_sets) view instead. |
+| [SNAPSHOT\_STORAGE\_USAGE view — Deprecated](/sql-reference/account-usage/snapshot_storage_usage) | Historical | 6 hours |  | Data retained for 1 year. This view is deprecated. Use the [BACKUP\_STORAGE\_USAGE](/sql-reference/account-usage/backup_storage_usage) view instead. |
+| [SNAPSHOTS view — Deprecated](/sql-reference/account-usage/snapshots) | Object | 6 hours |  | This view is deprecated. Use the [BACKUPS](/sql-reference/account-usage/backups) view instead. |
 | [SNOWFLAKE\_APP\_RUNTIME\_COMPUTE\_HISTORY](/sql-reference/account-usage/snowflake_app_runtime_compute_history) | Historical | 3 hours |  | Data retained for 1 year. |
 | [SNOWFLAKE\_COCO\_USAGE\_HISTORY](/sql-reference/account-usage/snowflake_coco_usage_history) | Historical | 1 hour |  | Data retained for 1 year. |
 | [SNOWFLAKE\_COWORK\_USAGE\_HISTORY](/sql-reference/account-usage/snowflake_cowork_usage_history_view) | Historical | 1 hour |  | Data retained for 1 year. |
@@ -277,7 +276,7 @@ The ACCOUNT\_USAGE schema contains the following views. The **Type** column iden
 | [TRUST\_CENTER\_FINDINGS](/sql-reference/account-usage/trust_center_findings) | Historical | 1 hour |  |  |
 | [TYPES](/sql-reference/account-usage/types) | Object | 2 hours |  |  |
 | [USER\_AI\_USAGE\_HISTORY](/sql-reference/account-usage/user_ai_usage_history) | Historical | 1 hour |  | Data retained for 1 year. |
-| [USERS](/sql-reference/account-usage/users) | Object | 2 hours |  |  |
+| [USERS](/sql-reference/account-usage/users) | Object | 2 hours |  | Data retained for 1 year. |
 | [VIEWS](/sql-reference/account-usage/views) | Object | 90 minutes |  |  |
 | [WAREHOUSE\_EVENTS\_HISTORY](/sql-reference/account-usage/warehouse_events_history) | Historical | 3 hours |  | Data retained for 1 year. |
 | [WAREHOUSE\_LOAD\_HISTORY](/sql-reference/account-usage/warehouse_load_history) | Historical | 3 hours |  | Data retained for 1 year. |
@@ -338,7 +337,7 @@ ACCOUNTADMIN role using either of the following approaches:
 
 Important
 
-To avoid unintentionally granting access to organization-level data, consider using [SNOWFLAKE database roles](#label-account-usage-snowflake-db-roles) to grant access to views in the ACCOUNT\_USAGE schema.
+Granting IMPORTED PRIVILEGES on the SNOWFLAKE database gives the role access to all objects in the SNOWFLAKE database. This is the same as granting every SNOWFLAKE database role (for example, OBJECT\_VIEWER, USAGE\_VIEWER, GOVERNANCE\_VIEWER, and SECURITY\_VIEWER) to that role. This includes sensitive views, such as login history, access history, and organization-level data. To grant access to only a subset of views, grant specific [SNOWFLAKE database roles](#label-account-usage-snowflake-db-roles) instead.
 
 For more information, refer to [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role).
 
@@ -369,6 +368,7 @@ For additional examples, see [Querying the Account Usage views](#label-account-u
 
 In addition, you can grant finer control to accounts using SNOWFLAKE database roles.
 For more information on database roles, see [database roles](/user-guide/security-access-control-considerations#label-access-control-considerations-database-roles).
+A role that has IMPORTED PRIVILEGES on the SNOWFLAKE database already has all of the privileges granted by these database roles.
 
 [ACCOUNT\_USAGE](/sql-reference/account-usage) schemas have five defined SNOWFLAKE database roles, each granted the SELECT privilege on specific views.
 
@@ -404,6 +404,11 @@ views in the shared SNOWFLAKE database. Use the following table to determine whi
 | [APPLICATION\_SPECIFICATIONS view](/sql-reference/account-usage/application_specifications) | SECURITY\_VIEWER |
 | [ARCHIVE\_STORAGE\_DATA\_RETRIEVAL\_USAGE\_HISTORY view](/sql-reference/account-usage/archive_storage_data_retrieval_usage_history) | USAGE\_VIEWER |
 | [AUTOMATIC\_CLUSTERING\_HISTORY view](/sql-reference/account-usage/automatic_clustering_history) | USAGE\_VIEWER |
+| [BACKUP\_OPERATION\_HISTORY view](/sql-reference/account-usage/backup_operation_history) | OBJECT\_VIEWER |
+| [BACKUP\_POLICIES view](/sql-reference/account-usage/backup_policies) | OBJECT\_VIEWER |
+| [BACKUP\_SETS view](/sql-reference/account-usage/backup_sets) | OBJECT\_VIEWER |
+| [BACKUP\_STORAGE\_USAGE view](/sql-reference/account-usage/backup_storage_usage) | OBJECT\_VIEWER |
+| [BACKUPS view](/sql-reference/account-usage/backups) | OBJECT\_VIEWER |
 | [BLOCK\_STORAGE\_HISTORY view](/sql-reference/account-usage/block_storage_history) | USAGE\_VIEWER |
 | [BLOCK\_STORAGE\_SNAPSHOTS view](/sql-reference/account-usage/block_storage_snapshots) | OBJECT\_VIEWER |
 | [CATALOG\_LINKED\_DATABASE\_USAGE\_HISTORY view](/sql-reference/account-usage/catalog_linked_database_usage_history) | USAGE\_VIEWER |
@@ -425,7 +430,6 @@ views in the shared SNOWFLAKE database. Use the following table to determine whi
 | [CORTEX\_FINE\_TUNING\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_fine_tuning_usage_history) | USAGE\_VIEWER |
 | [CORTEX\_FUNCTIONS\_QUERY\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_functions_query_usage_history) | USAGE\_VIEWER |
 | [CORTEX\_FUNCTIONS\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_functions_usage_history) | USAGE\_VIEWER |
-| [CORTEX\_PROVISIONED\_THROUGHPUT\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_provisioned_throughput_usage_history) | USAGE\_VIEWER |
 | [CORTEX\_REST\_API\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_rest_api_usage_history) | USAGE\_VIEWER |
 | [CORTEX\_SEARCH\_BATCH\_QUERY\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_search_batch_query_usage_history) | USAGE\_VIEWER |
 | [CORTEX\_SEARCH\_DAILY\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_search_daily_usage_history) | USAGE\_VIEWER |

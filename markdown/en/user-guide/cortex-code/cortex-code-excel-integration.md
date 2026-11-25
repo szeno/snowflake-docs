@@ -663,8 +663,8 @@ the functions:
 
 | Function | Description |
 | --- | --- |
-| `=CORTEX.ASK(prompt, [context])` | Asks Cortex a question. The response streams into the cell. Use the optional `context` argument to give Cortex text to answer from. |
-| `=CORTEX.COMPLETE(prompt)` | A shorter form of `CORTEX.ASK` that takes only a prompt. The response streams into the cell. |
+| `=CORTEX.ASK(prompt, [context])` | Asks Cortex a question. Use the optional `context` argument to give Cortex text to answer from. |
+| `=CORTEX.COMPLETE(prompt)` | A shorter form of `CORTEX.ASK` that takes only a prompt. |
 | `=CORTEX.SUMMARIZE(text)` | Summarizes text or a range of cells. |
 | `=CORTEX.SENTIMENT(text)` | Returns a sentiment score from -1.0 to 1.0. |
 | `=CORTEX.CLASSIFY(text, labels, ...)` | Classifies text into one of the labels that you provide. Provide at least two labels, as separate arguments or as a range. |
@@ -675,7 +675,7 @@ Expand
 
 Show lessSee more
 
-The functions send each prompt to a model through the [Cortex REST API](/user-guide/snowflake-cortex/cortex-rest-api).
+Each function runs a [Cortex AI Function](/user-guide/snowflake-cortex/aisql) on your current warehouse.
 
 The functions work only after you sign in from the pane. If you aren’t signed in when a function runs, for example
 just after you open a workbook, the cell waits up to 30 seconds for you to sign in, then shows an error that asks you to

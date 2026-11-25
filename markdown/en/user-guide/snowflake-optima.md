@@ -152,3 +152,63 @@ query execution, indicating how Snowflake Optima improved performance by reducin
 The following image shows an example of the **Statistics** pane that indicates that Snowflake Optima was used:
 
 ![Shows the Statistics pane on the Query Profile tab.](/static/images/snowflake-optima-query-statistics.png)
+
+### Review Optima impact with CoCo
+
+The [workload-performance-analysis](/user-guide/cortex-code/bundled-skills#label-bundled-skill-workload-performance-analysis)
+skill in CoCo summarizes what Snowflake Optima did for your account over a time window. The summary reports three
+measures, one for each Optima capability that produces a measurable benefit:
+
+| Optima capability | Measure | Source view |
+| --- | --- | --- |
+| [Optima Indexing](#optima-indexing) and [Optima Metadata](#optima-metadata) | Partitions pruned by Snowflake Optima | [TABLE\_QUERY\_PRUNING\_HISTORY view](/sql-reference/account-usage/table_query_pruning_history) |
+| [Optima Clustering](#optima-clustering) | Tables maintained by Optima Clustering | [AUTOMATIC\_CLUSTERING\_HISTORY view](/sql-reference/account-usage/automatic_clustering_history) |
+| [Optima Planning](#optima-planning) | Queries optimized by Optima Planning | [QUERY\_INSIGHTS view](/sql-reference/account-usage/query_insights) |
+
+Expand
+
+Show lessSee more
+
+Copy a prompt into the CoCo CLI, CoCo Desktop, or the CoCo panel in Snowsight:
+
+## Try this in CoCo first
+
+[Open CoCo](/user-guide/cortex-code/cortex-code)
+
+CoCo can run these workflows end to end. Copy a prompt to get started.
+
+- Review what Snowflake Optima did for my account
+
+  ```
+  What has Snowflake Optima done for my account over the last <NUMBER_OF_DAYS> days?
+  ```
+
+  Copy prompt
+
+The skill uses the last 7 days by default. To change the window, replace `<NUMBER_OF_DAYS>` or include a time
+range in your prompt, such as “over the last 30 days.”
+
+The summary includes the following information:
+
+- **Partitions pruned:** The total number of partitions that Snowflake Optima pruned in the window, and the tables that
+  benefited most. The summary also shows the percentage of total pruning that the top three tables account for.
+- **Tables maintained:** The number of tables that Optima Clustering maintained in the window. For the top tables, the
+  summary shows rows reclustered, bytes reclustered, and the number of reclustering operations.
+- **Queries optimized:** The number of queries that used Optima Planning in the window.
+
+If Snowflake Optima didn’t affect any tables or queries in the window, the summary omits that measure instead of reporting
+zero. When the window has no partitions pruned, the summary checks whether your account has
+[Snowflake generation 2 standard warehouses](/user-guide/warehouses-gen2) or
+[Adaptive Warehouses](/user-guide/warehouses-adaptive), because Optima applies to those warehouse types.
+
+The summary also reports which Optima features apply to the top tables, such as Optima Metadata, Optima Indexing, or
+Optima Clustering. Most of these views require the `SNOWFLAKE.USAGE_VIEWER` database role. Reading the per-table feature
+flags requires the `SNOWFLAKE.OBJECT_VIEWER` database role. If your role doesn’t have access to a view, the skill omits
+the measures or details that depend on that view.
+
+The summary doesn’t report Optima Clustering credits. For credit and spend analysis, use the
+[`cost-intelligence`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-cost-intelligence) skill.
+
+The skill analyzes historical data from [ACCOUNT\_USAGE](/sql-reference/account-usage) views, which can lag behind real
+time. For the full skill workflow and more example prompts, see
+[Analyze Workload Performance with CoCo](/user-guide/analyze-workload-performance-coco).

@@ -66,13 +66,6 @@ to individual features:
   ```
   REVOKE CREATE MODEL ON SCHEMA my_schema FROM ROLE my_role;
   ```
-- **Provisioned Throughput:** Revoke the CREATE PROVISIONED THROUGHPUT privilege on schemas from any roles you have granted it to.
-
-  Copy code
-
-  ```
-  REVOKE CREATE PROVISIONED THROUGHPUT ON SCHEMA my_schema FROM ROLE my_role;
-  ```
 
 ## Access control by feature
 
@@ -85,7 +78,6 @@ The following table has more detailed information on access control for individu
 | [Cortex Analyst](/user-guide/snowflake-cortex/cortex-analyst#label-analyst-access-control) | ✔ | ENABLE\_CORTEX\_ANALYST account parameter |  |
 | [Cortex Fine-tuning](/user-guide/snowflake-cortex/cortex-finetuning#label-cortex-finetune-privileges) | ✔ | CREATE MODEL on the schema where you create fine-tuned models |  |
 | [Cortex Knowledge Extensions](/user-guide/snowflake-cortex/cortex-knowledge-extensions/cke-overview) |  | SNOWFLAKE.CORTEX\_USER database role | Relies on access control for the underlying Cortex Search Service |
-| [Cortex Provisioned Throughput](/user-guide/snowflake-cortex/provisioned-throughput) | ✔ | CREATE PROVISIONED THROUGHPUT privilege on the schema where you create provisioned throughput objects |  |
 | [Cortex Search](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#label-cortex-search-privileges) |  | SNOWFLAKE.CORTEX\_USER database role | USAGE on the search service, database, schema, and table used by the search service |
 | [Snowflake Copilot](/user-guide/snowflake-copilot#label-snowflake-copilot-limit) |  | SNOWFLAKE.COPILOT\_USER database role |  |
 | [Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork) |  | SNOWFLAKE.CORTEX\_USER database role | Relies on access control for the underlying Cortex Agent or Search Service |
@@ -127,7 +119,6 @@ Cortex-related views in the [SNOWFLAKE.ACCOUNT\_USAGE](/sql-reference/account-us
 - [CORTEX\_FINE\_TUNING\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_fine_tuning_usage_history)
 - [CORTEX\_AI\_FUNCTIONS\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_ai_functions_usage_history)
 - [CORTEX\_AISQL\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_aisql_usage_history)
-- [CORTEX\_PROVISIONED\_THROUGHPUT\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_provisioned_throughput_usage_history)
 - [CORTEX\_SEARCH\_DAILY\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_search_daily_usage_history)
 - [CORTEX\_SEARCH\_SERVING\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_search_serving_usage_history)
 

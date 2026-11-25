@@ -700,6 +700,23 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
 
     The default value is `off`.
 
+`preserve_underscores_in_hostname`
+:   ODBC 4.x only. ODBC 3.x doesn’t support this parameter.
+
+    Specifies whether the driver keeps underscores (`_`) in the Snowflake host name. This parameter is equivalent to the JDBC
+    [allowUnderscoresInHost](/developer-guide/jdbc/jdbc-parameters#label-jdbc-connection-parameters-allowunderscoresinhost) parameter.
+
+    - `true` keeps underscores in the host name.
+    - `false` replaces underscores with hyphens (`-`) before connecting.
+
+    By default, the driver replaces underscores in the host name with hyphens because underscores aren’t valid in DNS host names.
+    Snowflake automatically accepts the hyphenated form of account names that contain underscores.
+
+    If you connect through private connectivity (for example, AWS PrivateLink) and your private DNS resolves only the underscored
+    host name, either add DNS records for the hyphenated host name that point to the same endpoint, or set this parameter to `true`.
+
+    The default value is `false`.
+
 `proxy`
 :   Specifies the proxy server URL in the format `http://<hostname>:<port>/` or `<hostname>:<port_number>` so that all communications from ODBC use the proxy server.
 
@@ -1123,11 +1140,15 @@ The ODBC driver supports key pair authentication and key rotation.
 
      Specifies the local path to the private key file you created (i.e. `rsa_key.p8`).
 
+     On Windows, ODBC driver version 3.9.0 and later show this parameter as **PRIV\_KEY\_FILE** in the DSN setup dialog, so you don’t need to edit the registry to set it. See [Installing and configuring the ODBC Driver 3.x for Windows](/developer-guide/odbc/odbc-windows-3x).
+
      The value set in DSN can be overridden by calling the `SQLSetConnectAttr()` function. For more details, see
      [Snowflake-specific behavior of the SQLSetConnectAttr function](/developer-guide/odbc/odbc-api#label-odbc-api-sqlsetconnectattr-specific-behavior).
    - `PRIV_KEY_FILE_PWD = <password>`
 
      Specifies the passcode to decode the private key file.
+
+     On Windows, ODBC driver version 3.9.0 and later show this parameter as **PRIV\_KEY\_FILE\_PWD** in the DSN setup dialog. Avoid saving it in a DSN, because DSN values are stored in the registry as plain text.
 
      This parameter should be set only if the parameter PRIV\_KEY\_FILE is also set.
 

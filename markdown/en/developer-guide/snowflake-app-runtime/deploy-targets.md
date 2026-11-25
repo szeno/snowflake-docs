@@ -75,9 +75,18 @@ it deploys to the baseline database and warehouse. `prod` overrides
 `min_instances` and `max_instances` do, see
 [Start, stop, and scale a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/scale-and-suspend).
 
+If two targets resolve to the same fully qualified name, they operate on the
+same service.
+
+### Serverless targets
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
 A target can also choose a different
 [compute option](/developer-guide/snowflake-app-runtime/serverless#label-snowflake-app-runtime-serverless-compare). You
-can’t convert an existing service to serverless compute (Public Preview), so give a
+can’t convert an existing service to serverless compute, so give a
 serverless target its own `name`. This `dev` target runs on managed compute,
 and the `serverless` target creates a separate service:
 
@@ -99,9 +108,6 @@ Deploy it with `snow app deploy --target serverless`. For the fields involved,
 see [`compute_resource`](/developer-guide/snowflake-app-runtime/app-yml#label-snowflake-app-runtime-app-yml-serverless).
 To move an existing app, see
 [Move an existing app to serverless compute](/developer-guide/snowflake-app-runtime/serverless#label-snowflake-app-runtime-serverless-switch).
-
-Two targets that resolve to the same fully qualified name operate on the
-same service.
 
 ## Deploy, open, and tear down a target
 

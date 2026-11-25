@@ -51,7 +51,7 @@ The prediction is based on a dynamic analysis of the most recent runs of the sam
 
 Use [CREATE TASK](/sql-reference/sql/create-task) to define the task. Don’t include the WAREHOUSE parameter.
 
-The role that runs the task must have the global EXECUTE MANAGED TASK privilege. For more information, see [Task security](#label-task-security-reqs).
+The task owner role must have the global EXECUTE TASK privilege and USAGE on the warehouse. For more information, see [Task security](#label-task-security-reqs).
 
 The following example creates a task that runs every hour.
 
@@ -214,10 +214,22 @@ The following table describes various factors that can help you decide when to u
 | --- | --- | --- | --- |
 | Number, duration, and predictability of concurrent task workloads | Recommended for under-utilized warehouses with too few tasks running concurrently, or completing quickly.  Tasks with relatively stable runs are good candidates for serverless tasks. | Recommended for fully utilized warehouses with multiple concurrent tasks.  Also recommended for unpredictable loads on compute resources. [Multi-cluster warehouses](/user-guide/warehouses-multicluster) with [auto-suspend and auto-resume](/user-guide/warehouses-overview#label-auto-suspension-and-auto-resumption) enabled could help moderate your credit consumption. | For serverless tasks, Snowflake bills your account based on the actual compute resource usage.  For user-managed tasks, billing for warehouses is based on warehouse size, with a 60-second minimum each time the warehouse is resumed. |
 | Schedule interval | Recommended when adherence to the schedule interval is highly important.  If a run of a standalone task or scheduled task graph exceeds the interval, Snowflake increases the size of the compute resources. | Recommended when adherence to the schedule interval is less important. | *Schedule interval* refers to the interval of time between scheduled runs of a standalone task or the root task in a task graph.  Increasing the compute resources can reduce the runtime of some, but not all, SQL code. It doesn’t ensure a task run is completed within the batch window. |
+| Reliability and failure tolerance | Recommended for workloads that tolerate an occasional failure and can be rerun safely. | Recommended for workloads that must not fail, such as data loads that can’t be rerun or long-running stored procedures. | Serverless tasks run on Snowflake-managed compute that’s shared with other workloads. For details, see the note after this table. |
 
 Expand
 
 Show lessSee more
+
+Note
+
+Serverless tasks run on Snowflake-managed compute that’s shared with other workloads. Occasionally, a task run can be interrupted
+on that compute, for example by memory pressure from other workloads, and the run fails with an internal error.
+
+Snowflake automatically retries most statements after such an interruption. However, Snowflake doesn’t retry task runs that
+run a stored procedure (using the CALL command), so the failure is reported to you.
+
+Serverless tasks are best suited to workloads that tolerate an occasional failure and can be rerun safely. For workloads that
+must not fail, use user-managed tasks with a dedicated warehouse.
 
 The maximum size for a serverless task run is equivalent to an XXLARGE warehouse.
 If a task workload requires a larger warehouse, create a user-managed task with a warehouse of the required size.
@@ -328,8 +340,14 @@ When you set the [TASK\_AUTO\_RETRY\_ATTEMPTS](/sql-reference/parameters#label-t
 
 ## Define additional session parameters
 
-A task supports all session parameters. For the complete list, see [Parameters](/sql-reference/parameters).
+A task supports most session parameters. For the complete list of session parameters, see [Parameters](/sql-reference/parameters).
 Tasks don’t support account or user parameters.
+
+The following session parameter settings aren’t supported for tasks. If one of these settings applies to a task, the task fails when it runs.
+
+- [AUTOCOMMIT](/sql-reference/parameters#label-autocommit) set to FALSE. Tasks require AUTOCOMMIT to be TRUE. If AUTOCOMMIT is set to FALSE at the account level, set it to TRUE for the task (using `ALTER TASK ... SET AUTOCOMMIT = TRUE`).
+  To run several statements as a single unit of work, use an [explicit transaction](/sql-reference/transactions#label-transactions-starting-and-ending-explicitly) (`BEGIN TRANSACTION` … `COMMIT` or `ROLLBACK`), for example, in a stored procedure that the task calls.
+- [SEARCH\_PATH](/sql-reference/parameters#label-search-path) set to any value.
 
 To set session parameters for a task, add the parameter to the task definition with [CREATE TASK](/sql-reference/sql/create-task), or modify the task using [ALTER TASK … SET](/sql-reference/sql/alter-task). Examples:
 

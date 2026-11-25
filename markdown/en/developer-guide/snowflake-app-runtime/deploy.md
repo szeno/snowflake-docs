@@ -197,7 +197,7 @@ Expand
 
 Show lessSee more
 
-These defaults cover most Node.js app builds.
+These defaults cover most Node.js and Python app builds.
 
 ### Custom outbound access during build
 
@@ -231,8 +231,9 @@ during `snow app setup`.
 ### Disabling default build egress
 
 Account administrators can turn off automatic outbound access during remote
-builds. When default egress is disabled, builds that rely on npm or Google
-Fonts fail at the dependency-fetch step unless the developer supplies an EAI
+builds. When default egress is disabled, builds that rely on npm, PyPI, or Google Fonts
+(see [the default hosts](#label-deploy-build-default-egress)) fail at the
+dependency-fetch step unless the developer supplies an EAI
 (for example, through `build_eai`) that covers the required hosts. Use these
 account parameters:
 
@@ -253,7 +254,7 @@ Copy code
 ALTER ACCOUNT SET ENABLE_REMOTE_BUILD_SERVICE_EGRESS_DESTINATIONS = FALSE;
 ```
 
-To re-enable npm and Google Fonts without turning the master switch back on,
+To re-enable npm and Google Fonts without turning the main switch back on,
 create an EAI and set `build_eai` in `app.yml` as described in
 [Custom outbound access during build](#label-deploy-build-custom-egress).
 
@@ -269,7 +270,10 @@ On the **first deploy**, Snowflake issues
 `CREATE OR ALTER APPLICATION SERVICE` from the package in your artifact
 repository (typically the `LATEST` version) and applies the full specification
 from `app.yml`. On later deploys, the same statement **converges** the service
-to the manifest: fields omitted from `app.yml` go back to their defaults. Your
+to the manifest: fields omitted from `app.yml` go back to their defaults, with
+[two exceptions](/developer-guide/snowflake-app-runtime/app-yml#label-snowflake-apps-manifest-validation):
+`compute_resource` keeps its current value when omitted, and
+`execute_as_role` can’t change after the app is created. Your
 app URL doesn’t change. For instance counts and suspend, see
 [Start, stop, and scale a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/scale-and-suspend).
 
@@ -285,8 +289,14 @@ shared database and schema you can grant to other roles. Without setup, deploy
 may default to your [personal database](/user-guide/personal-databases), which
 you can’t share with teammates.
 
+### Deploy to serverless compute
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
 The `compute_resource` field in `app.yml` chooses where the Application Service
-runs: managed compute by default, or serverless compute (Public Preview). The upload
+runs: managed compute by default, or serverless compute. The upload
 and build phases are the same for both. See
 [Serverless compute for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/serverless) and
 [Move an existing app to serverless compute](/developer-guide/snowflake-app-runtime/serverless#label-snowflake-app-runtime-serverless-switch).

@@ -327,13 +327,14 @@ Returned numeric values are full-precision floats and are not rounded.
 
 | Limit or parameter | Behavior |
 | --- | --- |
-| Prompt size | Maximum of 256 KiB for the entire JSON request. |
+| Prompt size | The `state` plus any single question must fit within 65,535 tokens. |
 | Questions per request | Maximum of 64. |
 | Options per choice question | 2–255. |
 | Levels per score question | 2–255. |
-| Question ID | 1–64 characters matching `[A-Za-z0-9_-]`. |
+| Question ID | Must be non-empty. |
 | Streaming and guardrails | Not supported. Requests using these features are rejected. |
-| `temperature` and `top_p` | Ignored. |
+| `temperature` | Ignored. |
+| `top_p` and `response_format` | Not supported. Requests using these parameters are rejected. |
 
 Expand
 

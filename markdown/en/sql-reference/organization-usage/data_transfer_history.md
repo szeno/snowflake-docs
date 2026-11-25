@@ -11,12 +11,7 @@ When you query a specific view in the `SNOWFLAKE.ORGANIZATION_USAGE` schema, fol
 [Performance (Organization Usage)](/sql-reference/organization-usage#label-org-usage-performance): bound every scan on history views, list
 columns explicitly, and use the time filter column table plus worked SQL and anti-patterns there.
 
-The DATA\_TRANSFER\_HISTORY view in the ORGANIZATION\_USAGE schema can be
-used to query the history of data transferred from Snowflake tables into a
-different cloud storage provider’s network (i.e. from Snowflake on AWS, Google
-Cloud Platform, or Microsoft Azure into another cloud provider’s network)
-and/or geographical region within a specified date range. The function returns
-the history for your entire Snowflake organization.
+The DATA\_TRANSFER\_HISTORY view in the ORGANIZATION\_USAGE schema can be used to query the history of data transferred from Snowflake tables within a specified date range. The view includes transfers to or from the same cloud provider and region, as well as transfers to other cloud providers (Snowflake on AWS, Google Cloud Platform, or Microsoft Azure) and geographical regions. The view returns the history for your entire Snowflake organization.
 
 ## Columns
 

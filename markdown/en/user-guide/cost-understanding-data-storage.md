@@ -10,6 +10,8 @@ Storage cost represents the cost of:
 The monthly costs for storing data in Snowflake are based on a flat rate per terabyte (TB).
 The amount charged depends on your type of account (Capacity or On Demand) and region (US or EU).
 
+Storage is billed monthly based on the average number of on-disk bytes (compressed) stored each day in your account during the month. It isn’t based on a single day or point-in-time snapshot.
+
 For storage pricing, see the [Snowflake Pricing Guide](https://www.snowflake.com/pricing/pricing-guide/).
 
 ## Staged file costs

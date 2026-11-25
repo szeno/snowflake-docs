@@ -19,6 +19,7 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [BACKUP\_OPERATION\_HISTORY](/sql-reference/organization-usage/backup_operation_history) | Historical | 6 hours | No | 1 year |
 | [BACKUP\_POLICIES](/sql-reference/organization-usage/backup_policies) | Object | 6 hours | No | All |
 | [BACKUP\_SETS](/sql-reference/organization-usage/backup_sets) | Object | 6 hours | No | All |
+| [BACKUP\_STORAGE\_USAGE](/sql-reference/organization-usage/backup_storage_usage) | Object | 3 hours | No | All |
 | [BACKUPS](/sql-reference/organization-usage/backups) | Object | 6 hours | No | All |
 | [BLOCK\_STORAGE\_HISTORY](/sql-reference/organization-usage/block_storage_history) | Historical | 24 hours | [Yes](/user-guide/organization-accounts-premium-views) | 1 year. |
 | [CATALOG\_LINKED\_DATABASE\_USAGE\_HISTORY](/sql-reference/organization-usage/catalog_linked_database_usage_history) | Historical | 5 hours | [Yes](/user-guide/organization-accounts-premium-views) | 1 year. |
@@ -42,7 +43,7 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [CREDENTIALS](/sql-reference/organization-usage/credentials) | Object | 24 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
 | [DATA\_CLASSIFICATION\_HISTORY](/sql-reference/organization-usage/data_classification_history) | Historical | 5 hours | [Yes](/user-guide/organization-accounts-premium-views) | 1 year. |
 | [DATA\_CLASSIFICATION\_LATEST](/sql-reference/organization-usage/data_classification_latest) | Object | 5 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
-| [DATA\_TRANSFER\_DAILY\_HISTORY](/sql-reference/organization-usage/data_transfer_daily_history) | Historical | 2 hours | No | 1 year |
+| [DATA\_TRANSFER\_DAILY\_HISTORY](/sql-reference/organization-usage/data_transfer_daily_history) | Historical | 24 hours | No | 1 year |
 | [DATA\_TRANSFER\_HISTORY](/sql-reference/organization-usage/data_transfer_history) | Historical | 24 hours | No | 1 year |
 | [DATABASE\_STORAGE\_USAGE\_HISTORY](/sql-reference/organization-usage/database_storage_usage_history) | Historical | 24 hours | No | 1 year |
 | [DATABASES](/sql-reference/organization-usage/databases) | Object | under 3 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
@@ -68,7 +69,7 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [MARKETPLACE\_PAID\_USAGE\_DAILY](/collaboration/views/marketplace-paid-usage-daily-org) | Historical | 24 hours | No | 1 year |
 | [MASKING\_POLICIES](/sql-reference/organization-usage/masking_policies) | Object | under 3 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
 | [MATERIALIZED\_VIEW\_REFRESH\_HISTORY](/sql-reference/organization-usage/materialized_view_refresh_history) | Historical | 24 hours | No | 1 year |
-| [METERING\_DAILY\_HISTORY](/sql-reference/organization-usage/metering_daily_history) | Historical | 2 hours | No | 1 year |
+| [METERING\_DAILY\_HISTORY](/sql-reference/organization-usage/metering_daily_history) | Historical | 24 hours | No | 1 year |
 | [METERING\_HISTORY](/sql-reference/organization-usage/metering_history) | Historical | under 15 minutes | [Yes](/user-guide/organization-accounts-premium-views) | 1 year. |
 | [MODEL\_SERVING\_USAGE\_HISTORY](/sql-reference/organization-usage/model_serving_usage_history) | Historical | 24 hours | [Yes](/user-guide/organization-accounts-premium-views) | 1 year |
 | [MONETIZED\_USAGE\_DAILY](/collaboration/views/monetized-usage-daily-org) | Historical | 24 hours | No | 1 year |
@@ -133,7 +134,7 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [SNOWPIPE\_STREAMING\_FILE\_MIGRATION\_HISTORY](/sql-reference/organization-usage/snowpipe_streaming_file_migration_history) | Historical | 14 hours | [Yes](/user-guide/organization-accounts-premium-views) | 1 year. |
 | [STAGES](/sql-reference/organization-usage/stages) | Object | under 3 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
 | [STAGE\_STORAGE\_USAGE\_HISTORY](/sql-reference/organization-usage/stage_storage_usage_history) | Historical | 24 hours | No | 1 year |
-| [STORAGE\_DAILY\_HISTORY](/sql-reference/organization-usage/storage_daily_history) | Historical | 2 hours | No | 1 year |
+| [STORAGE\_DAILY\_HISTORY](/sql-reference/organization-usage/storage_daily_history) | Historical | 24 hours | No | 1 year |
 | [STORAGE\_LIFECYCLE\_POLICIES](/sql-reference/organization-usage/storage_lifecycle_policies) | Object | under 3 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
 | [STORAGE\_LIFECYCLE\_POLICY\_HISTORY](/sql-reference/organization-usage/storage_lifecycle_policy_history) | Historical | under 3 hours | [Yes](/user-guide/organization-accounts-premium-views) | 1 year. |
 | [STORAGE\_USAGE](/sql-reference/organization-usage/storage_usage) | Historical | 4 hours | [Yes](/user-guide/organization-accounts-premium-views) | 1 year. |

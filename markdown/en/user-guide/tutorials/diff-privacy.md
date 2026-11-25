@@ -315,7 +315,7 @@ Copy code
 
 ```
 USE ROLE <role_name>;
-SELECT * FROM TABLE(SNOWFLAKE.DATA_PRIVACY.ESTIMATE_REMAINING_DP_AGGREGATES(dp_db.dp_schema.dp_tutorial_diabetes_survey));
+SELECT * FROM TABLE(SNOWFLAKE.DATA_PRIVACY.ESTIMATE_REMAINING_DP_AGGREGATES('dp_db.dp_schema.dp_tutorial_diabetes_survey'));
 ```
 
 ## Clean up

@@ -48,7 +48,7 @@ might run, but they aren’t supported.
 | --- | --- | --- |
 | Where it runs | One dev server for each user and project | An Application Service |
 | Source | Synced from the workspace | Built into the deployed version |
-| Command | `npm run dev` (or the equivalent for `pnpm`/`yarn`) | The `run` command in `app.yml` |
+| Command | `npm run dev` (or the equivalent for `pnpm` or `yarn`) | The `run` command in `app.yml` |
 | `NODE_ENV` | `development` | `production` |
 | Shareable | No | Yes, at the app’s URL |
 | Logs | Live logs in the Preview pane | Live logs and the event table. See [Monitor a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/observability) |

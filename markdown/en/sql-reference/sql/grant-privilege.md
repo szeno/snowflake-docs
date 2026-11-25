@@ -167,6 +167,8 @@ schemaObjectPrivileges ::=
      { MONITOR | OPERATE | USAGE } [ , ... ]
   -- For ARTIFACT REPOSITORY
      READ [ , ... ]
+  -- For CODE BUNDLE
+     { MONITOR | USAGE } [ , ... ]
   -- For CONTACT
      { APPLY | MODIFY } [ , ... ]
   -- For CORTEX EXTENSION
@@ -251,6 +253,7 @@ For more details about the privileges supported for each object type, see [Acces
     - `AGGREGATION POLICY`
     - `ALERT`
     - `AUTHENTICATION POLICY`
+    - `CODE BUNDLE`
     - `CORTEX EXTENSION`
     - `CORTEX SEARCH SERVICE`
     - `DATA METRIC FUNCTION`
@@ -377,6 +380,8 @@ For more details about the privileges supported for each object type, see [Acces
   higher-level roles within the role hierarchy. For more details, see [Overview of Access Control](/user-guide/security-access-control-overview).
 - For databases, the IMPORTED PRIVILEGES privilege only applies to shared databases (that is, databases created from a share). For more details,
   see [Consume imported data](/user-guide/data-share-consumers). Note that the IMPORTED PRIVILEGES privilege cannot be granted to a database role.
+- For the SNOWFLAKE database, IMPORTED PRIVILEGES grants access to all of its schemas and views. See
+  [Enabling other roles to use schemas in the SNOWFLAKE database](/sql-reference/account-usage#label-enabling-usage-for-other-roles).
 - For schemas and objects in schemas, an `ALL object_type_plural in container` option is provided to grant privileges on all
   objects of the same type within the container (that is, a database or schema). This is a convenience option; internally, the command is expanded
   into a series of individual GRANT commands on each object. Only objects that currently exist within the container are affected.
@@ -639,14 +644,6 @@ Grant the WRITE privilege on a shared workspace in the `mydb.myschema` schema to
 >
 > ```
 > GRANT WRITE ON WORKSPACE mydb.myschema.my_workspace TO ROLE analyst;
-> ```
-
-Grant the CREATE PROVISIONED THROUGHPUT privilege to a role:
-
-> Copy code
->
-> ```
-> GRANT CREATE PROVISIONED THROUGHPUT ON ACCOUNT TO ROLE myrole;
 > ```
 
 Grant the privilege to create hybrid tables in the specified schema:

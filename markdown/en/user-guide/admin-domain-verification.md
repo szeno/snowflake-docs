@@ -37,7 +37,7 @@ Domain verification uses a standard DNS TXT-record challenge:
 4. While the domain is verified, all users with email addresses in that domain are treated as having verified
    email addresses for purposes of notifications, MFA, and other features that gate on email verification.
 
-Verification is shared across the calling account’s entire organization (replication group). When a domain is
+Verification is shared across the calling account’s entire organization. When a domain is
 verified in one account, that verification is replicated to every account in the organization, immediately
 conferring verified-email status on matching users in *every* account.
 

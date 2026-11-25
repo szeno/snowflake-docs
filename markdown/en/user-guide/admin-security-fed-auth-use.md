@@ -137,9 +137,13 @@ result in multiple prompts for authentication if the client application establis
 To minimize the number of times that a user is prompted for authentication, the account administrator can enable connection
 caching.
 
-When connection caching is enabled, the client application stores a connection token for use in subsequent connections. For
-security, the connection token is stored in the keystore for the operating system. Before you enable connection caching,
-consult with your security team to determine if this complies with your security policies.
+When connection caching is enabled, the client application stores a connection token for use in subsequent connections. Where
+the token is stored depends on the operating system and the driver or connector. For the Snowflake Connector for Python,
+macOS and Windows store the token in the operating system’s keyring. Linux doesn’t use an operating system keystore. Instead,
+the connector stores the token in a JSON file under `~/.cache/snowflake/` that only the current user can read or write
+(permissions `0600`). To use a different
+directory, set the `SF_TEMPORARY_CREDENTIAL_CACHE_DIR` environment variable. Before you enable connection caching, consult with your security team to determine if this complies
+with your security policies.
 
 Tip
 
@@ -195,6 +199,9 @@ To enable connection caching:
      > pip install "snowflake-connector-python[secure-local-storage,pandas]"
      > ```
    - For the Snowflake JDBC Driver, see [Add the JNA classes to your classpath](/developer-guide/jdbc/jdbc-download#label-jdbc-driver-add-jna-classes-to-classpath).
+3. For the Snowflake Connector for Python, make sure the `client_store_temporary_credential` connection parameter is
+   `True`. This is the default value. If your application sets it to `False`, the connector doesn’t cache the token. For more
+   information, see [Connecting to Snowflake with the Python Connector](/developer-guide/python-connector/python-connector-connect).
 
 ### Native SSO — *Okta only*
 

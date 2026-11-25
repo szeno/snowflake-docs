@@ -297,6 +297,24 @@ Use standard community converters instead:
 - `io.confluent.connect.avro.AvroConverter`
 - `io.confluent.connect.protobuf.ProtobufConverter`
 
+### Changed values in RECORD\_CONTENT
+
+If you set `snowflake.enable.schematization` to `false`, v4 stores some values in the `RECORD_CONTENT` column in a different format than v3. Ingestion isn’t affected, but queries, views, and streams that read these values can return errors or NULL. Before you migrate, update any SQL that reads the following values:
+
+| Value | v3 format | v4 format | How to update your SQL |
+| --- | --- | --- | --- |
+| Timestamps (Kafka Connect `Timestamp` logical type, such as Avro `timestamp-millis`) | Epoch milliseconds as a string, such as `"1705312800000"` | ISO 8601 string, such as `"2024-01-15T10:00:00.000Z"` | Cast the value directly, such as `RECORD_CONTENT:event_time::TIMESTAMP_NTZ`. A v3 expression such as `TO_TIMESTAMP(RECORD_CONTENT:event_time::NUMBER, 3)` returns an error for v4 values. |
+| Times (Kafka Connect `Time` logical type, such as Avro `time-millis`) | Snowpipe mode: `"10:30:00.000+0000"`. Snowpipe Streaming mode: `"10:30:00.000Z"`. | `"10:30:00.000Z"` | If you migrate from Snowpipe mode, update string comparisons and formats that expect `+0000`. |
+| Floating-point infinity | `"Infinity"` and `"-Infinity"` | `"Inf"` and `"-Inf"` | Update filters that match these strings. |
+
+Expand
+
+Show lessSee more
+
+Warning
+
+If you use `org.apache.kafka.connect.json.JsonConverter` with `value.converter.schemas.enable=false`, integer values outside the 64-bit signed range (`-9223372036854775808` to `9223372036854775807`) aren’t stored correctly, and no error is reported. The v3 `SnowflakeJsonConverter` stored these values correctly. To keep these values, send them as JSON strings.
+
 ### Authentication
 
 v4.0 supports key-pair authentication only. Starting with v4.1.0, the connector also supports OAuth, and starting with v4.2.0 it supports workload-identity (SPCS) authentication. If you used OAuth with v3, you must use key-pair authentication when initially migrating to v4.0; you can switch to OAuth after upgrading to v4.1.0 or later, or to SPCS authentication after upgrading to v4.2.0 or later. For details, see [Authentication](/user-guide/kafka-connector/setup-kafka#label-kafkahp-authentication).

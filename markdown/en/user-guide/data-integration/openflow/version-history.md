@@ -6,7 +6,45 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## November 20, 2026
+
+### Runtime Server 2026.11.20.20
+
+- Fixed cluster connection creation for runtimes in government regions with FIPS enabled.
+
 ## November 19, 2026
+
+### Runtime Server 2026.11.19.2
+
+- Applied security patches and dependency upgrades.
+
+### Runtime Extensions 2026.11.19.8
+
+- **Behavior change:** CDC SQL Server: Removed the single-database SQL Server connector. After the upgrade, its flows stop replicating and fail with `Unsupported database product: Microsoft SQL Server`. Before upgrading, move to the Openflow Connector for SQL Server, which replicates one or more databases. For more information, see [About Openflow Connector for SQL Server](/user-guide/data-integration/openflow/connectors/sql-server/about).
+- CDC Databases (GA): Fixed an issue where an initial snapshot could be marked complete with rows missing when the read of its last batch ended early. Before completing a snapshot, the connector now confirms that no rows remain up to the last row present when the snapshot started, and continues the snapshot otherwise.
+- CDC SQL Server (GA): Fixed snapshot loads leaving long-running queries on the source database when a batch ends early, for example on tables with large text or binary values.
+- CDC SQL Server (GA): Fixed a database failover, such as an Availability Group role change, permanently failing tables with “change tracking is not enabled” while change tracking is still enabled. The connector now retries for up to 15 minutes before reporting the table as failed.
+- CDC SQL Server (GA): Fixed negative commit-to-capture and commit-to-merge latency metrics reported by the Change Tracking connector on instances whose local timezone is not UTC.
+- CDC Oracle (GA): Fixed an issue where the connector could get stuck in a reconnect loop with error `ORA-26876` (invalid processed low-watermark) after a pause in change delivery in the middle of a large transaction.
+- CDC MySQL (GA): Changed how `CaptureChangeMySQL` adopts GTID tracking. On a fresh start it uses `@gtid_purged` when Starting Binlog Position is Earliest and `@gtid_executed` when Latest; when a running connector switches from binlog tracking, it uses the union of `@gtid_purged` and the first retained `PREVIOUS_GTIDS` event.
+- Snowpipe Streaming: Fixed publishers with Offset Tracking Resolution set to Disabled sending an offset token that was not greater than the channel’s last token. Previously, a clock behind the committed token could mark a batch as committed too early.
+- Snowflake Schema: Added an Update Type property to `UpdateSnowflakeSchema`. The default, Create Schema If Not Exists, keeps the current behavior; Create Schema routes FlowFiles to a new `schema exists` relationship when the schema already exists.
+
+#### Gen 2 Connectors
+
+- CDC MySQL, CDC PostgreSQL (Public Preview): Changed table resnapshots to truncate the destination table before its schema is evolved. Previously, reconciling the destination schema could fail when a nullable column became non-nullable (for example after a primary key change) and existing rows held null values.
+- CDC PostgreSQL (Public Preview): Changed the connector to discard orphaned FlowFiles before it starts: FlowFiles for tables that were removed from replication, whose replication failed, or that belong to an earlier snapshot of the table.
+- CDC MySQL (Public Preview): Changed `CaptureChangeMySQL` to start logging GTID positions as soon as they appear in the binary log, while continuing to use binlog positions for tracking and deduplication as long as it remains configured for binary log mode.
+- SharePoint (Private Preview): Fixed the connector granting search access on restricted folders to every member of the site’s Microsoft 365 group. A folder restricted to specific people is now visible only to those people and the group’s owners. Folders ingested before this fix keep their previous permissions until refreshed; contact Snowflake Support for a one-time refresh.
+- SharePoint (Private Preview): Fixed a document whose file is deleted in SharePoint shortly after it changes, before the connector has fetched the change, staying searchable. It is now removed from the destination together with its permissions.
+
+#### Gen 1 Connectors
+
+- CDC PostgreSQL 0.73.0 (GA): Fixed table resnapshots getting stuck in Reconcile Destination Schema when a column changes from nullable to non-nullable while the destination table still holds null values, which commonly happens after a source primary key change. The destination table is now truncated before its schema is evolved.
+- CDC PostgreSQL 0.73.0 (GA): Added a Merge Strategy parameter to choose the SQL strategy used to merge journal rows into destination tables: `BASE` (default) or `ADAPTIVE`.
+- CDC MySQL 0.64.0, CDC SQL Server CT 0.64.0, SQL Server CDC 0.58.0, Oracle Embedded License 0.55.0, Oracle Embedded License Public Sector 0.55.0, Oracle Independent License 0.54.0 (GA): Fixed table resnapshots getting stuck in Reconcile Destination Schema when a column changes from nullable to non-nullable while the destination table still holds null values, which commonly happens after a source primary key change. The destination table is now truncated before its schema is evolved.
+- Kafka High Performance 0.7.0, Kinesis High Performance 0.6.0 (GA): Changed the Source Timestamp property to default to the Kafka or Kinesis record timestamp, so end-to-end latency is measured from when the record was written to the stream.
+- Salesforce 1.19.0 (GA): Changed the connector to no longer delete completed Bulk jobs, so job metadata remains available in the Salesforce administration console. Salesforce automatically cleans up this data after 7 days.
 
 ### Control Plane UI 0.102.0
 

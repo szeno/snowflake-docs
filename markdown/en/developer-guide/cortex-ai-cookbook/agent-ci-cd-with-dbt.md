@@ -375,6 +375,6 @@ Set up the agent-ci-cd-with-dbt recipe in agent-ci-cd-with-dbt/.
 - [EXECUTE\_AI\_EVALUATION](/sql-reference/functions/execute_ai_evaluation)
 - [SYSTEM$CREATE\_EVALUATION\_DATASET](/sql-reference/functions/system_create_evaluation_dataset)
 - [Tutorial: CI/CD with Slim CI and per-PR databases for dbt Projects on Snowflake](/user-guide/tutorials/dbt-projects-on-snowflake-advanced-ci-cd-tutorial)
-- [Snowflake CLI GitHub Action](/developer-guide/snowflake-cli/cicd/github-action)
+- [Snowflake CLI GitHub Action](/developer-guide/cicd/github-action)
 - [Workload identity federation](/user-guide/workload-identity-federation)
 - [YAML specification for semantic views](/user-guide/views-semantic/semantic-view-yaml-spec)

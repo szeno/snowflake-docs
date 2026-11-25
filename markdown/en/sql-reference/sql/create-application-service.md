@@ -107,7 +107,7 @@ CREATE OR ALTER APPLICATION SERVICE <name>
     move an app to serverless compute, create a new service. See
     [Move an existing app to serverless compute](/developer-guide/snowflake-app-runtime/serverless#label-snowflake-app-runtime-serverless-switch).
 
-    Default: `MANAGED_COMPUTE_POOL`
+    **DEFAULT:** `MANAGED_COMPUTE_POOL`
 
 `EXTERNAL_ACCESS_INTEGRATIONS = ( integration_name [ , ... ] )`
 :   Specifies the names of the
@@ -137,7 +137,7 @@ CREATE OR ALTER APPLICATION SERVICE <name>
 :   Specifies whether Snowflake automatically resumes the service when it
     receives an inbound request to one of its endpoints.
 
-    Default: `TRUE`.
+    **DEFAULT:** `TRUE`
 
     A service on serverless compute always starts on request, so you can’t set
     `AUTO_RESUME = FALSE` for it.

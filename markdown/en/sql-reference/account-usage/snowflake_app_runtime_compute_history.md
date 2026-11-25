@@ -13,9 +13,9 @@ Each row is one hour of usage for one compute type. Use `COMPUTE_TYPE` to tell t
 - `MANAGED COMPUTE POOL`: account-level usage on the shared Snowflake-managed compute pool.
   `COMPUTE_POOL_NAME` is `SNOWFLAKE_APP_RUNTIME_COMPUTE`. The application service and user
   columns are NULL. Per-app cost attribution isn’t available for these rows.
-- `SERVERLESS`: usage attributed to one application service. `APPLICATION_SERVICE_ID` and
+- `SERVERLESS` (Public Preview): usage attributed to one application service. `APPLICATION_SERVICE_ID` and
   `APPLICATION_SERVICE_NAME` identify the service. `COMPUTE_POOL_NAME` and `USER_ID` are NULL.
-- `PREVIEW`: usage attributed to the user who ran a Snowflake App Runtime preview on Workspaces.
+- `PREVIEW` (Public Preview): usage attributed to the user who ran a Snowflake App Runtime preview on Workspaces.
   `USER_ID` identifies that user. `COMPUTE_POOL_NAME` and the application service columns are NULL.
 
 ## Columns

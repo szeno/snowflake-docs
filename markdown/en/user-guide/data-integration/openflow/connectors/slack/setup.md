@@ -209,7 +209,7 @@ The Openflow canvas appears with the connector process group added to it.
 | Bot Token | Slack *Bot token* generated in the Slack App. |
 | Destination Database | Database to contain all connector objects. It must already exist. |
 | Destination Schema | Schema inside the database. It must already exist. |
-| Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/setup-openflow-byoc#label-deployment-byoc-setup-runtime-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. |
+| Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/privileges#label-openflow-execute-as-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. |
 | Snowflake Account | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: Snowflake account identifier. |
 | Snowflake Role | When using:   - **SNOWFLAKE\_MANAGED**: Use the runtime’s execute-as role (or a child role granted to it). - **KEY\_PAIR**: Use a valid role configured for your service user. |
 | Snowflake User | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: Username the flow uses to connect. |
@@ -270,7 +270,7 @@ The Openflow canvas appears with the connector process group added to it.
 | Destination Database | Database to contain all connector objects. It must already exist. |
 | Destination Schema | Schema inside the database. It must already exist. |
 | Upload Interval | Time to gather data before pushing to Snowflake. A larger value reduces load but increases data latency. |
-| Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/setup-openflow-byoc#label-deployment-byoc-setup-runtime-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. |
+| Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/privileges#label-openflow-execute-as-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. |
 | Snowflake Account | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: Snowflake account identifier. |
 | Snowflake Role | When using:   - **SNOWFLAKE\_MANAGED**: Use the runtime’s execute-as role (or a child role granted to it). - **KEY\_PAIR**: Use a valid role configured for your service user. |
 | Snowflake User | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: Username the flow uses to connect. |

@@ -4,12 +4,12 @@ For a consumer, the pricing model of a listing depends on what the provider of a
 A provider can attach a single pricing plan to a listing.
 
 This topic outlines the pricing models available for providers to choose for their listings.
-You can choose from a usage-based plan or a subscription-based plan:
+You can choose from a usage-based plan or a flat-fee plan:
 
 | Pricing model | Charge components | Billing timing |
 | --- | --- | --- |
 | [Usage-based](#label-listings-usage-pricing-model) | Providers charge for any combination:   - For billable events - Per query - Monthly fee | Consumers are billed in arrears in months where usage occurs. |
-| [Subscription-based](#label-listings-subscription-pricing-model) | Providers charge for a specified term, with optional recurring billing. | Consumers are billed upfront. |
+| [Flat-fee](#label-listings-subscription-pricing-model) | Providers charge for a specified term, with optional recurring billing. | Consumers are billed upfront. |
 
 Expand
 
@@ -171,8 +171,8 @@ With a monthly fee usage-based plan, you charge a fixed price for each month in 
 ran a query against a database included in the data product. For listings with applications, you can combine monthly fee usage charges
 with Custom Event Billing.
 
-If you want to charge a monthly fee whether or not consumers use your data product, add a subscription-based plan instead.
-See [Subscription-based pricing models](#label-listings-subscription-pricing-model).
+If you want to charge a monthly fee whether or not consumers use your data product, add a flat-fee plan instead.
+See [Flat-fee pricing models](#label-listings-subscription-pricing-model).
 
 To add a monthly fee usage-based plan to your listing, do the following:
 
@@ -234,21 +234,21 @@ monthly queries, and any queries made after the first 11,000 were also free beca
 
 ![Diagram showing query patterns for the per-query charge and per-monthly charge listing. The January invoice bills the consumer $120. $100 for the fixed monthly charge, and then $20 for a total of 3000 queries that were run against the listing, 1000 of which were free. The February invoice bills the consumer for a total of 11,000 queries, where 1,000 were included in the free queries and 10,000 queries cost $100. Combined with the $100 fixed monthly charge, the consumer hit the monthly maximum charge of $200. The consumer ran additional queries after the monthly maximum was met, but those queries were also free.](/static/images/marketplace-consumers-pricing-plan-fixed-usage.png)
 
-## Subscription-based pricing models
+## Flat-fee pricing models
 
-Choose a subscription-based pricing model to charge an upfront fee for a specified term, with optional recurring billing for your listing.
+Choose a flat-fee pricing model to charge an upfront fee for a specified term, with optional recurring billing for your listing.
 
-### Configure your listing for a subscription-based plan
+### Configure your listing for a flat-fee plan
 
-After you [create a listing](/collaboration/provider-listings-creating-publishing), you can configure it to add a subscription-based plan.
+After you [create a listing](/collaboration/provider-listings-creating-publishing), you can configure it to add a flat-fee plan.
 
 For this pricing plan, consumers are charged upfront for access to the data product for a specified term.
 You can choose to offer the listing with recurring billing for a subscription that auto-renews, or non-recurring billing for
 access for a fixed term.
 
-### Add a recurring subscription-based plan
+### Add a recurring flat-fee plan
 
-To add a recurring subscription-based plan to your listing, do the following:
+To add a recurring flat-fee plan to your listing, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Marketplace** » **Provider Studio**.
@@ -256,7 +256,7 @@ To add a recurring subscription-based plan to your listing, do the following:
 4. For the **Data Product** section, for **Pricing & Trial**, select **Add**.
 
    If you do not see a **Pricing & Trial** section, you must add a data product to the listing.
-5. Select **Subscription-based**.
+5. Select **Flat-fee**.
 6. For **Billing and access**, select **Recurring** to charge consumers upfront at the beginning of the recurring term.
 7. Specify a term from 1–36 months for the **Billing period** for the listing.
 8. Specify the total price to be paid upfront, in US dollars.
@@ -264,12 +264,12 @@ To add a recurring subscription-based plan to your listing, do the following:
    Trials are required for listings offered publicly on the Snowflake Marketplace.
 10. Select **Save**.
 
-### Add a non-recurring subscription-based plan
+### Add a non-recurring flat-fee plan
 
-You can add a non-recurring subscription-based plan to charge consumers once upfront for access to your listing. Listings with this plan
-cannot be repurchased by consumers. If you want consumers to be able to repurchase your listing, choose a recurring subscription-based plan.
+You can add a non-recurring flat-fee plan to charge consumers once upfront for access to your listing. Listings with this plan
+cannot be repurchased by consumers. If you want consumers to be able to repurchase your listing, choose a recurring flat-fee plan.
 
-To add a non-recurring subscription-based plan to your listing, do the following:
+To add a non-recurring flat-fee plan to your listing, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Marketplace** » **Provider Studio**.
@@ -277,7 +277,7 @@ To add a non-recurring subscription-based plan to your listing, do the following
 4. For the **Data Product** section, for **Pricing & Trial**, select **Add**.
 
    If you do not see a **Pricing & Trial** section, you must add a data product to the listing.
-5. Select **Subscription-based**.
+5. Select **Flat-fee**.
 6. If **Billing and access** is shown, select **One time** to charge consumers once upfront with no option to renew or repurchase the listing.
 7. Specify an **Access period** from 1–36 months for the listing.
 8. Specify the total price to be paid upfront, in US dollars.
@@ -324,15 +324,15 @@ To configure installment payments on an offer:
 
 ### Limitations
 
-You can’t change the pricing of an existing subscription. For example, you
-can’t change a non-recurring subscription to a recurring subscription, or add
+You can’t change the pricing of an existing flat-fee plan. For example, you
+can’t change a non-recurring flat-fee plan to a recurring flat-fee plan, or add
 installments to an existing plan. Instead, create a new offer.
 
 ### Grant consumers early access to your listing
 
 Early access:
 
-- Grants consumers access to subscription-based listings without requiring
+- Grants consumers access to flat-fee listings without requiring
   upfront payment.
 - Allows providers to specify early access and set terms such as NET 30, or
   to specify sharing an invoice directly with the consumer.
@@ -349,7 +349,7 @@ To enable early access:
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Marketplace** » **Provider Studio** » **Listings**.
 3. Find and select the listing that you want to configure for early access.
-4. Select **Subscription-based pricing** plan for paid listings.
+4. Select **Flat-fee pricing** plan for paid listings.
 5. Select **Allow early access** in the
    **Access the listing without payment** section.
 6. Select **Save** to save the changes.

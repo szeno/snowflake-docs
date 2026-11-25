@@ -10,6 +10,29 @@ Snowflake uses semantic versioning for [Snowpark Library for Python](/developer-
 
 See [Snowpark Developer Guide for Python](/developer-guide/snowpark/python/index) for documentation.
 
+## Version 1.58.0: Nov 19, 2026
+
+### Snowpark Python API updates
+
+#### New features
+
+- `DataFrameReader.documents()` (private preview) reads with a `schema` or a `prompt` now return the `AI_COMPLETE` token usage of each document in the `INPUT_TOKENS` and `OUTPUT_TOKENS` columns. A schema field can no longer have the same name as one of these columns.
+
+#### Improvements
+
+- `to_timestamp`, `to_char` and `to_varchar`, `to_binary`, and `try_to_binary` now accept the format as a `Column` or as a literal `str`. `to_binary` and `try_to_binary` now pass an empty-string format to Snowflake instead of silently ignoring it.
+
+#### Bug fixes
+
+- Fixed a bug where `to_binary` and `try_to_binary` raised a `TypeError` when the format was a `Column`.
+- Fixed a bug where `DataFrameReader.documents()` (private preview) reads with a schema rejected `.jpg`, `.jpeg`, `.png`, `.gif`, and `.webp` images with a “file type is not supported” error.
+
+### Snowpark local testing updates
+
+#### Bug fixes
+
+- Fixed a bug where `to_binary` in local testing treated an empty-string format as `HEX` and failed with an unclear error for an unknown format, instead of raising an invalid binary format error as Snowflake does.
+
 ## Version 1.57.0: Nov 12, 2026
 
 ### Snowpark Python API updates

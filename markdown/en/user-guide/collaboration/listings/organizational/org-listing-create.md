@@ -98,7 +98,7 @@ Show lessSee more
 
 ## Consume or query an organizational listing
 
-To consume an organizational listing directly, you can reference the [Uniform Listing Locator (ULL)](/user-guide/collaboration/listings/organizational/org-listing-configure#label-olisting-im-ull) without any additional privileges. If you require mounting the listing, then the following privileges are required:
+If the listing data is available in your region, you can query an organizational listing directly by using its [Uniform Listing Locator (ULL)](/user-guide/collaboration/listings/organizational/org-listing-configure#label-olisting-im-ull), with no additional privileges. This applies only when the listing data is already available in your region. If the listing is published in another region, the data must first be replicated to your region through auto-fulfillment, which requires the IMPORT SHARE and CREATE DATABASE privileges. See [Query a listing from another region](#label-olisting-ull-cross-region). To mount the listing instead, you need the following privileges:
 
 | Privilege | Object | Notes |
 | --- | --- | --- |
@@ -118,6 +118,32 @@ grants, even after the object is revoked from the share. To test as a consumer w
 1. Run `USE SECONDARY ROLES NONE;`.
 2. Use a role that has no direct grants on the shared objects.
 3. Query the listing through its ULL.
+
+### Query a listing from another region
+
+If the listing is published in a different region, Snowflake must replicate the data to your region through
+[auto-fulfillment](/collaboration/provider-listings-auto-fulfillment) before you can query it by its ULL.
+
+Until the data is replicated, ULL queries fail with this error:
+
+Copy code
+
+```
+090843 (0A000): Listing data is not ready yet. Please request for listing data fulfillment.
+```
+
+To request fulfillment, use a role with these privileges on the account:
+
+| Privilege | Object | Notes |
+| --- | --- | --- |
+| IMPORT SHARE | ACCOUNT | Required to request fulfillment of the listing data to your region. |
+| CREATE DATABASE | ACCOUNT | Required to request fulfillment of the listing data to your region. |
+
+Expand
+
+Show lessSee more
+
+After the data is replicated, you can query it by its ULL with no additional privileges.
 
 ### Manage listing auto-fulfillment settings
 

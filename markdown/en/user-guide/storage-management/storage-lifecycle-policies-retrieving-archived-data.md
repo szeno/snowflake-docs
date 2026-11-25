@@ -42,6 +42,9 @@ Note
   - [STATEMENT\_TIMEOUT\_IN\_SECONDS](/sql-reference/parameters#label-statement-timeout-in-seconds) must be at least 48 hours.
   - [ABORT\_DETACHED\_QUERY](/sql-reference/parameters#label-abort-detached-query) must be FALSE.
 
+  Run long retrievals as an asynchronous query from a driver instead of from Snowsight. For examples, see
+  [Performing an asynchronous query](/developer-guide/python-connector/python-connector-example#label-python-connector-querying-data-asynchronous) and [Performing an asynchronous query](/developer-guide/jdbc/jdbc-using#label-jdbc-asynchronous-query).
+
   COLD storage tier restore operations support a maximum of 1 million files per restore operation.
 - If you cancel a CREATE TABLE operation that retrieves data from archive storage, you might still incur retrieval costs.
 

@@ -8,6 +8,10 @@ an app’s state and logs first, see
 
 ### Serverless compute isn’t enabled
 
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
 If `snow app deploy` reports
 `compute_resource SERVERLESS is not enabled for this account.`, run `snow upgrade` to
 update the [Snowflake CLI](/developer-guide/snowflake-cli/installation), then
@@ -15,6 +19,10 @@ deploy again. If the error persists, serverless compute isn’t enabled for
 the account. Contact your Snowflake representative.
 
 ### Serverless deploy stops while the TLS certificate is issued
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
 
 On the first serverless deploy in an account, the CLI checks for the TLS
 certificate that serverless endpoints share. If the certificate is missing,
@@ -40,6 +48,10 @@ Wait for issuance to finish, then run the deploy again.
 
 ### Can’t upgrade or redeploy a disabled serverless app
 
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
 You can’t upgrade, redeploy, or change the configuration of a disabled
 serverless app. Run `ALTER APPLICATION SERVICE ... ENABLE`, then try again. See
 [Disable and enable a serverless app](/developer-guide/snowflake-app-runtime/scale-and-suspend#label-snowflake-app-runtime-scale-serverless-disable).
@@ -47,6 +59,10 @@ serverless app. Run `ALTER APPLICATION SERVICE ... ENABLE`, then try again. See
 ## Sign-in and caller’s rights
 
 ### Caller’s rights login fails on serverless compute
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
 
 On serverless compute, the `Sf-Context-Current-User-Token` header holds the
 caller’s complete OAuth token. Authenticate with that token alone and

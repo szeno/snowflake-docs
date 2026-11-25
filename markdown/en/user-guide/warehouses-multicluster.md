@@ -211,7 +211,7 @@ In this example, the same warehouse from example 3 runs in Auto-scale mode for 3
 
 - Cluster 1 runs continuously.
 - Cluster 2 runs continuously for the 2nd and 3rd hours.
-- Warehouse is resized from Medium to Large at 1:30 hours.
+- Warehouse is manually resized from Medium to Large at 1:30 hours.
 - Cluster 3 runs for 15 minutes in the 3rd hour.
 
 |  | Cluster 1 | Cluster 2 | Cluster 3 | **Total Credits** |

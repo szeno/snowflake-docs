@@ -5,7 +5,7 @@ You can run them from any development environment. You don’t need to run the c
 
 Important
 
-Snowflake ML Jobs are available in `snowflake-ml-python` version 1.26.0 and later.
+Snowflake ML Jobs are available in `snowflake-ml-python` version 1.35.0 and later.
 
 Snowflake ML Jobs enable you to do the following:
 
@@ -31,7 +31,7 @@ You can use these capabilities to do the following:
    Copy code
 
    ```
-   pip install snowflake-ml-python>=1.26.0
+   pip install snowflake-ml-python>=1.35.0
    ```
 2. The default compute pool size uses the `CPU_X64_S` instance family. The minimum number of nodes is 1 and the maximum is 25. You can use the following SQL command to create a custom compute pool:
 
@@ -384,7 +384,7 @@ the payload.
 
 Note
 
-ML Job Definitions are available in `snowflake-ml-python` version 1.26 and later.
+ML Job Definitions are available in `snowflake-ml-python` version 1.35.0 and later.
 
 To create an ML Job Definition, use the `MLJobDefinition` class.
 The API closely mirrors the job-creation APIs. All optional parameters supported for job creation are also supported when creating job definitions.
@@ -513,7 +513,7 @@ delete_job(job)
 
 ### Access the Ray Dashboard
 
-ML Jobs support the Ray Dashboard for running jobs in `snowflake-ml-python` version 1.30 and later.
+ML Jobs support the Ray Dashboard for running jobs in `snowflake-ml-python` version 1.35.0 and later.
 
 Note
 

@@ -1,4 +1,4 @@
-# SAP® BDC Connect for Snowflake Zerocopy Connector: Private connectivity
+# SAP® BDC Connect for Snowflake Zero-Copy Connector: Private connectivity
 
 [Business Critical Feature](/user-guide/intro-editions)
 
@@ -52,9 +52,6 @@ For a connector to a tenant that requires private connectivity, your Snowflake a
 - The account isn’t a trial account.
 - Outbound private connectivity is available for the account. For more information, see
   [Private connectivity for outbound network traffic](/user-guide/private-connectivity-outbound).
-- Additional host names are enabled for private endpoints in the account. Most tenants need this because SAP® serves sign-in
-  from a different host than the connector endpoint. To enable it, contact
-  [Snowflake Support](/user-guide/contacting-support).
 
 If the account doesn’t meet one of these requirements, the connection fails before Snowflake registers the connector with the
 tenant. The connector goes to `CONNECT_ERROR` state, and `DESC ZEROCOPY CONNECTOR` shows the error in the `connection_error`

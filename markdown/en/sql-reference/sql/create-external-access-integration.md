@@ -101,6 +101,12 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
+- The role that creates the integration must have the owner role of each referenced network rule in its role hierarchy. If it doesn’t,
+  the CREATE statement succeeds, but users of the integration later get an error about a missing privilege on the network rule.
+  For example, suppose the `network_admin` role owns a network rule and isn’t granted to `accountadmin`. If `accountadmin` creates
+  an integration that references the rule and grants USAGE on the integration to the `dev` role, `dev` can’t use the integration.
+  For more information, see [Access control](/developer-guide/external-network-access/creating-using-external-network-access#label-creating-using-external-access-integration-access-control)
+  and [Error: Insufficient privileges on network rule](/developer-guide/external-network-access/external-network-access-troubleshooting#label-ena-troubleshooting-insufficient-privileges-network-rule).
 - You can allow secrets for use by a UDF or procedure by using two external access integration parameters, as described below.
 
   - With the ALLOWED\_AUTHENTICATION\_SECRETS parameter. You can specify secrets as parameter values or set the parameter’s value to

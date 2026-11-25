@@ -63,13 +63,9 @@ First, grant the required privileges to the Openflow admin at the account level.
    These privileges are assigned to the ACCOUNTADMIN role as part of the default set of privileges, and that role can grant the privileges to a role of their choosing for the Openflow admin, denoted as `openflow_admin` in the code.
 2. Next, optionally set `DEFAULT_SECONDARY_ROLES` to `ALL` for Openflow users. Snowflake recommends this setting, but it isn’t required:
 
-   1. Sign in to Snowflake and switch to a role that your account admin has set up for using Openflow, for example `openflow_admin`.
+   1. Sign in with a role that can alter the Openflow users.
 
-      This may not be any of the following roles: ACCOUNTADMIN, ORGADMIN, GLOBALORGADMIN, or SECURITYADMIN.
-
-      If you see a blank screen or the error “message: Invalid consent request” when logging into Openflow, change your role to a role that is not one of these listed roles.
-
-      For more information, see [Prerequisites](#prerequisites).
+      Runtime sign-in fails when the user’s default role is `ACCOUNTADMIN`, `ORGADMIN`, `GLOBALORGADMIN`, or `SECURITYADMIN`. If the runtime UI shows a blank screen, `Invalid consent request`, or `Unable to log in`, set `DEFAULT_ROLE` to an Openflow role such as `openflow_admin`. See [Openflow privileges](/user-guide/data-integration/openflow/privileges).
    2. Run the following code, replacing `<openflow_user>` with each Openflow user:
 
    Copy code
@@ -81,141 +77,11 @@ First, grant the required privileges to the Openflow admin at the account level.
 
    With secondary roles, Openflow authorizes actions against all of the user’s granted roles. Without them, users must choose a role that has the required Openflow privileges in the role picker. In gen 2, deployments are visible only through the selected role.
 
-#### Deployment privileges
+For deployment and runtime object privileges (`OWNERSHIP`, `USAGE`, `OPERATE`, and `MONITOR`) and
+why the administrator grants exist, see [Openflow privileges](/user-guide/data-integration/openflow/privileges).
 
-The deployment object represents a set of resources provisioned to deploy one or more Snowflake Openflow runtimes. For organizations bringing
-their own cloud resources, the deployment represents a managed Kubernetes cluster along with its associated nodes.
-
-Users with `CREATE OPENFLOW DEPLOYMENT` on the account can create deployment objects.
-
-Additional privileges can be defined on deployment objects directly to support differentiation of access.
-
-You can grant the following privileges on a deployment object:
-
-- OWNERSHIP: Enables full control over deployment actions, including deletion of the deployment.
-- USAGE: Enables creation of runtime child objects.
-
-#### Runtime privileges
-
-The runtime object represents a cluster of one or more Snowflake Openflow runtime servers, provisioned to run flow definitions. For Kubernetes deployments, the runtime object represents a stateful set of Snowflake Openflow runtime containers deployed in a namespace, along with supporting components.
-
-Users with the OWNERSHIP privilege on the parent deployment object and the `CREATE OPENFLOW RUNTIME INTEGRATION` (gen 1) or `CREATE OPENFLOW RUNTIME` (gen 2) privilege can create runtimes. Additional privileges can be defined on runtime objects directly.
-
-You can grant the following privileges on a runtime object:
-
-- OWNERSHIP: Enables full control over runtime actions, including deletion of the associated runtime and modification of runtime flow definitions.
-- USAGE: Enables write access to the deployed runtime, including creating and modifying connectors and flow definitions.
-- MONITOR: Enables read-only access to the deployed runtime for observing health and status, without making any changes.
-
-#### Execute-as role
-
-An execute-as role is a Snowflake role bound to a specific Openflow runtime. Connectors that use `SNOWFLAKE_MANAGED` authentication run with this role’s privileges (or those of a child role granted to it). The execute-as role is used for the following tasks:
-
-- Grant access to Snowflake resources.
-- Grant access to connector-specific resources.
-
-Because execute-as roles are linked to Openflow managed tokens, you don’t need to create separate service users and key pairs for authentication to Snowflake. If you’re deploying a connector with the `KEY_PAIR` authentication strategy instead, see [Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth).
-
-Note
-
-<RUNTIME\_NAME> denotes the name of the associated runtime.
-
-To create an execute-as role:
-
-1. Create the role.
-
-   Copy code
-
-   ```
-   USE ROLE ACCOUNTADMIN;
-   CREATE ROLE IF NOT EXISTS OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   ```
-2. Grant the execute-as role access to a warehouse.
-   Snowflake recommends using a dedicated warehouse for data ingestion.
-   This warehouse should be used when configuring your connectors for runtimes where you use this execute-as role.
-
-   Copy code
-
-   ```
-   GRANT USAGE, OPERATE ON WAREHOUSE <OPENFLOW_INGEST_WAREHOUSE> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   ```
-3. Allow the execute-as role to use, create, or otherwise access Snowflake objects.
-
-   > Note
-   >
-   > Depending on the Openflow connector being created, the required underlying objects vary.
-   > The example below is for illustration purposes only.
-
-   Copy code
-
-   ```
-   GRANT USAGE ON DATABASE <OPENFLOW_DATABASE> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   GRANT USAGE ON SCHEMA <OPENFLOW_SCHEMA> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   ```
-4. Allow the user to use the execute-as role.
-
-   Copy code
-
-   ```
-   GRANT ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL TO USER <username>;
-   ```
-
-#### Example for role setup
-
-Consider a scenario where the following roles should be set up:
-
-- **accountadmin:** Out-of-the box role from Snowflake, which has these CREATE privileges:
-
-  - CREATE OPENFLOW DEPLOYMENT
-  - CREATE OPENFLOW RUNTIME INTEGRATION (gen 1, on existing gen 1 deployments) / CREATE OPENFLOW RUNTIME (gen 2, on schema)
-- **openflow\_admin:** Can create, manage, and delete deployments.
-- **deployment1\_runtime\_manager\_1:** Can create a runtime only within deployment 1. It can modify and delete a runtime that it created within deployment 1, but not a runtime created by deployment1\_runtime\_manager\_2.
-- **deployment1\_runtime\_manager\_2:** Can create a runtime only within deployment 1. It can modify and delete a runtime that it created within deployment 1, but not a runtime created by deployment1\_runtime\_manager\_1.
-- **deployment1\_runtime\_viewer\_1:** Can view a runtime canvas within deployment 1 that was created by deployment1\_runtime\_manager\_1.
-- **deployment1\_runtime\_viewer\_2:** Can view a runtime canvas within deployment 1 that was created by deployment1\_runtime\_manager\_2.
-- **deployment2\_runtime\_manager:** Can create a runtime only within deployment 2.
-- **deployment2\_runtime\_viewer:** Can view a runtime canvas within deployment 2.
-
-To set up Openflow with these roles, follow these steps:
-
-1. Create new roles and assign the relevant privileges:
-
-   Copy code
-
-   ```
-   use role ACCOUNTADMIN;
-   create role if not exists openflow_admin;
-   create role if not exists deployment1_runtime_manager_1;
-   create role if not exists deployment1_runtime_manager_2;
-   create role if not exists deployment1_runtime_viewer_1;
-   create role if not exists deployment1_runtime_viewer_2;
-   create role if not exists deployment2_runtime_manager;
-   create role if not exists deployment2_runtime_viewer;
-
-   -- Assign create deployment privilege to roles. (This privilege cannot be granted in Openflow UI.)
-   grant create openflow deployment on account to role openflow_admin;
-
-   -- Assign create runtime privilege to roles. (This privilege cannot be granted in the Control Plane UI.)
-   -- Gen 1 (on existing gen 1 deployments):
-   grant create openflow runtime integration on account to role deployment1_runtime_manager_1;
-   grant create openflow runtime integration on account to role deployment1_runtime_manager_2;
-   grant create openflow runtime integration on account to role deployment2_runtime_manager;
-
-   -- Grant roles to users. (Repeat this step for each user.)
-
-   grant role <role name> to user <username>;
-   ```
-2. To create a deployment, follow these steps:
-
-   1. Sign in to Snowsight as openflow\_admin.
-   2. In the navigation menu, select **Ingestion** » **Openflow**.
-   3. To create deployment 1, select **Create a deployment**, and grant the USAGE privilege to deployment1\_runtime\_manager\_1 and deployment1\_runtime\_manager\_2.
-   4. To create deployment 2, select **Create a deployment**, and grant the USAGE privilege to deployment2\_runtime\_manager.
-3. To create a runtime in deployment 1, follow these steps:
-
-   1. Log in as deployment1\_runtime\_manager\_1.
-   2. Create a runtime as described in the following sections. deployment1\_runtime\_manager\_1 should be able to create runtimes and manage any runtimes it created within this deployment.
-   3. In the Openflow UI, select deployment1\_runtime\_viewer\_1 and grant it the USAGE privilege.
+For execute-as roles and an example that separates admin, editor, and viewer grants, see
+[Execute-as role](/user-guide/data-integration/openflow/privileges#label-openflow-execute-as-role).
 
 ### AWS account
 
@@ -276,13 +142,7 @@ If you want to use an existing VPC and your own subnets, ensure that you have th
 
 Important
 
-Sign in to Snowflake and switch to a role that your account admin has set up for using Openflow, for example `openflow_admin`.
-
-This may not be any of the following roles: ACCOUNTADMIN, ORGADMIN, GLOBALORGADMIN, or SECURITYADMIN.
-
-If you see a blank screen, or the error: “message: Invalid consent request”, when logging into Openflow, change your role to a role that is not one of these listed roles.
-
-For more information, see [Prerequisites](#prerequisites).
+To create the deployment in Snowsight, use a role with the `CREATE OPENFLOW DEPLOYMENT` privilege on the account, such as `OPENFLOW_ADMIN`. Runtime sign-in fails when the user’s default role is `ACCOUNTADMIN`, `ORGADMIN`, `GLOBALORGADMIN`, or `SECURITYADMIN`. If the runtime UI shows a blank screen, `Invalid consent request`, or `Unable to log in`, set `DEFAULT_ROLE` to an Openflow role. See [Openflow privileges](/user-guide/data-integration/openflow/privileges).
 
 1. In the navigation menu, select **Ingestion** » **Openflow**.
 2. Select **Launch Openflow**.

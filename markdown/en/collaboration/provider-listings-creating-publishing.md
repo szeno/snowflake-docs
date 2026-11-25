@@ -147,14 +147,14 @@ The following example shows how to create a private listing that includes a pric
 14. Click in the **Pricing** section to set up pricing information for your listing. For more information about pricing plans and offers, see [Pricing plans and offers](/user-guide/collaboration/listings/pricing-plans-offers/pricing-plans-and-offers).
 15. In the **Pricing plans** tab, select **Create pricing plan**.
 16. In the **Settings** dialog, specify a display name for your pricing plan, then click **Next**.
-17. In the **Pricing details** dialog, specify a pricing model. You can choose either **Usage-based** or **Flat fee**.
+17. In the **Pricing details** dialog, specify a pricing model. You can choose either **Usage-based** or **Flat-fee**.
 
     - If you select **Usage-based**, specify the following details:
 
       - The usage-based access fee (monthly fee).
       - The cost per query and the number of included queries (optional).
       - The maximum monthly charge (optional).
-    - If you select **Flat fee**, specify the flat fee amount and the billing frequency.
+    - If you select **Flat-fee**, specify the flat-fee amount and the billing frequency.
 18. Click **Next**.
 19. In the **Summary** dialog, review the pricing details, then click **Done**.
 20. Navigate to the **Offers** tab.

@@ -104,16 +104,19 @@ restAuthenticationParams (for OAuth) ::=
 ### REST configuration parameters (restConfigParams)
 
 `CATALOG_URI = 'delta_sharing_endpoint_url'`
-:   The endpoint URL for your Delta Sharing server. For Databricks Unity Catalog, this is the `endpoint` value from the
-    recipient credential file that Databricks generates.
+:   The endpoint URL for your Delta Sharing recipient. For Databricks Unity Catalog with bearer-token authentication, use the
+    complete `endpoint` value from your recipient credential file. For OIDC or OAuth authentication, use the recipient endpoint
+    supplied by your provider.
 
-    For example:
-
-    Copy code
+    The following example shows a recipient-specific AWS endpoint:
 
     ```
-    https://oregon.cloud.databricks.com/api/2.0/delta-sharing/metastores/46d301b9-1b7d-48ea-9d2a-48efb54bd280
+    https://<recipient-id>.opensharing.<region>.cloud.databricks.com/api/2.0/delta-sharing/metastores/<metastore-id>
     ```
+
+    Copy the endpoint unchanged, including its hostname and path. The hostname can vary by cloud and region.
+    For endpoint migration and token rotation, see
+    [Update recipient credentials or endpoints](/user-guide/tables-iceberg-configure-catalog-integration-delta-sharing#label-tables-iceberg-configure-catalog-integration-delta-sharing-update-recipient).
 
 `CATALOG_NAME = 'shares/share_name'`
 :   Specifies the Delta Sharing share to use, in the form `shares/<share_name>`. The share name is the name of the share that
@@ -198,7 +201,8 @@ For general information about roles and privilege grants for performing SQL acti
 
 - A Delta Sharing catalog integration provides read-only access to shared Delta tables. A catalog-linked database that uses
   a Delta Sharing catalog integration doesn’t support write operations.
-- You can’t modify an existing catalog integration; use a CREATE OR REPLACE CATALOG INTEGRATION statement instead.
+- Use [ALTER CATALOG INTEGRATION](/sql-reference/sql/alter-catalog-integration) to rotate a bearer token. You can’t change `CATALOG_URI` with
+  `ALTER CATALOG INTEGRATION`.
 - You can’t drop or replace a catalog integration if one or more Apache Iceberg™ tables
   are associated with the catalog integration.
 

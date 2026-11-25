@@ -164,9 +164,8 @@ parameters that you configure when [creating a secret](/sql-reference/sql/create
 :   Specifies a comma-separated list of scopes, with single quotes surrounding each scope, to use when making a request from the OAuth by a
     role with USAGE on the integration during the OAuth client credentials flow.
 
-    This list must be a subset of the scopes defined in the `OAUTH_ALLOWED_SCOPES` property of the security integration. If the
-    `OAUTH_SCOPES` property values are not specified, the secret inherits all of the scopes that are specified in the security
-    integration.
+    This list defines the maximum set of scopes that secrets created with this integration can request. The `OAUTH_SCOPES` property
+    of a secret must be a subset of this list. If a secret doesn’t specify `OAUTH_SCOPES`, it inherits all of the scopes in this list.
 
     For the ServiceNow connector, the only possible scope value is `'useraccount'`.
 

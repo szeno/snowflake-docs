@@ -1,6 +1,6 @@
 # Intent-Driven Governance
 
-[Preview Feature](/release-notes/preview-features) — Open
+[Preview Feature](/release-notes/preview-features)
 
 Available to all accounts.
 
@@ -92,12 +92,6 @@ LIST @INTENT_DRIVEN_GOVERNANCE.SPECS.SPECS/versions;
 ```
 
 - **Version control:** Each successful, verified execution creates an immutable committed version.
-
-  Copy code
-
-  ```
-  LIST @INTENT_DRIVEN_GOVERNANCE.SPECS.SPECS/versions/v001;
-  ```
 - **Persistent artifacts:** Working and committed artifacts preserve the spec, generated SQL, precheck evidence, and execution result outside the chat conversation.
 - **Restore:** Select a committed version to begin a read-only fix-forward restore review. The workflow compares it with the latest baseline and live state before generating new SQL.
 - **Auditability:** The execution summary records the approved SQL digest, executed statements, query IDs, verification results, and committed artifact paths.

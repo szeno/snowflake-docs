@@ -85,7 +85,7 @@ if __name__ == "__main__":
 Generate deployment settings. Setup resolves the database, schema, and warehouse
 from its options, then account defaults, then your personal database. It
 doesn’t fill the database from the active connection. See
-[Create the app](/developer-guide/snowflake-app-runtime/getting-started).
+[Build with the Snowflake CLI](/developer-guide/snowflake-app-runtime/getting-started#label-getting-started-cli-path).
 
 Copy code
 
@@ -95,8 +95,8 @@ snow app setup --app-name hello_python
 
 Keep the name, database, schema, warehouse, and ignore entries that setup
 writes. Add `compute_resource`, `runtime`, `install`, and `run`
-as shown below, and add `.venv`, `.python_packages`, and `output` to `ignore`.
-The complete `app.yml` looks like this. Replace the placeholders with the
+as in the following example, and add `.venv`, `.python_packages`, and `output` to `ignore`.
+The following example shows the complete `app.yml`. Replace the placeholders with the
 database, schema, and warehouse values from your generated file.
 
 Make sure `compute_resource: SERVERLESS` and `runtime: python` are set; Python

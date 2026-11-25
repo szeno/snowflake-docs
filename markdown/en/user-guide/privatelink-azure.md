@@ -36,7 +36,7 @@ Here are the high-level steps to integrate Snowflake with Azure Private Link:
    on-premises DNS server or private DNS on your VNet, and use DNS forwarding to direct queries for the entry from other locations where
    your users will access Snowflake.
 6. After the Private Endpoint displays a **CONNECTION STATE** value of **Approved**, test your connection to Snowflake with
-   [SnowCD (Connectivity Diagnostic Tool)](/user-guide/snowcd) and [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink).
+   [snow connection test](/developer-guide/snowflake-cli/connecting/configure-connections#test-and-diagnose-a-connection) and [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink).
 7. Connect to Snowflake using your private connectivity account URL.
 
 To further harden your security posture, Snowflake recommends [Pinning private connectivity endpoints for inbound traffic](/user-guide/pin-private-endpoints) for your Snowflake account.
@@ -215,13 +215,18 @@ Snowflake on Azure. Note that this procedure assumes that your use case does not
      Snowsight and the Snowflake Marketplace using private connectivity. However, there is additional configuration if you want to enable
      URL redirects. For information, see [Snowsight & Private Connectivity](/user-guide/ui-snowsight-gs#label-ui-snowsight-gs-private-connectivity).
 
+     If your account name contains an underscore, also add a DNS entry that uses a hyphen in place of each underscore in the account URL. For
+     example, if your organization is `myorg` and your account name is `account_dev`, add an entry like
+     `myorg-account-dev.privatelink.snowflakecomputing.com`. Without this entry, connections that use the hyphenated URL might fail. For more
+     information, see [Multi-factor authentication: New Duo interface](/release-notes/bcr-bundles/2025_01/bcr-1875).
+
      Note
 
      A full explanation of DNS configuration is beyond the scope of this procedure. For example, you can choose to integrate an
      [Azure Private DNS zone](https://docs.microsoft.com/en-us/azure/dns/private-dns-privatednszone) into your environment. Please
      consult your internal Azure and Cloud Infrastructure administrators to configure and resolve the URLs in DNS properly.
 5. After verifying your outbound firewall settings and DNS records include your Azure Private Link account and OCSP URLs, test your
-   connection to Snowflake with [SnowCD (Connectivity Diagnostic Tool)](/user-guide/snowcd) and [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink).
+   connection to Snowflake with [snow connection test](/developer-guide/snowflake-cli/connecting/configure-connections#test-and-diagnose-a-connection) and [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink).
 6. Connect to Snowflake with your private connectivity account [URL](/user-guide/organizations-connect#label-connecting-via-url).
 
    Note that if you want to connect to Snowsight via Azure Private Link, follow the instructions in the

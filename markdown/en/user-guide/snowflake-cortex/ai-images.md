@@ -657,12 +657,40 @@ in [AI\_COMPLETE with documents](/user-guide/snowflake-cortex/ai-complete-docume
 | Model | Context window (tokens) | File types | File size | Files per prompt |
 | --- | --- | --- | --- | --- |
 | `openai-gpt-4.1` | 1,047,576 | .jpg, .jpeg, .png, .webp, .gif | 10MB | 5 |
+| `openai-gpt-5` | 272,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-5-mini` | 272,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-5-nano` | 272,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-5.1` | 272,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-5.2` | 400,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-5.4` | 1,050,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-5.4-mini` | 400,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-5.4-nano` | 400,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-5.6-luna` | 1,050,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-5.6-sol` | 1,050,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-5.6-terra` | 1,050,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-6-astra` | 1,050,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-6-luna` | 1,050,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-6-sol` | 1,050,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
+| `openai-gpt-6.1-terra` | 1,050,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 5 |
 | `claude-sonnet-4-6` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
 | `claude-opus-5-5` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
 | `claude-sonnet-5-5` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
 | `claude-haiku-5-5` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
+| `claude-haiku-4-5` | 200,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
+| `claude-sonnet-4-5` | 200,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
+| `claude-opus-4-5` | 200,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
+| `claude-opus-4-6` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
+| `claude-opus-4-7` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
+| `claude-opus-4-8` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
+| `claude-sonnet-5` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
+| `claude-opus-5` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
 | `llama4-maverick` | 128,000 | .jpg, .jpeg, .png, .webp, .gif, .bmp | 10 MB | 10 |
 | `pixtral-large` | 128,000 | .jpg, .jpeg, .png, .webp, .gif, .bmp | 10 MB | 8 |
+| `grok-4.6` | 500,000 | .jpg, .jpeg, .png | [[F1]](#citation-F1) | 20 |
+| `grok-4.7` | 500,000 | .jpg, .jpeg, .png | [[F1]](#citation-F1) | 20 |
+| `kimi-k3` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 20 |
+| `mistral-large3` | 256,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 20 |
+| `qwen3-vl-235b-a22b` | 128,000 | .jpg, .jpeg, .png, .webp, .gif | [[F1]](#citation-F1) | 20 |
 | `voyage-multimodal-3` | 32,768 | .jpg, .png, .pg, .gif, .bmp | 10 MB | 5 |
 | `gemini-3.1-pro` | 1,000,000 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
 | `gemini-3.1-flash-lite` | 1,048,576 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
@@ -681,6 +709,9 @@ Show lessSee more
 
 [l1]
 Images must be smaller than 8000x8000 pixels. Limits apply to each individual image.
+
+[f1]
+The model provider does not publish a per-image file size limit for this model.
 
 [p1]
 A single request can include up to 20 image files, 10 audio files, and 10 video files, with a combined payload size of up to 100 MB.

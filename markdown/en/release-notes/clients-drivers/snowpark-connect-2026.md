@@ -11,7 +11,7 @@ For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snow
 
 #### Behavior changes
 
-- Starting with this version, a next-generation file reader and writer handle CSV and JSON reads and writes, and XML reads. See  for behavior changes
+- Starting with this version, a next-generation file reader and writer handle CSV and JSON reads and writes, and XML reads. See [Migrate Snowpark Connect for Spark file I/O to version 1.51.0 (Preview)](/developer-guide/snowpark-connect/snowpark-connect-file-io-migrate) for behavior changes
 
 #### Bug fixes
 

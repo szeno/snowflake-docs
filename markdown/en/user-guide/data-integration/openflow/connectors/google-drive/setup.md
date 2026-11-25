@@ -8,7 +8,15 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 [Snowflake Openflow on BYOC deployments](/user-guide/data-integration/openflow/about-byoc) are available to all accounts in AWS Commercial Regions only ([Commercial regions](/user-guide/intro-regions#label-na-general-regions)).
 
-This topic describes the steps to set up the Openflow Connector for Google Drive.
+This topic describes the steps to set up the Openflow Connector for Google Drive
+when you use domain-wide delegation (**Google Drive (Simple Ingest)** or
+**Google Drive (Cortex Connect)**).
+
+If you installed **Google Drive (Simple Ingest, No Domain-wide authority, no ACLs)**
+or **Google Drive (Cortex Connect, No Domain-wide authority, no ACLs)**, follow
+[Set up the Openflow Connector for Google Drive without domain-wide delegation (Preview)](/user-guide/data-integration/openflow/connectors/google-drive/setup-simple-ingest)
+instead. Those variants don’t use domain-wide delegation or OAuth scopes in the
+Google Admin Console.
 
 ## Prerequisites
 
@@ -48,8 +56,8 @@ off.
 
 1. Log in to the [Google Cloud Console](https://console.cloud.google.com/) with a super admin
    account that has the Organizational Policy Admin Role.
-2. Ensure you are in the project associated with your organization, not
-   the project in your organization.
+2. In the resource selector, make sure you’re in the organization, not a
+   project in the organization.
 3. Click **Organization Policies**.
 4. Select the **Disable service account key creation** policy.
 5. Click **Manage Policy** and turn off enforcement.
@@ -229,7 +237,7 @@ Show lessSee more
 | --- | --- | --- |
 | Destination Database | The database where data will be persisted. It must already exist in Snowflake. The name is case-sensitive. For unquoted identifiers, provide the name in uppercase. | Yes |
 | Destination Schema | The schema where data will be persisted, which must already exist in Snowflake. The name is case-sensitive. For unquoted identifiers, provide the name in uppercase.  See the following examples:  - `CREATE SCHEMA SCHEMA_NAME` or `CREATE SCHEMA schema_name`: use `SCHEMA_NAME` - `CREATE SCHEMA "schema_name"` or `CREATE SCHEMA "SCHEMA_NAME"`: use `schema_name` or `SCHEMA_NAME`, respectively | Yes |
-| Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/setup-openflow-byoc#label-deployment-byoc-setup-runtime-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. | Yes |
+| Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/privileges#label-openflow-execute-as-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. | Yes |
 | Snowflake Account Identifier | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Snowflake account name formatted as [organization-name]-[account-name]. | Yes |
 | Snowflake Private Key | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Must be the RSA private key used for authentication, formatted according to PKCS8   standards and including standard PEM headers and footers. Note that either a Snowflake Private   Key File or a Snowflake Private Key must be defined. | No |
 | Snowflake Private Key File | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: The private key file must be blank. - **KEY\_PAIR**: Upload the file that contains the RSA private key used for authentication to Snowflake,   formatted according to PKCS8 standards and including standard PEM headers and footers.   The header line begins with `-----BEGIN PRIVATE`.   To upload the private key file, select the **Reference asset** checkbox. | No |
@@ -256,7 +264,7 @@ Expand
 
 Show lessSee more
 
-1. Right-click on the plane and select **Enable all Controller Services**.
+1. Right-click the canvas and select **Enable all Controller Services**.
 2. Right-click on the imported process group and select **Start**. The connector starts the data ingestion.
 
 ## Use case 2: Use the connector definition to ingest files and perform processing with Cortex
@@ -311,7 +319,7 @@ Show lessSee more
 | Destination Database | The database where data will be persisted. It must already exist in Snowflake |
 | Destination Schema | The schema where data will be persisted. It must already exist in Snowflake |
 | Snowflake Account Identifier | Leave this blank when using SNOWFLAKE\_MANAGED Authentication Strategy. When using KEY\_PAIR, provide your Snowflake account name formatted as [organization-name]-[account-name] where data will be persisted. |
-| Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/setup-openflow-byoc#label-deployment-byoc-setup-runtime-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. |
+| Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/privileges#label-openflow-execute-as-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. |
 | Snowflake Private Key | Leave this blank when using SNOWFLAKE\_MANAGED Authentication Strategy. When using KEY\_PAIR, provide the RSA private key used for authentication. The RSA key must be formatted according to PKCS8 standards and have standard PEM headers and footers. Note that either Snowflake Private Key File or Snowflake Private Key must be defined. |
 | Snowflake Private Key File | Leave this blank when using SNOWFLAKE\_MANAGED Authentication Strategy. When using KEY\_PAIR, upload the file that contains the RSA Private Key used for authentication to Snowflake, formatted according to PKCS8 standards and having standard PEM headers and footers. The header line begins with `-----BEGIN PRIVATE`. Select the **Reference asset** checkbox to upload the private key file. |
 | Snowflake Private Key Password | Leave this blank when using SNOWFLAKE\_MANAGED Authentication Strategy. When using KEY\_PAIR, provide the password associated with the Snowflake Private Key File. |
@@ -339,7 +347,7 @@ Expand
 
 Show lessSee more
 
-1. Right-click on the plane and select **Enable all Controller Services**.
+1. Right-click the canvas and select **Enable all Controller Services**.
 2. Right-click on the imported process group and select **Start**. The connector starts the data ingestion.
 3. [Query the Cortex Search service](#label-openflow-gdrive-cortex).
 

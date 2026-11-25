@@ -10,6 +10,22 @@ Openflow BYOC deployments are available to all accounts in AWS [Commercial regio
 
 Provides pooled database connections to Snowflake services
 
+## Choosing an authentication strategy
+
+Set **Authentication Strategy** to **Snowflake Managed Token** in both Openflow Snowflake Deployments and BYOC
+deployments. With this strategy, the runtime obtains and refreshes the token that the service uses to connect to the
+Snowflake account that hosts the runtime, so you don’t manage credentials yourself. Set **Role** and **Warehouse** to
+the role and warehouse that the flow needs. For more information, see
+[Snowflake Managed Token authentication](/user-guide/data-integration/openflow/about#label-openflow-snowflake-managed-token).
+
+Use **Key Pair** only when the runtime must send data to a different Snowflake account than the one that hosts it.
+
+Note
+
+The properties marked as required in the following table apply to the **Password** and **Key Pair** authentication
+strategies. When **Authentication Strategy** is **Snowflake Managed Token**, the **Account**, **User**, **Password**,
+and **Private Key Service** properties aren’t used, and you can leave them blank.
+
 ## Tags
 
 connection, database, jdbc, openflow, snowflake

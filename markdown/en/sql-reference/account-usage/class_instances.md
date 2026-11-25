@@ -3,7 +3,7 @@ Schema:
 
 # CLASS\_INSTANCES view
 
-This Account Usage view displays a row for each instance of a class defined in the account.
+This Account Usage view displays a row for each instance of a class defined in the account. The data is retained for 365 days (1 year).
 
 ## Columns
 

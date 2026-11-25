@@ -46,6 +46,19 @@ Before you begin, make sure that you have:
   For Databricks Unity Catalog, see [Delta Sharing](https://docs.databricks.com/aws/en/delta-sharing/) in the Databricks
   documentation for instructions on enabling Delta Sharing, creating a share, and creating a recipient.
 
+## Use the current recipient endpoint
+
+For Databricks Unity Catalog, obtain the current endpoint for your recipient from the provider. With bearer-token
+authentication, use the `endpoint` value from the current recipient credential file. With OIDC or OAuth authentication,
+use the recipient endpoint that the provider supplies.
+
+Set `CATALOG_URI` to the complete endpoint, including its hostname and path. Databricks recipient-specific endpoints can
+use hostnames such as `<recipient-id>.opensharing.<region>.cloud.databricks.com` on AWS. Copy the endpoint that the provider
+supplies unchanged. If you restrict outbound connectivity, allow HTTPS access to that endpoint’s hostname.
+
+If your integration uses an older workspace or regional endpoint, obtain the current recipient endpoint and follow
+[Update recipient credentials or endpoints](#label-tables-iceberg-configure-catalog-integration-delta-sharing-update-recipient).
+
 ## Configure a catalog integration with bearer-token authentication
 
 With bearer-token authentication, the Delta Sharing provider issues a long-lived bearer token to the recipient. Snowflake uses
@@ -256,6 +269,32 @@ Where:
 ### Step 3: Verify the catalog integration
 
 Verify the catalog integration by following [Verify the catalog integration](#label-tables-iceberg-configure-catalog-integration-delta-sharing-verify).
+
+## Update recipient credentials or endpoints
+
+When the provider rotates a bearer token, obtain the current recipient credential file and check both `endpoint` and
+`bearerToken`. For Databricks instructions, see
+[Read data shared with bearer tokens](https://docs.databricks.com/aws/en/delta-sharing/read-data-open).
+
+If the endpoint is unchanged, update the bearer token with [ALTER CATALOG INTEGRATION](/sql-reference/sql/alter-catalog-integration):
+
+Copy code
+
+```
+ALTER CATALOG INTEGRATION my_delta_sharing_int
+  SET REST_AUTHENTICATION = (
+    BEARER_TOKEN = '<bearer_token_from_current_credential>'
+  );
+```
+
+If the endpoint changes, create a catalog integration with the current endpoint. You can’t change `CATALOG_URI` with
+`ALTER CATALOG INTEGRATION`. When existing Iceberg tables depend on the old integration, use a new integration name:
+Snowflake prevents dropping or replacing an integration with associated Iceberg tables. See the usage notes in
+[CREATE CATALOG INTEGRATION (Delta Sharing)](/sql-reference/sql/create-catalog-integration-delta-sharing).
+
+Verify the new or updated integration by following
+[Verify the catalog integration](#label-tables-iceberg-configure-catalog-integration-delta-sharing-verify).
+Plan the migration of dependent tables and catalog-linked databases before retiring the old integration.
 
 ## Verify the catalog integration
 

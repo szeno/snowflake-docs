@@ -61,7 +61,7 @@ See [.NET Driver](/developer-guide/dotnet/dotnet-driver) for documentation.
 
   Enabling CRLs improves security by checking for revoked certificates during the TLS handshake process. For more information, see the [Replacing OCSP with CRL as the method of certificate revocation checking](https://community.snowflake.com/s/article/Replacing-OCSP-with-CRL-as-the-method-of-certificate-revocation-checking) Knowledge Base article.
 
-  This feature is disabled by default. For information on enabling this feature, see [Switching on/off certificate revocation checks (CRL)](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/CertficateValidation.md#switching-onoff-certificate-revocation-checks-crl). We recommend you test this feature in advisory mode before enabling it in production.
+  This feature is disabled by default. For information on enabling this feature, see [Switching on/off certificate revocation checks (CRL)](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Client/CertficateValidation.md#switching-onoff-certificate-revocation-checks-crl). We recommend you test this feature in advisory mode before enabling it in production.
 - Added support for TLS 1.3. The default negotiated version of TLS is either TLS 1.2 or TLS 1.3, and the server decides which one to establish.
 - Removed noisy log messages.
 

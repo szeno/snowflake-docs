@@ -18,10 +18,13 @@ See also:
 Copy code
 
 ```
-DROP BACKUP POLICY <name>
+DROP BACKUP POLICY [ IF EXISTS ] <name>
 ```
 
 ## Parameters
+
+`IF EXISTS`
+:   If the backup policy doesn’t exist, the command completes without error.
 
 `name`
 :   Specifies the identifier for the backup policy.

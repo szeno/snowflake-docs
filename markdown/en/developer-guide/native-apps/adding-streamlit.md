@@ -36,18 +36,12 @@ Streamlit in Snowflake offers two runtime environments, and both are available i
 - **Container runtime**: Runs your app code as a long-running Snowpark Container Services service on a compute pool that
   the app creates in the consumer account. All viewers share one instance of the app.
 
-Note
-
-Container runtimes for Streamlit apps in a Snowflake Native App are in preview. See
-[Container runtime](#label-streamlit-container-runtime-na).
-
 The following table summarizes the differences that matter most when you choose a runtime for a
 Streamlit app inside a Snowflake Native App. For a general comparison of the two runtimes that isn’t
 specific to the Snowflake Native App Framework, see [Runtime environments for Streamlit apps](/developer-guide/streamlit/app-development/runtime-environments).
 
 | Consideration | Warehouse runtime | Container runtime |
 | --- | --- | --- |
-| Release stage | Generally available. | Preview. |
 | Compute for app code | A virtual warehouse. | A [compute pool](/developer-guide/native-apps/container-compute-pool) that the app creates and owns in the consumer account. |
 | Compute for queries | The same warehouse that runs the app code, unless the app activates a different warehouse. | A virtual warehouse, separate from the compute pool that runs the app code. |
 | Consumer privileges the app must request | None specific to Streamlit. | `CREATE COMPUTE POOL` and `BIND SERVICE ENDPOINT`, plus `CREATE WAREHOUSE` if the app creates its query warehouse and `CREATE EXTERNAL ACCESS INTEGRATION` if the app installs Python packages. Granted automatically with `manifest_version: 2`. |
@@ -304,10 +298,6 @@ Snowflake recommends explicitly setting the Streamlit version for your app. Howe
 do not explicitly set the version of the Streamlit library, Streamlit version 1.22.0 is set as the default.
 
 ## Container runtime
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
 
 A container runtime serves your Streamlit app as a long-running Snowpark Container Services service. Instead of creating
 a separate instance of the app for each viewer, the app runs once on a compute pool and all viewers

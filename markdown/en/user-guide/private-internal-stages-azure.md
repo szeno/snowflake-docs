@@ -100,12 +100,15 @@ Complete the following steps to configure and implement secure access to Snowfla
    ALTER ACCOUNT SET ENABLE_INTERNAL_STAGES_PRIVATELINK = true;
    SELECT KEY, VALUE FROM TABLE(flatten(input=>parse_json(system$get_privatelink_config())));
    ```
-3. As the Azure administrator, create a private endpoint through the Azure portal.
-
-   View the private endpoint properties and record the resource ID value. You will provide this value as the `privateEndpointResourceID`
-   function argument in the next step.
+3. As the Azure administrator, create a private endpoint through the Azure portal for the internal stage storage account whose
+   `ResourceID` you recorded in step 2. In the **Create a private endpoint** wizard, on the **Resource** tab, select
+   **Connect to an Azure resource by resource ID or alias** and enter that `ResourceID` as the resource.
 
    Verify that the **Target sub-resource** value is set to `blob`.
+
+   After you create the private endpoint, view its properties and record its own resource ID value. This value is different from the
+   storage account `ResourceID` from step 2. You will provide the private endpoint’s resource ID as the `privateEndpointResourceID`
+   function argument in the next step.
 
    For more information, see the Microsoft Azure Private Link [documentation](https://docs.microsoft.com/en-us/azure/private-link/).
 
@@ -140,9 +143,6 @@ Complete the following steps to configure and implement secure access to Snowfla
    call the
    [SYSTEM$GET\_STAGE\_PRIVATELINK\_AUTHORIZED\_ENDPOINTS](/sql-reference/functions/system_get_stage_privatelink_authorized_endpoints)
    function.
-
-   If necessary, complete these steps to [revoke](#label-private-internal-stages-azure-disable-endpoints) access to the internal
-   stage.
 5. Involve your network administrator to update the DNS settings in a private DNS zone. The settings must resolve the privatelink blob URL
    `<storage_account_name>.privatelink.blob.core.windows.net` to the private IP address(es) of the Azure private endpoint that connects
    to your storage account internal stage.
@@ -165,6 +165,8 @@ Complete the following steps to configure and implement secure access to Snowfla
      ```
      dig <storage_account_name>.blob.core.windows.net
      ```
+
+If you need to undo this configuration later, see [Revoking private endpoints to access Snowflake internal stages](#label-private-internal-stages-azure-disable-endpoints).
 
 ## Blocking public access — *Recommended*
 

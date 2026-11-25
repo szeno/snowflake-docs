@@ -116,8 +116,8 @@ Copy code
 ```
 CREATE ALERT my_alert_on_task_failures
   IF( EXISTS(
-    SELECT * FROM SNOWFLAKE.TELEMETRY.EVENT_TABLE
-      WHERE resource_attributes:"snow.executable.type" = 'task'
+    SELECT * FROM SNOWFLAKE.TELEMETRY.EVENTS
+      WHERE resource_attributes:"snow.executable.type" = 'TASK'
         AND resource_attributes:"snow.database.name" = 'my_db'
         AND record:"severity_text" = 'ERROR'
         AND value:"state" = 'FAILED'))
@@ -180,7 +180,7 @@ Copy code
 SELECT *
   FROM my_event_table
   WHERE
-    resource_attributes:"snow.executable.type" = 'FAILED' AND
+    resource_attributes:"snow.executable.type" = 'TASK' AND
     resource_attributes:"snow.schema.name" = 'MY_SCHEMA' AND
     value:state = 'FAILED'
   ORDER BY timestamp DESC;
@@ -281,8 +281,8 @@ The `value` column contains an [VARIANT](/sql-reference/data-types-semistructure
 
 | Key | Type | Description | Example |
 | --- | --- | --- | --- |
-| `state` | VARCHAR | The state of the task execution, which can be one of the following values:   - `SUCCEEDED`: The task execution succeeded. - `ERROR`: The task execution failed. | `SUCCEEDED` |
-| `message` | VARCHAR | If the value in `state` is `ERROR`, this column includes the error message. |  |
+| `state` | VARCHAR | The state of the task execution, which can be one of the following values:   - `SUCCEEDED`: The task execution succeeded. - `FAILED`: The task execution failed. | `SUCCEEDED` |
+| `message` | VARCHAR | If the value in `state` is `FAILED`, this column includes the error message. |  |
 
 Expand
 

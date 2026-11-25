@@ -230,6 +230,7 @@ Use `comparisonConfiguration.typeMappingFilePath` to supply a custom mapping fil
   Partition the sales_transactions table by TRANSACTION_ID for validation
   ```
 - **Anti-locking**: AIM DMV adds `LOCKING ROW FOR ACCESS` automatically on every Teradata source scan. No configuration is required. See [Anti-locking and query modifiers](../manual-migration/data-validation-configuration-reference#anti-locking-and-query-modifiers).
+- **AIM for Virtualization tables**: If the migration used `targetProfile: "aimv"`, set the same value in the validation workflow so schema and row-level validation accept the types those tables use. See [Validating AIM for Virtualization tables](../manual-migration/data-validation-configuration-reference#aim-for-virtualization-target-profile).
 
 ## Related content
 

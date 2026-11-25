@@ -142,9 +142,30 @@ Copy code
 ```
 -- Confirm the table is Iceberg
 SELECT GET_DDL('TABLE', '<db>.<schema>.<table>');
+```
 
--- Confirm the Iceberg version on the database
-SHOW PARAMETERS LIKE 'ICEBERG_VERSION_DEFAULT' IN DATABASE <db>;
+To confirm the table’s Iceberg version, run:
+
+Copy code
+
+```
+SHOW PARAMETERS LIKE 'ICEBERG_VERSION' IN TABLE <db>.<schema>.<table>;
+```
+
+The `value` column shows the table’s Iceberg format version. The `GET_DDL` output also includes
+`ICEBERG_VERSION = <n>`. For other ways to check the version, see
+[Get the format version for Iceberg tables](/user-guide/tables-iceberg-v3-specification-support#label-tables-iceberg-get-format-version).
+
+If your connector predates Iceberg Version pinning (see
+[Upgrading an existing connector to use Iceberg Version pinning](#upgrading-an-existing-connector-to-use-iceberg-version-pinning)),
+new tables use the legacy `ICEBERG_VERSION_DEFAULT` fallback. A schema-level value overrides the
+database-level value, so check the schema. The output shows the effective value and the level it’s
+set at:
+
+Copy code
+
+```
+SHOW PARAMETERS LIKE 'ICEBERG_VERSION_DEFAULT' IN SCHEMA <db>.<schema>;
 ```
 
 ## Known limitations

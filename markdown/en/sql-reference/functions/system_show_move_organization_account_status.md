@@ -3,9 +3,9 @@ Categories:
 
 # SYSTEM$SHOW\_MOVE\_ORGANIZATION\_ACCOUNT\_STATUS
 
-[Preview Feature](/release-notes/preview-features) — Open
+[Business Critical Feature](/user-guide/intro-editions)
 
-Available to all accounts that are Enterprise Edition (or higher).
+This feature requires Business Critical (or higher).
 
 To inquire about upgrading, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 

@@ -80,8 +80,12 @@ CREATE DATABASE <name> FROM LISTING '<listing_global_name>'
 Copy code
 
 ```
-CREATE DATABASE <name> FROM SHARE <provider_account>.<share_name>
+CREATE [ OR REPLACE ] DATABASE <name>
+    FROM SHARE <provider_account>.<share_name>
 ```
+
+Databases created from a share can’t be cloned, and properties such as `TRANSIENT` and `DATA_RETENTION_TIME_IN_DAYS`
+don’t apply. For details, see [Databases created from shares](/sql-reference/sql/create-database#label-create-database-from-share-usage-notes).
 
 **Secondary Database (Database Replication)**
 
@@ -185,6 +189,10 @@ For more details, see [CREATE <object> … CLONE](/sql-reference/sql/create-clon
 `provider_account.share_name`
 :   Specifies the identifier of the [share](/user-guide/data-sharing-intro) from which to create the database. As documented, the name of the
     share must be fully qualified with the name of the account providing the share.
+
+The `OR REPLACE` keyword also applies when you create a database from a share. For properties that don’t apply to databases created from a share, see
+[Databases created from shares](/sql-reference/sql/create-database#label-create-database-from-share-usage-notes) and
+[Consume imported data](/user-guide/data-share-consumers).
 
 ### Database replication parameters
 
@@ -651,10 +659,10 @@ For general information about roles and privilege grants for performing SQL acti
 - CREATE OR REPLACE *<object>* statements are atomic. That is, when an object is replaced, the old object is deleted and the new object is created in a single transaction.
 
 - Creating a new database automatically creates two schemas in the database:
-
   - PUBLIC: Default schema for the database.
   - INFORMATION\_SCHEMA: Schema which contains views and table functions that can be used for querying metadata about the objects in the
     database, as well as across all objects in the account.
+
 - Databases created from shares differ from standard databases in the following ways:
 
   - They do not have the PUBLIC schema unless it was explicitly granted to the share. They do include the

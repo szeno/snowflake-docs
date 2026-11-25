@@ -42,8 +42,14 @@ A service can be in one of the following states:
 - `DELETED`: the service has been dropped.
 - `INTERNAL_ERROR`: the service is in an unexpected internal state.
 
-On [serverless compute](/developer-guide/snowflake-app-runtime/serverless)
-(Public Preview), the `compute_resource` column in `SHOW APPLICATION SERVICES`
+### Serverless app status
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+On [serverless compute](/developer-guide/snowflake-app-runtime/serverless),
+the `compute_resource` column in `SHOW APPLICATION SERVICES`
 output shows `SERVERLESS`. A serverless app that stopped after its idle period
 shows `SUSPENDED` with `current_instances` at `0`. That’s expected: the next
 request starts it again, so you don’t resume it.
@@ -66,7 +72,7 @@ capped at 100 KB.
 
 On managed compute, use `--type` to select another stream. Serverless apps
 support only `--type log`; see
-[On serverless compute, live logs come from the running instance, so you can](/developer-guide/snowflake-app-runtime/observability#label-snowflake-app-runtime-observability-serverless-logs).
+[Serverless app logs](#label-snowflake-app-runtime-observability-serverless-logs).
 
 Copy code
 
@@ -101,6 +107,12 @@ SELECT SYSTEM$GET_APPLICATION_SERVICE_LOGS('my_db.my_schema.my_app', 500, 1);
 ```
 
 The role that reads logs needs the MONITOR privilege on the service.
+
+### Serverless app logs
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
 
 On serverless compute, live logs come from the running instance, so you can
 read them only while the app runs. While the app isn’t running, live logs fail
@@ -185,7 +197,7 @@ access as sensitive: anyone with `SELECT` on it can read logs from every
 Application Service. Don’t log query results, tokens, or secrets. See
 [Avoid logging sensitive data](/developer-guide/snowflake-app-runtime/secure-development#label-snowflake-app-runtime-secure-development-logging)
 and
-[Governing log access](/developer-guide/snowflake-app-runtime/security#label-snowflake-app-runtime-security-observability).
+[Govern log access](/developer-guide/snowflake-app-runtime/security#label-snowflake-app-runtime-security-observability).
 
 ## Next steps
 

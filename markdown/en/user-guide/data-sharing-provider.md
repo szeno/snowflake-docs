@@ -44,9 +44,10 @@ Note the following important usage details for creating and maintaining shares:
   if you drop and then recreate an object, it is still considered a new object, even if the name is the same.
   To make a new object available to consumers, you must use the [GRANT <privilege> … TO SHARE](/sql-reference/sql/grant-privilege-share) command to
   explicitly add the object to the share.
-- By default, for data security and privacy reasons, only [secure views](/user-guide/views-secure) are supported in shares.
-  If you add a standard view to a share created with the default settings, Snowflake returns an error. To share standard
-  (non-secure) views, create the share with `SECURE_OBJECTS_ONLY = FALSE`. For more information, see [Share data in non-secured views](/user-guide/data-sharing-views).
+- For data security and privacy reasons, by default only [secure views](/user-guide/views-secure) are supported in shares.
+  If a standard view is added to a share that doesn’t allow non-secure objects, Snowflake returns an error. To share
+  standard (non-secure) views, create or alter the share with `SECURE_OBJECTS_ONLY = FALSE`. For more information, see
+  [Share data in non-secured views](/user-guide/data-sharing-views).
 - Creating secure views on streams in your database and then sharing those views with consumers is not recommended.
   This scenario requires the ability to modify a stream in another account, which is not a supported operation and is therefore
   an anti-pattern. Instead, allow consumers to create their own streams on the tables and secure views that you share.
@@ -87,7 +88,7 @@ Before creating a share, Snowflake recommends identifying the Snowflake objects 
 - Tables
 - Dynamic tables
 - External tables
-- Externally managed and managed Apache Iceberg™ tables
+- Externally managed and Snowflake-managed Apache Iceberg™ tables
 - Externally managed Delta Lake tables (with Delta Direct and catalog-linked databases)
 - Views
 

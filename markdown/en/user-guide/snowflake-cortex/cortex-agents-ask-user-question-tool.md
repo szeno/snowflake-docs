@@ -14,7 +14,7 @@ The agent emits a tool use for `ask_user_question` containing one to four questi
 
 ## Enabling the ask user question tool
 
-You don’t usually enable this tool yourself: it’s injected automatically when you use [Deep Research](/user-guide/snowflake-cortex/snowflake-cowork#label-snowflake-cowork-deep-research) or [Profiles](/LIMITEDACCESS/snowflake-cortex/about-cowork-profiles), both of which need a way to come back to the user for a decision. Requests in those modes get the tool whether or not it’s declared.
+You don’t usually enable this tool yourself: it’s injected automatically when you use [Deep Research](/user-guide/snowflake-cortex/snowflake-cowork#label-snowflake-cowork-deep-research) or [Profiles](/user-guide/snowflake-cortex/snowflake-cowork/about-cowork-profiles), both of which need a way to come back to the user for a decision. Requests in those modes get the tool whether or not it’s declared.
 
 To make the tool available outside those modes, declare it in the request’s `tools` array. It takes no resources, so it needs no `tool_resources` entry:
 

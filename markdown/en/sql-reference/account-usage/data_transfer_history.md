@@ -3,8 +3,7 @@ Schema:
 
 # DATA\_TRANSFER\_HISTORY view
 
-This Account Usage view can be used to query the history of data transferred from Snowflake tables into a different cloud storage provider’s network (i.e. from Snowflake on AWS, Google Cloud Platform, or Microsoft Azure into
-the other cloud provider’s network) or geographical region within the last 365 days (1 year). The view includes the history for your entire Snowflake account.
+This Account Usage view can be used to query the history of data transferred from Snowflake tables within the last 365 days (1 year). The view includes transfers to or from the same cloud provider and region, as well as transfers to other cloud providers (Snowflake on AWS, Google Cloud Platform, or Microsoft Azure) and geographical regions. The view includes the history for your entire Snowflake account.
 
 ## Columns
 

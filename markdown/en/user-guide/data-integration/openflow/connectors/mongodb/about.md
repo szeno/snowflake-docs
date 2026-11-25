@@ -87,20 +87,10 @@ The MongoDB administrator performs the following tasks:
 1. Enable replication
 
    The MongoDB administrator configures a replica set or sharded cluster.
-2. Ensure the oplog size is sufficient
+2. Configure oplog retention
 
-   For high-volume data ingestion, the MongoDB administrator must ensure the `oplogSizeMB` is
-   sufficiently large to retain the history of changes during the connector or connectivity
-   downtime. If the connector is offline for longer than the Oplog’s retention period, the
-   full re-sync of data might be required.
-
-   Copy code
-
-   ```
-   replication:
-     replSetName: "myReplicaSet"
-     oplogSizeMB: 51200
-   ```
+   Snowflake recommends retaining at least 72 hours of oplog. See
+   [Set the oplog retention period](/user-guide/data-integration/openflow/connectors/mongodb/connect#label-mongodb-oplog-retention).
 3. Create a database user
 
    The MongoDB administrator creates a user with the necessary roles to monitor changes in the database.

@@ -41,7 +41,7 @@ To edit your Snowflake billing contact information:
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Admin** » **Billing**.
 3. On the **Billing and Payments** page, select the **Contacts** tab.
-4. Find the field that you want to edit, and select [![Pencil icon](/static/images/snowsight/icons/pencil-icon.svg)](/static/images/snowsight/icons/pencil-icon.svg).
+4. On the **Snowflake billing contact** card, find the field that you want to edit, and select [![Pencil icon](/static/images/snowsight/icons/pencil-icon.svg)](/static/images/snowsight/icons/pencil-icon.svg).
 5. Type your updated information.
 
    If you are updating email addresses, you can update multiple email addresses at the same time. The list can be comma-separated or
@@ -57,7 +57,7 @@ To edit your Snowflake billing contact information:
 ### Receiving notification of changes
 
 Snowflake notifies customers who update billing information about the change by sending an email message to the current email addresses
-shown in the **Usage emails** and **Invoices emails** fields on the **Billing communication** card. If a customer changes the email address
+shown in the **Usage statement emails** and **Invoice emails** fields on the **Snowflake billing contact** card. If a customer changes the email address
 in a specific email address field, Snowflake sends an email message to both the previous and current email addresses entered in that field.
 
 Snowflake sends notification emails to customers about successful and unsuccessful update attempts. Unsuccessful update attempts also

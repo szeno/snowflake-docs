@@ -33,7 +33,7 @@ Where:
 >   WAREHOUSE_TYPE = { STANDARD | 'SNOWPARK-OPTIMIZED' | ADAPTIVE }
 >   WAREHOUSE_SIZE = { XSMALL | SMALL | MEDIUM | LARGE | XLARGE | XXLARGE | XXXLARGE | X4LARGE | X5LARGE | X6LARGE }
 >   GENERATION = { '1' | '2' }
->   RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 | MEMORY_64X | MEMORY_64X_x86 }
+>   RESOURCE_CONSTRAINT = { MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 | MEMORY_64X | MEMORY_64X_x86 }
 >   MAX_CLUSTER_COUNT = <num>
 >   MIN_CLUSTER_COUNT = <num>
 >   SCALING_POLICY = { STANDARD | ECONOMY }
@@ -80,7 +80,7 @@ objectProperties ::=
   WAREHOUSE_TYPE = { STANDARD | 'SNOWPARK-OPTIMIZED' | ADAPTIVE }
   WAREHOUSE_SIZE = { XSMALL | SMALL | MEDIUM | LARGE | XLARGE | XXLARGE | XXXLARGE | X4LARGE | X5LARGE | X6LARGE }
   GENERATION = { '1' | '2' }
-  RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 | MEMORY_64X | MEMORY_64X_x86 }
+  RESOURCE_CONSTRAINT = { MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 | MEMORY_64X | MEMORY_64X_x86 }
   MAX_CLUSTER_COUNT = <num>
   MIN_CLUSTER_COUNT = <num>
   SCALING_POLICY = { STANDARD | ECONOMY }
@@ -160,19 +160,17 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
         Show lessSee more
 
         - X5LARGE and X6LARGE sizes for Snowpark-optimized warehouses are only supported with the MEMORY\_16X resource constraint.
-        - X5LARGE and X6LARGE sizes aren’t supported for standard warehouses that use the STANDARD\_GEN\_2 resource constraint.
+        - X5LARGE and X6LARGE sizes aren’t supported for standard warehouses that use generation 2 (`GENERATION = '2'`).
         - The default size for Snowpark-optimized warehouses is MEDIUM.
         - To use a value that contains a hyphen (for example, `'2X-LARGE'`), you must enclose the value in single quotes, as shown.
 
 `GENERATION = { '1' | '2' }`
-:   Specifies the warehouse generation for standard warehouses. This parameter provides a simplified way to set the warehouse generation,
-    instead of using RESOURCE\_CONSTRAINT = STANDARD\_GEN\_1 or STANDARD\_GEN\_2.
+:   Specifies the warehouse generation for standard warehouses. This parameter provides the way to set the warehouse generation.
+    Don’t use RESOURCE\_CONSTRAINT to set the generation of a standard warehouse.
 
     Valid values:
-    :   - `'1'`: Uses generation 1 compute resources. Equivalent to
-          `RESOURCE_CONSTRAINT = STANDARD_GEN_1`.
-        - `'2'`: Uses generation 2 compute resources. Equivalent to
-          `RESOURCE_CONSTRAINT = STANDARD_GEN_2`.
+    :   - `GENERATION = '1'`: Uses generation 1 compute resources.
+        - `GENERATION = '2'`: Uses generation 2 compute resources.
 
     Default:
     :   `'2'` (generation 2 compute resources)
@@ -181,10 +179,9 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
 
     - Values must be enclosed in single quotes (for example, `'1'`, not `1`).
     - GENERATION applies only to standard warehouses (`WAREHOUSE_TYPE = STANDARD`).
-    - When both GENERATION and RESOURCE\_CONSTRAINT are specified, any mismatch results in an error.
     - You can’t use GENERATION with Snowpark-optimized warehouses or memory-based resource constraints (MEMORY\_1X, MEMORY\_16X, MEMORY\_64X).
 
-`RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 | MEMORY_64X | MEMORY_64X_x86 }`
+`RESOURCE_CONSTRAINT = { MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 | MEMORY_64X | MEMORY_64X_x86 }`
 
 > [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
 >
@@ -193,8 +190,9 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
 >
 > All other MEMORY\_\* resource constraint sizes are generally available and are available for all cloud platforms.
 >
-> Specifies the memory and CPU architecture for [Snowpark-optimized warehouses](/user-guide/warehouses-snowpark-optimized),
-> or generation 1 or [generation 2 capabilities for standard warehouses](/user-guide/warehouses-gen2).
+> Specifies the memory and CPU architecture for [Snowpark-optimized warehouses](/user-guide/warehouses-snowpark-optimized).
+> To set generation 1 or [generation 2 capabilities for standard warehouses](/user-guide/warehouses-gen2),
+> use the `GENERATION` property.
 >
 > The following table includes the valid values for the property, available memory, CPU architecture, and the minimum warehouse
 > size required for the `resource_constraint` setting.
@@ -205,8 +203,6 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
 > >
 > > | Value | Warehouse type | Memory (up to) | CPU architecture | Min warehouse size required | Max warehouse size |
 > > | --- | --- | --- | --- | --- | --- |
-> > | `STANDARD_GEN_1` | Standard | 16 GB | Standard | XSMALL | X6LARGE |
-> > | `STANDARD_GEN_2` | Standard | 16 GB | Standard (generation 2) | XSMALL | X4LARGE |
 > > | `MEMORY_1X` | Snowpark-optimized | 16 GB | Standard | XSMALL | X4LARGE |
 > > | `MEMORY_1X_x86` | Snowpark-optimized | 16 GB | x86 | XSMALL | X4LARGE |
 > > | `MEMORY_16X` | Snowpark-optimized | 256 GB | Standard | MEDIUM | X6LARGE |
@@ -226,9 +222,9 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
 > >
 > > Tip
 > >
-> > For standard warehouses, consider using the GENERATION parameter instead of STANDARD\_GEN\_1 and STANDARD\_GEN\_2 values.
-> > The GENERATION parameter provides a simpler way to specify the warehouse generation.
-> > Specify `GENERATION = '2'` or `GENERATION = '1'`. The quotes are required around the
+> > You can’t set or unset `STANDARD_GEN_1` and `STANDARD_GEN_2` for `RESOURCE_CONSTRAINT`. For more information, see
+> > [BCR-2225](/release-notes/bcr-bundles/2026_02/bcr-2225).
+> > To specify the generation of a standard warehouse, use the GENERATION parameter. Specify `GENERATION = '2'` or `GENERATION = '1'`. The quotes are required around the
 > > generation number.
 
 `MAX_CLUSTER_COUNT = num`

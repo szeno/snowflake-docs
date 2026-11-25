@@ -255,6 +255,61 @@ Copy code
 SELECT COUNT(*) FROM IDENTIFIER(:table_name)
 ```
 
+The following example declares variables and binds them in `INSERT`, `UPDATE`, and `SELECT ... INTO` statements. For more
+information about `SELECT ... INTO`, see [Setting variables to the results of a SELECT statement](#label-snowscript-variables-select-into). The block creates a temporary
+table so that you can run the example as written:
+
+Copy code
+
+```
+DECLARE
+  item_id INTEGER DEFAULT 1;
+  item_name VARCHAR DEFAULT 'widget';
+  item_price NUMBER(10, 2) DEFAULT 9.99;
+  row_count INTEGER;
+BEGIN
+  CREATE OR REPLACE TEMPORARY TABLE items (id INTEGER, name VARCHAR, price NUMBER(10, 2));
+  INSERT INTO items (id, name, price) VALUES (:item_id, :item_name, :item_price);
+  UPDATE items SET price = :item_price * 2 WHERE id = :item_id;
+  SELECT COUNT(*) INTO :row_count FROM items WHERE price > :item_price;
+  RETURN 'Rows with price above ' || item_price || ': ' || row_count;
+END;
+```
+
+Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the
+`execute_stream` or `execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector)
+code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
+
+Copy code
+
+```
+EXECUTE IMMEDIATE $$
+DECLARE
+  item_id INTEGER DEFAULT 1;
+  item_name VARCHAR DEFAULT 'widget';
+  item_price NUMBER(10, 2) DEFAULT 9.99;
+  row_count INTEGER;
+BEGIN
+  CREATE OR REPLACE TEMPORARY TABLE items (id INTEGER, name VARCHAR, price NUMBER(10, 2));
+  INSERT INTO items (id, name, price) VALUES (:item_id, :item_name, :item_price);
+  UPDATE items SET price = :item_price * 2 WHERE id = :item_id;
+  SELECT COUNT(*) INTO :row_count FROM items WHERE price > :item_price;
+  RETURN 'Rows with price above ' || item_price || ': ' || row_count;
+END;
+$$
+;
+```
+
+Copy code
+
+```
++-------------------------------+
+| anonymous block               |
+|-------------------------------|
+| Rows with price above 9.99: 1 |
++-------------------------------+
+```
+
 If you are using a variable in an expression or with a
 [Snowflake Scripting language element](/sql-reference-snowflake-scripting) (for example,
 [RETURN](/sql-reference/snowflake-scripting/return)), you do not need to prefix the variable with a colon.

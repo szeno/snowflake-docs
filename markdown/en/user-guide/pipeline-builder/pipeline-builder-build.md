@@ -50,8 +50,9 @@ The canvas has the following controls:
 - **Deployed Project**: opens the deployed DCM project in Snowsight. This button appears after the project has been deployed at least once.
 - **Deploy**: plans and deploys the project. For more information, see [Deploy, run, and monitor pipelines](/user-guide/pipeline-builder/pipeline-builder-deploy).
 
-Each card on the canvas is a task. A badge above the card shows its type, such as **Notebook**, **Python**, **SQL**, or **SQL file**, and
-the card shows the file it runs. Select a card to open its settings drawer, or select the **⋮** menu on the card for more actions.
+Each card on the canvas is a task. A badge above the card shows its type, such as **Notebook**, **Python**, **SQL**, **SQL file**, or
+**dbt**, and the card shows the file or dbt project it runs. Select a card to open its settings drawer, or select the **⋮** menu on the card
+for more actions.
 
 ## Add tasks
 
@@ -75,6 +76,7 @@ To add a task, do one of the following:
 | **ML Job** | Python files as an [ML Job](/developer-guide/snowflake-ml/ml-jobs/overview). | An ML Job uses a Code Bundle with the **ML** bundle type. |
 | **SQL** | SQL that you write in the task. | Enter the SQL in the task’s **Source** editor. Use a SQL task to call stored procedures or run other Snowflake objects. |
 | **SQL file** | A `.sql` file. | For **Source**, select **Workspace files** to pick a file in the project, **Stage** to pick a file on a stage, or **Stage URI** to enter a stage path. |
+| **dbt** | A [dbt project object](/user-guide/data-engineering/dbt-projects-on-snowflake-understanding-dbt-project-objects) that’s deployed in the task’s schema. | Select the **dbt project** and the **Operation** to run. A dbt task needs a warehouse. See [Run a dbt project](#label-pipeline-builder-dbt-tasks). |
 
 Expand
 
@@ -185,6 +187,8 @@ shows an error with a **Fix** action that corrects it.
 - **Code bundle** (Notebook / Python and ML Job tasks): the **Bundle** that holds the code, the **Entrypoint** file to run, and the
   **Arguments** to pass to it. Select **Add argument** to add an argument.
 - **Source** (SQL and SQL file tasks): the SQL to run, or the `.sql` file to run.
+- **dbt** (dbt tasks): the **Operation**, **dbt project**, **Profile**, **Environment**, and **Additional Flags**. For more information,
+  see [Run a dbt project](#label-pipeline-builder-dbt-tasks).
 - **Schedule** (standalone tasks only): **None**, **Interval**, or **Cron**. Tasks in a task graph use the graph’s schedule.
 - **Execution**: the **Warehouse** the task uses. In a task graph, a task without a warehouse uses the graph’s default warehouse.
 
@@ -240,6 +244,36 @@ In a task graph, the graph owns the schedule, desired state, overlap policy, ret
 By default, a task runs after all its predecessors succeed. To change this, set a **Predecessors condition**, such as **At least one
 failed** or **None failed**. To add a SQL check that must also be true, such as whether a stream has data or what a predecessor returned,
 use **Additional conditions**. For the options and examples, see [Run tasks conditionally](/user-guide/pipeline-builder/pipeline-builder-conditions).
+
+## Run a dbt project
+
+A dbt task runs a deployed [dbt project object](/user-guide/data-engineering/dbt-projects-on-snowflake-understanding-dbt-project-objects)
+with [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project).
+
+Important
+
+Unlike Code Bundles, Pipeline Builder doesn’t create or deploy dbt projects for you. Before you can add a task that runs a dbt project,
+deploy the project as a dbt project object. For more information, see
+[Deploy dbt project objects](/user-guide/data-engineering/dbt-projects-on-snowflake-deploy).
+
+On the task’s **General** tab, set the following:
+
+- **Operation**: the dbt command to run. Choose **Run** (the default), **Test**, **Build**, **Docs generate**, **Snapshot**, or
+  **Source freshness**. To run another command, use a SQL task that calls `EXECUTE DBT PROJECT`. See
+  [Supported dbt commands and flags](/user-guide/data-engineering/dbt-projects-on-snowflake-supported-commands).
+- **dbt project**: the dbt project object to run. It must be in the same database and schema as the task.
+- **Profile**: the target in the project’s
+  [`dbt_projects_profiles.yml`](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices#label-dbt-projects-profiles-file)
+  or `profiles.yml` file. **Project default** uses the project’s default target.
+- **Environment**: an environment from the project’s
+  [`env.yml`](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables) file. **Project default** uses the dbt
+  project object’s default environment.
+- **Additional Flags**: other dbt CLI flags, such as `--select tag:daily`.
+- **Warehouse**: the warehouse the task runs on. It’s required, because a dbt task can’t use serverless compute. In a task graph whose
+  task defaults set a warehouse, you can leave it empty.
+
+dbt runs with the privileges of the role in the project’s profile file. The role that deploys the pipeline needs the `USAGE` privilege on
+the dbt project object. For more information, see [Access control for dbt projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-access-control).
 
 ## Configure task graph settings and task defaults
 

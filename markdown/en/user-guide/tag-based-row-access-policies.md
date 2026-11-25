@@ -51,7 +51,8 @@ account. Use the following steps:
 
    ```
    ALTER TAG [ IF EXISTS ] <tag_name> SET ROW ACCESS POLICY <policy_name>
-     [ ON ( <arg_name> <data_type> [ , ... ] ) [ , ( <arg_name> <data_type> [ , ... ] ) ... ] ];
+     [ ON ( <arg_name> <data_type> [ , ... ] ) [ , ( <arg_name> <data_type> [ , ... ] ) ... ] ]
+     [ PERMISSIVE | RESTRICTIVE ];
    ```
 
    For example:
@@ -114,6 +115,69 @@ When the tag is set on a table or view, Snowflake resolves signature aliases in 
 2. If at least one argument in that tuple can’t be resolved, Snowflake tries the next alias tuple (`user_id`, `social_security`).
 3. If more than one alias tuple matches the same table, Snowflake returns a runtime error when a query runs on that table.
 4. If no alias tuple matches, the policy isn’t enforced on that table.
+
+## Combine multiple tag-based row access policies (*Preview*)
+
+Use multiple tag-based row access policies when independent tags each carry their own row filter. For example, keep residency rules on a
+country tag and business-unit access on a department tag, then let Snowflake combine those filters at query time instead of merging every
+rule into a single policy.
+
+By default, every tag-based row access policy is `RESTRICTIVE`, whether you write `RESTRICTIVE` in the ALTER TAG statement or omit the
+keyword. Specify `PERMISSIVE` when you set the policy on the tag if you want that policy to grant access when its condition is satisfied,
+even if other permissive policies on the same object don’t pass.
+
+Copy code
+
+```
+ALTER TAG <tag_name> SET ROW ACCESS POLICY <policy_name>
+  [ ON ( <arg_name> <data_type> [ , ... ] ) ]
+  [ PERMISSIVE | RESTRICTIVE ];
+```
+
+### How multiple policies are evaluated
+
+When more than one tag with a row access policy applies to a table or view, Snowflake enforces policy conditions as follows:
+
+- `RESTRICTIVE` policies are combined with `AND` to progressively narrow row access. This is the secure default.
+- `PERMISSIVE` policies are combined with `OR` to grant broader access. The combined permissive result is then constrained by every
+  `RESTRICTIVE` policy.
+
+If you don’t specify a keyword, the row access policy is `RESTRICTIVE`.
+
+#### Scenario A: Multiple RESTRICTIVE tags
+
+A region tag carries `rap_us_only` and a department tag carries `rap_sales_dept`. Neither statement specifies a keyword, so both policies
+are `RESTRICTIVE`:
+
+Copy code
+
+```
+ALTER TAG tag_region SET ROW ACCESS POLICY rap_us_only
+  ON (region VARCHAR);
+
+ALTER TAG tag_dept SET ROW ACCESS POLICY rap_sales_dept
+  ON (department VARCHAR);
+```
+
+The table filter is `rap_us_only AND rap_sales_dept`. A row is visible only when both policies evaluate to `TRUE`.
+
+#### Scenario B: Mixed evaluation
+
+A department tag carries a `RESTRICTIVE` policy, and audit and executive tags carry `PERMISSIVE` policies:
+
+Copy code
+
+```
+ALTER TAG tag_dept SET ROW ACCESS POLICY rap_dept_filter
+  ON (department VARCHAR) RESTRICTIVE;
+
+ALTER TAG tag_audit SET ROW ACCESS POLICY rap_auditor PERMISSIVE;
+
+ALTER TAG tag_exec SET ROW ACCESS POLICY rap_exec PERMISSIVE;
+```
+
+The table filter is `(rap_auditor OR rap_exec) AND rap_dept_filter`. A row is visible when at least one permissive policy is satisfied, and
+the restrictive department policy is also satisfied.
 
 ## Remove a row access policy from a tag
 
@@ -460,7 +524,8 @@ The following steps create a tag-based row access policy to protect accounting d
   [Signature aliases](#label-tag-based-rap-signature-aliases) (in this topic).
 - A tag can have only one row access policy.
 - A policy cannot be assigned to a system tag.
-- A table can’t be associated with more than one tag-based row access policy.
+- When more than one tag with a row access policy applies to the same table or view, Snowflake combines the policies. For more information,
+  see [Combine multiple tag-based row access policies](#label-tag-based-rap-multiple) (in this topic).
 - If a different type of data protection policy — for example, a masking policy — is assigned to a tag, you can’t attach a row access
   policy to the same tag.
 - A tag-based row access policy can be applied to a table or view that is assigned other tag-based policies, for example, a tag-based

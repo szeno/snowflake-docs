@@ -1014,7 +1014,7 @@ within the session level by executing an ALTER SESSION command, but it does not 
 keep-alive functionality, such as extending the session. For information about setting the parameter at
 the session level, see the client documentation:
 
-- [.NET](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Connecting.md)
+- [.NET](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Client/Connecting.md)
 - [Golang](https://pkg.go.dev/github.com/snowflakedb/gosnowflake#section-readme)
 - [JDBC](/developer-guide/jdbc/jdbc-configure)
 - [Node.js](/developer-guide/node-js/nodejs-driver-connect)
@@ -3860,10 +3860,10 @@ Data Type:
 :   Boolean
 
 Description:
-:   Specifies whether to require a storage integration object as cloud credentials when creating a named external stage (using [CREATE STAGE](/sql-reference/sql/create-stage)) to access a private cloud storage location.
+:   Specifies whether to require a storage integration object as cloud credentials when creating a named external stage (using [CREATE STAGE](/sql-reference/sql/create-stage)) to access a private or public cloud storage location.
 
 Values:
-:   `TRUE`: Creating an external stage to access a private cloud storage location requires referencing a storage integration object as cloud credentials.
+:   `TRUE`: Creating an external stage to access a private or public cloud storage location requires referencing a storage integration object as cloud credentials.
 
     `FALSE`: Creating an external stage does not require referencing a storage integration object. Users can instead reference explicit cloud provider credentials, such as secret keys or access tokens, if they have been configured for the storage location.
 
@@ -3879,12 +3879,12 @@ Data Type:
 :   Boolean
 
 Description:
-:   Specifies whether to require using a named external stage that references a storage integration object as cloud credentials when loading data from or unloading data to a private cloud storage location.
+:   Specifies whether to require using a named external stage that references a storage integration object as cloud credentials when loading data from or unloading data to a private or public cloud storage location.
 
 Values:
-:   `TRUE`: Loading data from or unloading data to a private cloud storage location requires using a named external stage that references a storage integration object; specifying a named external stage that references explicit cloud provider credentials, such as secret keys or access tokens, produces a user error.
+:   `TRUE`: Loading data from or unloading data to a private or public cloud storage location requires using a named external stage that references a storage integration object; specifying a named external stage that references explicit cloud provider credentials, such as secret keys or access tokens, produces a user error.
 
-    `FALSE`: Users can load data from or unload data to a private cloud storage location using a named external stage that references explicit cloud provider credentials.
+    `FALSE`: Users can load data from or unload data to a private or public cloud storage location using a named external stage that references explicit cloud provider credentials.
 
     If [PREVENT\_UNLOAD\_TO\_INLINE\_URL](#label-prevent-unload-to-inline-url) is FALSE, then users can specify the explicit cloud provider credentials directly in the COPY statement.
 

@@ -10,7 +10,14 @@ You can customize the time period and time interval during which to evaluate war
 
 Note
 
-To view the load monitoring chart, you must be using a role that has the MONITOR privilege on the warehouse.
+To view the load monitoring chart in Snowsight, you must be using a role that has both of the following:
+
+- The MONITOR privilege on the warehouse.
+- Access to the SNOWFLAKE.ACCOUNT\_USAGE schema, through either the IMPORTED PRIVILEGES privilege on the SNOWFLAKE database or the
+  SNOWFLAKE.USAGE\_VIEWER database role. For information, see [Enabling other roles to use schemas in the SNOWFLAKE database](/sql-reference/account-usage#label-enabling-usage-for-other-roles).
+
+Without access to the ACCOUNT\_USAGE schema, the **Warehouse Activity** tile fails to load activity data. The MONITOR privilege alone is
+enough to query the INFORMATION\_SCHEMA [WAREHOUSE\_LOAD\_HISTORY](/sql-reference/functions/warehouse_load_history) table function.
 
 To view the chart:
 

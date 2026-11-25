@@ -50,7 +50,7 @@ To get the settings that you can use to configure a client, driver, library, or 
    - If your client, driver, library, or third-party application supports specifying a connection string (for example,
      the [ODBC Driver](/developer-guide/odbc/odbc-parameters#label-odbc-connection-string), [JDBC Driver](/developer-guide/jdbc/jdbc-configure#label-jdbc-connection-string),
      [Go Snowflake Driver](https://pkg.go.dev/github.com/snowflakedb/gosnowflake#hdr-Connection_String), or
-     [.NET Driver](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Connecting.md)):
+     [.NET Driver](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Client/Connecting.md)):
 
      1. Select the **Connectors/Drivers** tab.
      2. From the **Select Connector or Driver** menu, select the driver that you want to use.
@@ -164,7 +164,7 @@ Python:
         in the `us-west` region.
 
     For additional information, see
-    [Connecting](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Connecting.md).
+    [Connecting](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Client/Connecting.md).
 
 Golang:
 :   - Account name: `db, err := sql.Open("snowflake", "jsmith:mypassword@orgname-account_name/mydb/testschema?warehouse=mywh")`

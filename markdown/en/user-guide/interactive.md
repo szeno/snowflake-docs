@@ -86,7 +86,7 @@ Copy code
 ALTER WAREHOUSE interactive_demo RESUME;
 ```
 
-If you have tables added to an interactive warehouse, those added tables will be proactively warmed upon warehouse resumption. Queries will be slow while the cache warms after resuming. Warming speed depends on data size and warehouse size. An XS warehouse warms roughly at 300-400MB/s. The larger the table, the longer the cache-warming time. Larger warehouses warm faster.
+If you have tables added to an interactive warehouse, those added tables will be proactively warmed upon warehouse resumption. Queries will be slow while the cache warms after resuming. Warming speed depends on data size and warehouse size. An XS warehouse warms roughly at 300-400MB/s. The larger the table, the longer the cache-warming time. Larger warehouses warm faster. For example, warming 1 TB takes roughly 650-850 seconds on a medium warehouse and 330-420 seconds on a large warehouse. For details, see [Adding tables to an interactive warehouse](#optional-adding-tables-to-an-interactive-warehouse).
 
 The following command suspends an interactive warehouse:
 
@@ -189,6 +189,29 @@ The warming process doesn’t block the warehouse from accepting new queries. Pr
 1. Micropartitions required to serve user-issued queries
 2. Newly added micropartitions through auto-refresh or other means of data ingestion
 3. Other micropartitions of attached tables
+
+Warming runs in the background, so queries that need data that isn’t cached yet read it from remote storage
+and run slower until warming completes. The total warming time depends on the amount of data in the attached
+tables and on the size of the warehouse. Larger warehouses have more aggregate
+I/O bandwidth, so they warm faster.
+
+Warming speed scales with warehouse size. An XSMALL warehouse warms at roughly 300-400 MB/s, and each
+larger size warms about twice as fast as the previous size. For example, a medium warehouse warms at
+roughly 1.2-1.5 GB/s.
+
+The following estimates are approximate and show how warming time scales with warehouse size. They
+assume 1 TB of attached table data, which requires at least a medium warehouse.
+
+| Warehouse size | Approximate warming speed | Approximate time to warm 1 TB |
+| --- | --- | --- |
+| Medium | 1.2-1.5 GB/s | 650-850 seconds |
+| Large | 2.4-3.0 GB/s | 330-420 seconds |
+
+Expand
+
+Show lessSee more
+
+Actual warming times vary with data layout, table size, and concurrent query load.
 
 To run ADD TABLES command, the role must have the MANAGE ATTACHED TABLES or MODIFY privilege on
 the warehouse. Use MANAGE ATTACHED TABLES to grant scoped access to cache management

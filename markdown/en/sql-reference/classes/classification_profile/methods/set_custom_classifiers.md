@@ -22,7 +22,7 @@ Copy code
 
     Each key in the object specifies the name of an instance of the [CUSTOM\_CLASSIFIER class](/sql-reference/classes/custom_classifier).
 
-    The value of each key specifies the [<code className=”samp”><em>custom\_classifier</em></code>!LIST](/sql-reference/classes/custom_classifier/methods/list) method of the custom classifier instance.
+    The value of each key specifies the [<custom\_classifier>!LIST](/sql-reference/classes/custom_classifier/methods/list) method of the custom classifier instance.
 
 ## Returns
 

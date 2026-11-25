@@ -210,8 +210,8 @@ For specific scenarios, refer to this example table:
 | Usage-based | 1 month | Jan 1, 2023 | Jun 15, 2023 | Aug 1, 2023 |
 | Usage-based | 1 month | Jan 1, 2023 | Jun 2, 2023 | Aug 1, 2023 |
 | Usage-based | 1 month | Jan 1, 2023 | May 30, 2023 | Jul 1, 2023 |
-| Subscription-based | 3 months, recurring | Jan 1, 2023 | Feb 15, 2023 | Apr 1, 2023 |
-| Subscription-based | 3 months, recurring | Jan 1, 2023 | Mar 15, 2023 | Jul 1, 2023 |
+| Flat-fee | 3 months, recurring | Jan 1, 2023 | Feb 15, 2023 | Apr 1, 2023 |
+| Flat-fee | 3 months, recurring | Jan 1, 2023 | Mar 15, 2023 | Jul 1, 2023 |
 
 Expand
 
@@ -224,7 +224,7 @@ You can change the pricing plan for a paid listing when you edit the listing. If
 - You cannot remove a pricing plan from a paid listing to make it a free listing. See [Change Existing Listings to Paid Listings](#change-existing-listings-to-paid-listings).
 - You cannot change the type of pricing plan. If your listing currently has a
   [usage-based pricing plan](/collaboration/provider-listings-pricing-model#label-listings-usage-pricing-model), you cannot change the plan to a
-  [subscription-based pricing plan](/collaboration/provider-listings-pricing-model#label-listings-subscription-pricing-model), and vice versa.
+  [flat-fee pricing plan](/collaboration/provider-listings-pricing-model#label-listings-subscription-pricing-model), and vice versa.
 - If your paid listing is published in the Snowflake Marketplace, you must resubmit the listing for approval after changing the pricing plan.
   After the updated pricing plan is approved and the updated listing is published, Snowflake automatically notifies current consumers of
   the listing about the pricing plan change using the billing contact email address associated with each consumer’s account.

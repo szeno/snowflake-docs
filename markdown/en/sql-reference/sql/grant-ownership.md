@@ -217,8 +217,11 @@ GRANT OWNERSHIP
   - In the `granted_by` column, the value in one row is for the grant by the original owner role.
   - In the `granted_by` column, the value in the other row is for the grant by the new owner role.
 
-  Snowflake prevents the GRANT OWNERSHIP … REVOKE CURRENT GRANTS command on a shared database. For details, see the [Shared database](#shared-database)
+  Snowflake prevents the GRANT OWNERSHIP … REVOKE CURRENT GRANTS command on a shared database. For details, see the [Shared database (provider account)](#label-grant-ownership-shared-database-provider)
   example in this topic.
+- In a consumer account, you can’t transfer ownership of a database created from a share (an imported database). GRANT OWNERSHIP on an
+  imported database fails. To give another role access, use GRANT IMPORTED PRIVILEGES. To make another role the owner, drop the database
+  and recreate it from the share using that role. See [Shared database (consumer account)](#label-grant-ownership-shared-database-consumer).
 - Transferring ownership of objects that already exist affects only those objects. Objects created later are owned by the role in use when they’re created. A future ownership grant (`GRANT OWNERSHIP ON FUTURE`) applies to objects of that type that are created after the grant.
 - Transferring ownership of objects of the following types is blocked unless additional conditions are met:
 
@@ -342,7 +345,7 @@ privileges on the table:
 >   COPY CURRENT GRANTS;
 > ```
 
-### Shared database
+### Shared database (provider account)
 
 To transfer the OWNERSHIP privilege on a shared database, use these commands:
 
@@ -355,3 +358,26 @@ To transfer the OWNERSHIP privilege on a shared database, use these commands:
 > ```
 
 If necessary, re-grant the database to the share using a [GRANT <privilege> … TO SHARE](/sql-reference/sql/grant-privilege-share) command.
+
+### Shared database (consumer account)
+
+In a consumer account, you can’t use GRANT OWNERSHIP to transfer ownership of a database created from a share. Instead, drop the database
+and recreate it from the share using the role that should own it (`<new_owner_role>`):
+
+> Copy code
+>
+> ```
+> USE ROLE ACCOUNTADMIN;
+> GRANT IMPORT SHARE ON ACCOUNT TO ROLE <new_owner_role>;
+> GRANT CREATE DATABASE ON ACCOUNT TO ROLE <new_owner_role>;
+> DROP DATABASE <shared_db>;
+> USE ROLE <new_owner_role>;
+> CREATE DATABASE <shared_db> FROM SHARE <provider_account>.<share_name>;
+> ```
+
+Note
+
+Dropping and recreating the database removes the existing IMPORTED PRIVILEGES grants on it. Re-grant them after you recreate the
+database. The SYSADMIN role already has the CREATE DATABASE privilege.
+
+For more information, see [Granting privileges on an imported database](/user-guide/data-share-consumers#label-granting-privileges-on-shared-database).

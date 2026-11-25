@@ -7,6 +7,25 @@ Note
 
 The connection parameters are now documented in the [JDBC Driver connection parameter reference](/developer-guide/jdbc/jdbc-parameters).
 
+## Runtime dependencies
+
+The standard `snowflake-jdbc` JAR file bundles most of the libraries that the driver needs. To use connection caching and token
+caching, add [Java Native Access (JNA)](/developer-guide/jdbc/jdbc-download#label-jdbc-driver-add-jna-classes-to-classpath) to your classpath.
+
+If you manage dependencies yourself, use the `snowflake-jdbc-thin` artifact instead, which doesn’t bundle third-party libraries.
+For the Maven coordinates of each artifact, see [Downloading / integrating the JDBC Driver](/developer-guide/jdbc/jdbc-download).
+
+Note
+
+On Java 16 and later, the driver might fail with errors about illegal reflective access when it reads query results in Arrow format.
+To resolve this, start your application with the following JVM option:
+
+Copy code
+
+```
+--add-opens=java.base/java.nio=ALL-UNNAMED
+```
+
 ## JDBC Driver class
 
 Version 4.xVersion 3.x
@@ -526,6 +545,41 @@ To enable the workload identity federation authenticator, do the following:
 2. Set the `workloadIdentityProvider` connection parameter to `AWS`, `AZURE`, `GCP`, or `OIDC`, based on your platform.
 3. For OpenID Connect (OIDC), specify the `token` connection parameter.
 
+### Rotating OIDC tokens (Kubernetes)
+
+The `token` parameter is a static value that’s read when the connection is created. For workload identity federation, the driver
+doesn’t read the token from a file, and it doesn’t watch a token file for changes. The `token_file_path` option in `connections.toml`
+applies only to the OAuth authenticator.
+
+In Kubernetes environments such as Amazon EKS, Azure AKS, and Google GKE, projected service account tokens rotate. Your application
+must read the token file itself and pass the current value as the `token` parameter each time it opens a new connection.
+
+The driver uses the OIDC token only to log in. When the OIDC token expires, an open connection isn’t affected, because the driver
+renews the session without it. New connections, including connections that a connection pool opens, must use the
+current token from the file.
+
+Copy code
+
+```
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Properties;
+
+String token = new String(Files.readAllBytes(Paths.get("<service_account_token_path>")), StandardCharsets.UTF_8).trim();
+
+Properties props = new Properties();
+props.put("authenticator", "WORKLOAD_IDENTITY");
+props.put("workloadIdentityProvider", "OIDC");
+props.put("token", token);
+
+Connection conn = DriverManager.getConnection("jdbc:snowflake://<account_identifier>.snowflakecomputing.com", props);
+```
+
+For more information about workload identity federation, see [Workload identity federation](/user-guide/workload-identity-federation).
+
 ## Verifying the network connection to Snowflake with SnowCD
 
 After configuring your driver, you can evaluate and troubleshoot your network connectivity to Snowflake using [SnowCD](/user-guide/snowcd).
@@ -908,7 +962,7 @@ Some of the libraries use Apache commons-logging for logging. Handling these log
 
 ### Logging configuration file
 
-Alternatively, you can easily specify the [log level](https://github.com/snowflakedb/snowflake-jdbc/blob/master/src/main/java/net/snowflake/client/log/SFLogLevel.java) and
+Alternatively, you can easily specify the [log level](https://github.com/snowflakedb/snowflake-jdbc/blob/master/src/main/java/net/snowflake/client/internal/log/SFLogLevel.java) and
 the directory in which to save log files in the `sf_client_config.json` configuration file.
 
 Note

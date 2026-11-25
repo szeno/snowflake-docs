@@ -230,6 +230,11 @@ Note that the values for `regionless-snowsight-privatelink-url` and `snowsight-p
 Snowsight and the Snowflake Marketplace using private connectivity. However, there is additional configuration if you want to enable
 URL redirects. For information, see [Snowsight & Private Connectivity](/user-guide/ui-snowsight-gs#label-ui-snowsight-gs-private-connectivity).
 
+If your account name contains an underscore, also add a DNS entry that uses a hyphen in place of each underscore in the account URL. For
+example, if your organization is `myorg` and your account name is `account_dev`, add an entry like
+`myorg-account-dev.privatelink.snowflakecomputing.com`. Without this entry, connections that use the hyphenated URL might fail. For more
+information, see [Multi-factor authentication: New Duo interface](/release-notes/bcr-bundles/2025_01/bcr-1875).
+
 For additional help with DNS configuration, please contact your internal AWS administrator.
 
 Important
@@ -307,10 +312,10 @@ For information about creating gateway endpoints, see [Gateway VPC endpoints](ht
 
 ## Connect to Snowflake
 
-Before you connect to Snowflake, you can *optionally* use the Snowflake Connectivity Diagnostic tool (SnowCD) to evaluate the
+Before you connect to Snowflake, you can *optionally* use [snow connection test](/developer-guide/snowflake-cli/connecting/configure-connections#test-and-diagnose-a-connection) to evaluate the
 network connection with Snowflake and AWS PrivateLink.
 
-For more information, see [SnowCD](/user-guide/snowcd) and [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink).
+For more information, see [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink).
 
 Otherwise, connect to Snowflake with your private connectivity account [URL](/user-guide/organizations-connect#label-connecting-via-url).
 

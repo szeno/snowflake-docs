@@ -15,7 +15,7 @@ The ability to define [semantic views](/user-guide/views-semantic/overview) (whi
 to semantic models) is now generally available.
 
 To create and manage semantic views, you can use SQL commands (such as [CREATE SEMANTIC VIEW](/sql-reference/sql/create-semantic-view)) and the
-[Cortex Analyst Semantic View Generator](/user-guide/views-semantic/ui), which is a wizard in Snowsight that guides you
+[Cortex Analyst Semantic View Generator](/user-guide/views-semantic/autopilot), which is a wizard in Snowsight that guides you
 through the process of creating a semantic view.
 
 Once you create a semantic view, Cortex Analyst can leverage the information in the semantic view definition and generate the

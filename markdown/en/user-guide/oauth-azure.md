@@ -97,7 +97,6 @@ flow in use. After determining which OAuth flow to use:
   | displayName | A friendly name for users to view. |
   | id | A unique ID. You can use the `[System.Guid]::NewGuid()` function from PowerShell to generate a unique ID if needed. |
   | isEnabled | Set to `true`. |
-  | lang | The language. Set to `null`. |
   | origin | Set to `Application`. |
   | value | Set to the name of the Snowflake role with the `session:role:` prefix.   For the Analyst role, enter `session:role:analyst`. |
 
@@ -117,7 +116,6 @@ flow in use. After determining which OAuth flow to use:
           "displayName": "Account Admin",
           "id": "3ea51f40-2ad7-4e79-aa18-12c45156dc6a",
           "isEnabled": true,
-          "lang": null,
           "origin": "Application",
           "value": "session:role:analyst"
       }

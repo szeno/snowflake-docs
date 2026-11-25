@@ -22,9 +22,9 @@ The following methods and SQL commands are supported:
   - [SHOW CUSTOM\_CLASSIFIER](/sql-reference/classes/custom_classifier/commands/show-custom-classifiers)
 - Methods:
 
-  - [<code className=”samp”><em>custom\_classifier</em></code>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex)
-  - [<code className=”samp”><em>custom\_classifier</em></code>!DELETE\_CATEGORY](/sql-reference/classes/custom_classifier/methods/delete_category)
-  - [<code className=”samp”><em>custom\_classifier</em></code>!LIST](/sql-reference/classes/custom_classifier/methods/list)
+  - [<custom\_classifier>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex)
+  - [<custom\_classifier>!DELETE\_CATEGORY](/sql-reference/classes/custom_classifier/methods/delete_category)
+  - [<custom\_classifier>!LIST](/sql-reference/classes/custom_classifier/methods/list)
 
 ## Access control
 
@@ -189,7 +189,7 @@ Complete these steps to create a custom classifier to classify a table:
    | 2023-09-08 07:00:00.123000+00:00 | INTERNAL_IDS  | DATA          | CLASSIFIERS | 1.0             | None    | DATA_OWNER  |
    +----------------------------------+---------------+---------------+-------------+-----------------+---------+-------------+
    ```
-6. Call the [<code className=”samp”><em>custom\_classifier</em></code>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex) method on the instance to specify the system tags and regular
+6. Call the [<custom\_classifier>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex) method on the instance to specify the system tags and regular
    expression to identify internal employee IDs in a column. In this example, the value regular expression matches six-digit employee IDs.
    The regular expression to match the column name, `EMP.*ID.*`, and the comment are optional:
 
@@ -242,7 +242,7 @@ Complete these steps to create a custom classifier to classify a table:
    values such as `xyz`.
 
    For details, see [String functions (regular expressions)](/sql-reference/functions-regexp).
-7. Call the [<code className=”samp”><em>custom\_classifier</em></code>!LIST](/sql-reference/classes/custom_classifier/methods/list) method on the instance to verify the regular expression that
+7. Call the [<custom\_classifier>!LIST](/sql-reference/classes/custom_classifier/methods/list) method on the instance to verify the regular expression that
    you added to the instance:
 
    Copy code
@@ -269,7 +269,7 @@ Complete these steps to create a custom classifier to classify a table:
    +--------------------------------------------------------------------------------+
    ```
 
-   To remove a category, call the [<code className=”samp”><em>custom\_classifier</em></code>!DELETE\_CATEGORY](/sql-reference/classes/custom_classifier/methods/delete_category) method on the instance.
+   To remove a category, call the [<custom\_classifier>!DELETE\_CATEGORY](/sql-reference/classes/custom_classifier/methods/delete_category) method on the instance.
 8. Call the [SYSTEM$CLASSIFY\_SCHEMA](/sql-reference/stored-procedures/system_classify_schema) stored procedure to classify the table.
 9. If the instance is no longer needed, use the [DROP CUSTOM\_CLASSIFIER](/sql-reference/classes/custom_classifier/commands/drop-custom-classifier) command to
    remove a custom classifier instance from the system:

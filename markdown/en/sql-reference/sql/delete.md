@@ -76,6 +76,31 @@ DELETE FROM <table_name>
   Because at least one joined pair satisfies the condition, the row is deleted. As a result, after the statement completes, `tab1`
   is empty.
 
+## Protecting against accidental deletes
+
+A DELETE statement is permanent unless you can recover the removed rows. Snowflake provides several features that help you avoid
+or reverse an accidental delete:
+
+- **Time Travel:** For the data retention period, you can query a table as it was before the delete by using
+  [AT | BEFORE](/sql-reference/constructs/at-before) (`AT` or `BEFORE`), and then restore the rows. For more information, see
+  [Understanding & using Time Travel](/user-guide/data-time-travel).
+- **Zero-copy cloning:** You can clone a table, including as it existed at a past Time Travel point, and keep the clone as a safety copy
+  before you delete. For more information, see [Cloning considerations](/user-guide/object-clone).
+- **Backups:** A backup preserves a point-in-time copy of a table that you can restore from later. For more information, see
+  [Backups for disaster recovery and immutable storage](/user-guide/backups).
+- **Fail-safe:** After the Time Travel retention period ends, Snowflake keeps historical data for a further seven days for
+  disaster recovery. Only Snowflake can recover data in Fail-safe, so you can’t depend on it for routine recovery. For more
+  information, see [Understanding and viewing Fail-safe](/user-guide/data-failsafe).
+- **Transactions:** If you run DELETE inside an explicit transaction, you can undo it with [ROLLBACK](/sql-reference/sql/rollback) before you
+  commit. For more information, see [BEGIN](/sql-reference/sql/begin).
+- **UNDROP:** If you dropped a table rather than deleting rows from it, use [UNDROP TABLE](/sql-reference/sql/undrop-table).
+- **Archiving rows:** You can copy the rows to an archive table with INSERT … SELECT before you delete them.
+- **Streams:** A stream records the changes made to a table, including deletes. For more information, see
+  [Introduction to streams](/user-guide/streams-intro).
+- **Access control:** Grant the DELETE privilege on a table only to roles that need it.
+
+For examples, see [Recovering from an accidental delete](#label-delete-examples-recover).
+
 ## Examples
 
 Suppose that an organization that leases bicycles uses the following tables:
@@ -206,3 +231,111 @@ Show the data after the delete:
 > |        101 |        1111 |
 > +------------+-------------+
 > ```
+
+### Recovering from an accidental delete
+
+The following examples use the `leased_bicycles` table as originally loaded, with all five rows
+(bicycles 101 through 105) present. Run the load statements again to reset the table if needed.
+
+#### Recover deleted rows with Time Travel
+
+Record the time before you delete, and then delete the rows:
+
+Copy code
+
+```
+SET before_delete = CURRENT_TIMESTAMP();
+
+DELETE FROM leased_bicycles WHERE "customer_id" = 5555;
+```
+
+To recover the deleted rows, insert them back from the table as it was before the delete. Alternatively, use
+`BEFORE(STATEMENT => '<query_id>')` with the query ID of the DELETE statement:
+
+Copy code
+
+```
+INSERT INTO leased_bicycles
+  SELECT * FROM leased_bicycles AT(TIMESTAMP => $before_delete)
+  WHERE "customer_id" = 5555;
+```
+
+Copy code
+
+```
+SELECT * FROM leased_bicycles WHERE "customer_id" = 5555;
+```
+
+```
++------------+-------------+
+| BICYCLE_ID | customer_id |
+|------------+-------------|
+|        105 |        5555 |
++------------+-------------+
+```
+
+#### Recover by cloning the table from before the delete
+
+Create a clone of the table as it was before the delete, replacing `<query_id>` with the query ID of the DELETE statement:
+
+Copy code
+
+```
+CREATE TABLE leased_bicycles_restored CLONE leased_bicycles
+  BEFORE(STATEMENT => '<query_id>');
+```
+
+You can then copy rows from the clone back into the original table, or swap the two tables by using
+[ALTER TABLE](/sql-reference/sql/alter-table) … SWAP WITH.
+
+#### Archive rows before you delete them
+
+Copy the rows to an archive table, and then delete them. Running both statements in one transaction ensures that the delete
+happens only if the archive succeeds:
+
+Copy code
+
+```
+CREATE TABLE leased_bicycles_archive LIKE leased_bicycles;
+
+BEGIN;
+INSERT INTO leased_bicycles_archive
+  SELECT * FROM leased_bicycles WHERE "customer_id" = 5555;
+DELETE FROM leased_bicycles WHERE "customer_id" = 5555;
+COMMIT;
+```
+
+#### Undo a delete with ROLLBACK
+
+Run the delete in an explicit transaction, check the result, and then roll back to undo it:
+
+Copy code
+
+```
+BEGIN;
+DELETE FROM leased_bicycles WHERE "customer_id" = 5555;
+SELECT COUNT(*) FROM leased_bicycles WHERE "customer_id" = 5555;
+```
+
+```
++----------+
+| COUNT(*) |
+|----------|
+|        0 |
++----------+
+```
+
+Copy code
+
+```
+ROLLBACK;
+SELECT COUNT(*) FROM leased_bicycles WHERE "customer_id" = 5555;
+```
+
+```
++----------+
+| COUNT(*) |
+|----------|
+|        1 |
++----------+
+```

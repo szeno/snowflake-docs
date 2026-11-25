@@ -146,7 +146,7 @@ Copy code
 snow helpers import-snowsql-connections
 ```
 
-As the command processes the SnowSQL configuration files, it shows the progress and prompts for confirmation when a connection with the same name is already defined in the Snowflake CLI configuration.
+As the command processes the SnowSQL configuration files, it shows progress and prompts for confirmation when a connection with the same name is already defined in the Snowflake CLI configuration.
 
 ```
 SnowSQL config file [/etc/snowsql.cnf] does not exist. Skipping.

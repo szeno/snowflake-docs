@@ -54,6 +54,7 @@ When –json is present, the CLI writes a single JSON document to stdout at the 
 - `scai data validate pause`
 - `scai data validate resume`
 - `scai data validate cancel`
+- `scai data validate revalidate`
 - `scai data orchestrator setup`
 - `scai data orchestrator update`
 - `scai data orchestrator start`
@@ -2544,6 +2545,55 @@ scai data validate cancel MY_WORKFLOW
 
 # Cancel a workflow (skip prompt)
 scai data validate cancel MY_WORKFLOW -y
+```
+
+---
+
+##### scai data validate revalidate
+
+Create a child workflow that retries failed validation work from a finished or failed parent workflow.
+
+Copy code
+
+```
+scai data validate revalidate <WORKFLOW_NAME> [--recheck-schema] [-c <CONNECTION>]
+```
+
+**Prerequisites:**
+
+- A finished or failed data validation workflow
+- Snowflake connection with appropriate privileges
+- A running Orchestrator
+- A running Worker for external-source validation
+
+**Behavior:**
+
+- Reuses existing `PARTITION_METADATA` by default and re-runs only failing L2 or L3 partitions
+- Skips schema re-checks by default
+- Runs the full pipeline for schema-failed tables when `--recheck-schema` is set
+
+**Options:**
+
+| Option | Description | Required |
+| --- | --- | --- |
+| `<WORKFLOW_NAME>` | Name of the finished or failed parent workflow. | Yes |
+| `--recheck-schema` | Re-check schema and run the full pipeline for schema-failed tables. Required to retry a schema-only failure when all data partitions passed. | No |
+| `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use from `connections.toml`. Uses the default connection when omitted. | No |
+
+Expand
+
+Show lessSee more
+
+**Examples:**
+
+Copy code
+
+```
+# Reuse partition metadata and retry failing L2/L3 work
+scai data validate revalidate MY_WORKFLOW
+
+# Re-check schema and run the full pipeline for schema-failed tables
+scai data validate revalidate MY_WORKFLOW --recheck-schema
 ```
 
 ---

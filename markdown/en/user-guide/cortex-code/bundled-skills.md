@@ -146,13 +146,14 @@ Ways to use it:
 
 ### `workload-performance-analysis`
 
-Analyze SQL query performance via ACCOUNT\_USAGE: spilling, partition pruning, cache hit rates, clustering key recommendations, SOS and QAS eligibility.
+Analyze SQL query performance via ACCOUNT\_USAGE: spilling, partition pruning, cache hit rates, clustering key recommendations, SOS and QAS eligibility, and the impact of Snowflake Optima.
 
 Ways to use it:
 
 - Identify queries with excessive disk spilling and get concrete fix recommendations
 - Analyze partition pruning ratios and suggest better clustering keys for large tables
 - Find queries eligible for Search Optimization Service or Query Acceleration Service
+- Summarize what Snowflake Optima did for your account: partitions pruned, tables maintained by Optima Clustering, and queries optimized by Optima Planning
 
 For Snowsight entry points, example prompts, and prerequisites, see
 [Analyze Workload Performance with CoCo](/user-guide/analyze-workload-performance-coco).
@@ -218,6 +219,16 @@ Ways to use it:
 - Initialize a new DCM project with DEFINE TABLE, DEFINE SCHEMA, and three-tier role patterns
 - Deploy schema changes across dev, staging, and production environments via manifest
 - Audit an existing DCM project for drift, misconfigurations, or missing role grants
+
+### `ci-cd`
+
+Set up automated Snowflake deploys with CI/CD pipelines and OIDC authentication on GitHub Actions, GitLab CI, or Azure DevOps. Cortex Code loads this skill when you want to automate deploys, deploy on push or pull request merge, validate on pull request or merge request, configure pipeline authentication, or allow CI runners through a network policy. The skill defaults to OIDC `WORKLOAD_IDENTITY` on a `TYPE = SERVICE` user, so you need a role such as USERADMIN or ACCOUNTADMIN to create that user. It asks for your approval before it creates the user, changes network or authentication policies, or pushes pipeline files.
+
+Ways to use it:
+
+- Set up a GitHub Actions workflow that deploys to Snowflake with OIDC
+- Validate merge requests in a GitLab CI pipeline before they merge
+- Allow GitHub-hosted runners through a network policy by using the `SNOWFLAKE.NETWORK_SECURITY.GITHUBACTIONS_GLOBAL` managed rule
 
 ### `iceberg`
 

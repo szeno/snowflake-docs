@@ -51,7 +51,7 @@ to which it is applied, and not all objects support all privileges:
 | EXECUTE AUTO CLASSIFICATION | Global, Database, Schema | Grants the ability to set a classification profile on a database or schema to implement [sensitive data classification](/user-guide/classify-intro). |
 | EXECUTE DATA METRIC FUNCTION | Global | Enables using serverless compute resources when calling a data metric function. |
 | EXECUTE MANAGED ALERT | Global | Grants the ability to create alerts that rely on serverless compute resources. Only required to create serverless alerts. The role that has the OWNERSHIP privilege on a serverless alert must have both the EXECUTE MANAGED ALERT and the EXECUTE ALERT privilege for the alert to run. |
-| EXECUTE MANAGED TASK | Global | Grants the ability to create tasks that rely on serverless compute resources. Only required to create serverless tasks. The role that has the OWNERSHIP privilege on a task must have both the EXECUTE MANAGED TASK and the EXECUTE TASK privilege for the task to run. |
+| EXECUTE MANAGED TASK | Global | Grants the ability to create tasks that rely on serverless compute resources. Only required to create serverless tasks. For serverless tasks to run, the role that has the OWNERSHIP privilege on the task must have both the EXECUTE MANAGED TASK and the EXECUTE TASK privileges. |
 | EXECUTE TASK | Global | Grants the ability to run tasks owned by the role. For serverless tasks to run, the role that has the OWNERSHIP privilege on the task must also have the global EXECUTE MANAGED TASK privilege. |
 | FAILOVER | Failover Group, Connection | Grants the ability to promote a secondary failover group or secondary connection to serve as the primary. |
 | IMPORT ORGANIZATION LISTING | Global | Enables a consumer to install an organizational listing, or to query an organizational listing without installing it. |
@@ -186,7 +186,7 @@ The remaining sections in this topic describe the specific privileges available 
 | EXECUTE AUTO CLASSIFICATION | Grants the ability to set a classification profile on a schema to implement [sensitive data classification](/user-guide/classify-intro). | Must be granted by the ACCOUNTADMIN role. |
 | EXECUTE DATA METRIC FUNCTION | Enables using serverless compute resources when calling a data metric function. |  |
 | EXECUTE MANAGED ALERT | Grants the ability to create alerts that rely on serverless compute resources. Only required to create serverless alerts. The role that has the OWNERSHIP privilege on a serverless alert must have both the EXECUTE MANAGED ALERT and the EXECUTE ALERT privilege for the alert to run. |  |
-| EXECUTE MANAGED TASK | Grants the ability to create tasks that rely on serverless compute resources. Only required for serverless tasks. The role that has the OWNERSHIP privilege on a task must have both the EXECUTE MANAGED TASK and the EXECUTE TASK privilege for the task to run. | Must be granted by the ACCOUNTADMIN role. |
+| EXECUTE MANAGED TASK | Grants the ability to create tasks that rely on serverless compute resources. Only required for serverless tasks. For serverless tasks to run, the role that has the OWNERSHIP privilege on the task must have both the EXECUTE MANAGED TASK and the EXECUTE TASK privileges. | Must be granted by the ACCOUNTADMIN role. |
 | EXECUTE TASK | Grants the ability to run tasks owned by the role. For serverless tasks to run, the role that has the OWNERSHIP privilege on the task must also have the global EXECUTE MANAGED TASK privilege. | Must be granted by the ACCOUNTADMIN role. |
 | IMPORT SHARE | Enables a data consumer to view shares shared with their account. Also grants the ability to create databases from shares; requires the global CREATE DATABASE privilege. For more details, see [Enable non-ACCOUNTADMIN roles to perform data sharing tasks](/user-guide/security-access-privileges-shares). | Must be granted by the ACCOUNTADMIN role. |
 | IMPORT ORGANIZATION LISTING | Enables a consumer to install an organizational listing, or to query an organizational listing without installing it. |  |
@@ -423,18 +423,6 @@ Expand
 
 Show lessSee more
 
-## Provisioned Throughput privileges
-
-| Privilege | Usage |
-| --- | --- |
-| OWNERSHIP | Grants full control over a provisioned throughput. Only one role at a time can hold this privilege on a specific object. |
-| USE | Enables inference with a provisioned throughput. |
-| MONITOR | Enables performing DESCRIBE and SHOW commands on a provisioned throughput. |
-
-Expand
-
-Show lessSee more
-
 ## Session policy privileges
 
 | Privilege | Usage |
@@ -617,6 +605,7 @@ Note
 | CREATE MODEL MONITOR | Enables creating a [model monitor](/developer-guide/snowflake-ml/model-registry/model-observability) on a schema. |
 | CREATE IMAGE REPOSITORY | Enables creating a Snowpark Container Services [image repository](/developer-guide/snowpark-container-services/working-with-registry-repository) on a schema. |
 | CREATE SERVICE | Enables creating a Snowpark Container Services [service](/developer-guide/snowpark-container-services/working-with-services) on a schema. |
+| CREATE SERVICE CLASS | Enables creating a Snowpark Container Services service class on a schema. |
 | CREATE SNAPSHOT | Enables creating a Snowpark Container Services [snapshot](/developer-guide/snowpark-container-services/block-storage-volume) on a schema. |
 | CREATE WORKSPACE | Enables creating a new [Snowflake Workspace](/user-guide/ui-snowsight/workspaces) in a schema. |
 | EXECUTE AUTO CLASSIFICATION | Grants the ability to set a classification profile on a schema in order to implement [sensitive data classification](/user-guide/classify-intro). Schema owner has this privilege by default. |

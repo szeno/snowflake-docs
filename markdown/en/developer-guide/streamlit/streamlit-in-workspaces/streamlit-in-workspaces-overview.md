@@ -75,7 +75,7 @@ To create a Streamlit app in a workspace, you need access to a role with:
   configured, and your user must have a default warehouse selected.
 
 Apps in Workspaces run on a compute pool (container runtime). You are billed for compute
-pool usage while an app is running. Compute nodes are released after 3 hours of inactivity.
+pool usage while an app is running. Compute nodes are released after 3 days of inactivity.
 
 To deploy a Streamlit app from a workspace, your role also needs:
 

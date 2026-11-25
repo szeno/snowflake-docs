@@ -266,7 +266,7 @@ in the resulting database:
 
    ```
    /* Option 1 */
-   grant database role mydb_shared1.db1 to role custom_role1;
+   grant database role mydb_shared1.dr1 to role custom_role1;
 
    /* Option 2 */
    grant imported privileges on database mydb_shared1 to custom_role1;

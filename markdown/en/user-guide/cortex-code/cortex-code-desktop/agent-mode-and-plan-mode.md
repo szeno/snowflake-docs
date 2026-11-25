@@ -87,11 +87,11 @@ You can switch between Agent mode and Plan mode in three ways:
 
 ### Automatic switching by the agent
 
-The agent can propose switching to Plan mode on its own when it determines a task would benefit
-from planning before implementation. When the agent decides to switch, it shows a
-**confirmation dialog** — you can accept or decline the switch.
+The agent can switch to Plan mode on its own when it determines a task would benefit
+from planning before implementation. It switches without a confirmation dialog; you still review
+and approve the plan before any code is written.
 
-The agent may propose switching to Plan mode when:
+The agent may switch to Plan mode when:
 
 - The task has multiple valid approaches with significant tradeoffs
 - Architectural or structural decisions need to be made before writing code

@@ -938,8 +938,8 @@ To authenticate with this method, send the signed JWT in the `Authorization` hea
 
 ### Key rotation
 
-Snowflake supports multiple active keys to allow for uninterrupted rotation. Rotate and replace your public and private keys based on the
-expiration schedule you follow internally.
+Snowflake supports multiple active keys so you can rotate them without interruption. Rotate and replace your public and private keys
+according to your organization’s own key-rotation policy.
 
 Currently, you can use the `OAUTH_CLIENT_RSA_PUBLIC_KEY` and `OAUTH_CLIENT_RSA_PUBLIC_KEY_2` parameters for
 [ALTER SECURITY INTEGRATION](/sql-reference/sql/alter-security-integration-oauth-snowflake) to associate up to 2 public keys with a single user.

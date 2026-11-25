@@ -88,7 +88,7 @@ snow upgrade
 Upgraded 3.12.0 → 3.13.1.
 ```
 
-Homebrew, pip, pipx, uv, and the package installers are left unchanged. The command prints the standalone installer command instead.
+Homebrew, pip, pipx, uv, and the package installers are left unchanged. The command prints the standalone installer command instead. To upgrade a Linux package install, see [Install with an OS tool](/developer-guide/snowflake-cli/installation#label-snowcli-install-linux-package-managers).
 
 See [`snow upgrade`](/developer-guide/snowflake-cli/command-reference/upgrade-commands/upgrade) for `--revert` and `--dry-run`.
 
@@ -275,7 +275,17 @@ The command copies each file it changes before editing it. For details, see [sno
    ```
 
    Use the file that matches this machine.
-4. Check the installation:
+4. To upgrade later, download the newer package as in step 2 and run:
+
+   Copy code
+
+   ```
+   sudo dpkg -i snowflake-cli-<version>.<arch>.deb    # Debian, Ubuntu
+   sudo rpm -Uvh snowflake-cli-<version>.<arch>.rpm   # RHEL, CentOS, Fedora
+   ```
+
+   Don’t use `rpm -i` to upgrade. It’s for new installs only.
+5. Check the installation:
 
    Copy code
 

@@ -1,4 +1,4 @@
-# <code className=”samp”><em>custom\_classifier</em></code>!DELETE\_CATEGORY
+# <custom\_classifier>!DELETE\_CATEGORY
 
 [Enterprise Edition Feature](/user-guide/intro-editions)
 
@@ -21,7 +21,7 @@ Copy code
 
 `semantic_category`
 :   Specifies the identifier (name) for the semantic category that you added to the instance when calling the
-    [<code className=”samp”><em>custom\_classifier</em></code>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex) method.
+    [<custom\_classifier>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex) method.
 
 ## Output
 

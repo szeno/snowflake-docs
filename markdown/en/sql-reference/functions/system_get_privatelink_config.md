@@ -42,7 +42,7 @@ located:
 >   "privatelink-account-principal": "<aws_principal_arn>",
 >   "regionless-privatelink-ocsp-url": "<privatelink_org_ocsp_url>",
 >   "app-service-privatelink-url": "<privatelink_streamlit_url>",
->   "app-service-privatelink-url-next": "<privatelink_account_scoped_app_url>",
+>   "app-service-privatelink-url-next": "*.<org_name>-<account_name>.us-east-2.aws.privatelink.snowflake.app",
 >   "privatelink-dashed-urls-for-duo": "<privatelink_duo_url_list>"
 > }
 > ```
@@ -167,10 +167,11 @@ Where:
 >     `CLIENT_FAILOVER` (i.e. `TYPE`) from the [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink) function.
 >
 > `regionless-privatelink-account-url`
-> :   The private connectivity URL that includes your organization name and account name.
+> :   The private connectivity URL that includes your organization name and account name. The URL has the form
+>     `<orgname>-<account_name>.privatelink.snowflakecomputing.com` and is the recommended connection URL.
 >
->     This value matches the output value of `SNOWFLAKE_DEPLOYMENT_REGIONLESS` in the
->     [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink) function.
+>     Use this value to create a canonical name (i.e. CNAME) for DNS resolution. This value matches the output value of
+>     `SNOWFLAKE_DEPLOYMENT_REGIONLESS` in the [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink) function.
 >
 > `privatelink-ocsp-url`
 > :   The OCSP URL corresponding to your Snowflake account identifier that uses AWS PrivateLink, Microsoft Azure Private Link, or Google
@@ -226,12 +227,16 @@ Where:
 >     Streamlit, Notebooks, and Snowpark Container Services. This key is returned when account-scoped private link URLs
 >     are not enabled for your account, but newer products may use it before you enable them.
 >
+>     For an account in the AWS US East (Ohio) region (`us-east-2`), the value has the following format:
+>
+>     `*.org_name-account_name.us-east-2.aws.privatelink.snowflake.app`
+>
 >     You can enable account-scoped private link URLs by setting the
 >     [ENABLE\_PER\_ACCOUNT\_APP\_SERVICE\_PRIVATELINK\_URL](/sql-reference/parameters#label-enable-per-account-app-service-privatelink-url)
 >     account parameter to `TRUE`.
 >
 > `privatelink-dashed-urls-for-duo`
-> :   The list of dashed variant URLs is shown only when the hostname contains an underscore. These URLs are used for Duo Multi-Factor Authentication.
+> :   The list of dashed variant URLs is shown only when the hostname contains an underscore. These URLs apply to any client that doesn’t accept underscores in hostnames, such as the Python connector, dbt-snowflake, and Okta/SCIM, and not only to Duo Multi-Factor Authentication. For example, these clients substitute `-` for `_` in the account name, so register DNS records for the dashed variants as well as the underscore variants.
 
 ## Usage notes
 

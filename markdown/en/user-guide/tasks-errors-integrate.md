@@ -107,16 +107,6 @@ The following is a sample message payload describing a task error. The payload c
 Copy code
 
 ```
-{\"version\":\"1.0\",\"messageId\":\"3ff1eff0-7ad7-493c-9552-c0307087e0c6\",\"messageType\":\"USER_TASK_FAILED\",\"timestamp\":\"2021-11-11T19:46:39.648Z\",\"accountName\":\"AWS_UTEN_DPO_ACC\",\"taskName\":\"AWS_UTEN_DPO_DB.AWS_UTEN_SC.UTEN_AWS_TK1\",\"taskId\":\"01a03962-2b57-889e-0000-000000000001\",\"rootTaskName\":\"AWS_UTEN_DPO_DB.AWS_UTEN_SC.UTEN_AWS_TK1\",\"rootTaskId\":\"01a03962-2b57-889e-0000-000000000001\",\"messages\":[{\"runId\":\"2021-11-11T19:46:23.826Z\",\"scheduledTime\":\"2021-11-11T19:46:23.826Z\",\"queryStartTime\":\"2021-11-11T19:46:24.879Z\",\"completedTime\":\"null\",\"queryId\":\"01a03962-0300-0002-0000-0000000034d8\",\"errorCode\":\"000630\",\"errorMessage\":\"Statement reached its statement or warehouse timeout of 10 second(s) and was canceled.\"}]}
-```
-
-Note that you must parse the string into a JSON object to process values in the payload.
-
-After you parse the string, the sample payload has the following structure:
-
-Copy code
-
-```
 {
   "version": "1.0",
   "messageId": "3ff1eff0-7ad7-493c-9552-c0307087e0c6",
@@ -139,6 +129,12 @@ Copy code
     }
   ]
 }
+```
+
+The message is delivered as an escaped JSON string, as in the following example. You must parse the string into a JSON object to process values in the payload.
+
+```
+{\"version\":\"1.0\",\"messageId\":\"3ff1eff0-7ad7-493c-9552-c0307087e0c6\",\"messageType\":\"USER_TASK_FAILED\",\"timestamp\":\"2021-11-11T19:46:39.648Z\",\"accountName\":\"AWS_UTEN_DPO_ACC\",\"taskName\":\"AWS_UTEN_DPO_DB.AWS_UTEN_SC.UTEN_AWS_TK1\",\"taskId\":\"01a03962-2b57-889e-0000-000000000001\",\"rootTaskName\":\"AWS_UTEN_DPO_DB.AWS_UTEN_SC.UTEN_AWS_TK1\",\"rootTaskId\":\"01a03962-2b57-889e-0000-000000000001\",\"messages\":[{\"runId\":\"2021-11-11T19:46:23.826Z\",\"scheduledTime\":\"2021-11-11T19:46:23.826Z\",\"queryStartTime\":\"2021-11-11T19:46:24.879Z\",\"completedTime\":\"null\",\"queryId\":\"01a03962-0300-0002-0000-0000000034d8\",\"errorCode\":\"000630\",\"errorMessage\":\"Statement reached its statement or warehouse timeout of 10 second(s) and was canceled.\"}]}
 ```
 
 For the payload of task success notifications, see [Configure a task to send success notifications](/user-guide/tasks-success-integrate).

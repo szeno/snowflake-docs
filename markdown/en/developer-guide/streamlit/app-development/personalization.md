@@ -101,7 +101,7 @@ The SQL function CURRENT\_USER() returns the Snowflake username of the session o
 Streamlit in Snowflake apps using owner’s rights, this is the owner of the Streamlit object, not the viewer.
 To identify the viewer in your Python code, use `st.user` instead.
 
-If you need the viewer’s identity in SQL queries, consider using restricted caller’s rights (Preview).
+If you need the viewer’s identity in SQL queries, consider using restricted caller’s rights.
 With restricted caller’s rights, queries run as the viewer, so CURRENT\_USER() returns the viewer’s
 identity. For more information, see [Restricted caller’s rights and Streamlit in Snowflake](/developer-guide/streamlit/features/restricted-callers-rights).
 

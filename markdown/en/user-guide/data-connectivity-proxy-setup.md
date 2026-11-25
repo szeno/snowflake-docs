@@ -7,12 +7,59 @@ created with `scai data worker setup --dcp`.
 The agent host needs at least 1 vCPU and 512 MB of memory. For the full prerequisite list, see
 [Prerequisites](/user-guide/data-connectivity-proxy#label-dcp-prerequisites).
 
-## Step 1: Create a DCP object in Snowflake
+Complete the steps in order. Each step uses objects or values from earlier steps.
+
+## Step 1: Create a network rule for the private destination
+
+Create a network rule that names the host and port the agent should reach. Use a DNS hostname, not a raw IP address. Use
+`MODE = DATA_CONNECTIVITY_PROXY_EGRESS` and `TYPE = HOST_PORT`. Ordinary `MODE = EGRESS` rules aren’t applied to DCP.
+
+Copy code
+
+```
+CREATE NETWORK RULE my_private_network_rule
+  MODE = DATA_CONNECTIVITY_PROXY_EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('my-private-db.internal:5432');
+```
+
+If the destination has no DNS name, add a host entry that’s visible inside the agent container so the hostname in
+`VALUE_LIST` resolves there. Pass `--add-host <hostname>:<ip>` to the `docker run` command in
+[Step 6](#label-dcp-setup-deploy-agent). The agent container has its own `/etc/hosts` and doesn’t read the Docker
+host’s `/etc/hosts`, so editing the host’s file has no effect. If the name doesn’t resolve, the agent can still
+report `AGENT_HEALTH = HEALTHY` and list the name in `REACHABLE_DESTINATIONS`, but connections fail.
+
+If you don’t deploy with `docker run`, use the equivalent setting:
+
+- Docker Compose: `extra_hosts`
+- Kubernetes: `hostAliases`
+
+For more information, see [CREATE NETWORK RULE](/sql-reference/sql/create-network-rule).
+
+## Step 2: Create an external access integration
+
+Create an external access integration (EAI) that references the DCP network rule:
+
+Copy code
+
+```
+CREATE EXTERNAL ACCESS INTEGRATION my_private_source_eai
+  ALLOWED_NETWORK_RULES = (my_private_network_rule)
+  ENABLED = TRUE;
+```
+
+Traffic to destinations in that rule is eligible for DCP because the rule uses `MODE = DATA_CONNECTIVITY_PROXY_EGRESS`.
+
+You associate this EAI with the DCP object in [Step 3](#label-dcp-setup-create-object), and with the Snowflake workload that uses the
+connection (for example, an Openflow runtime) in [Step 8](#label-dcp-setup-connector).
+
+For more information, see [Creating and using an external access integration](/developer-guide/external-network-access/creating-using-external-network-access).
+
+## Step 3: Create a DCP object and associate the EAI
 
 Create a Data Connectivity Proxy object using the ACCOUNTADMIN role (or a role with the `CREATE DATA CONNECTIVITY PROXY` privilege).
 
-You can associate an external access integration when you create the DCP object. Create the network rule and EAI first
-([Step 6](#label-dcp-setup-network-rule) and [Step 7](#label-dcp-setup-eai)), then:
+You can associate the external access integration from [Step 2](#label-dcp-setup-eai) when you create the DCP object:
 
 Copy code
 
@@ -22,12 +69,23 @@ CREATE DATA CONNECTIVITY PROXY my_dcp_client
   ENABLED = TRUE;
 ```
 
-You can also create the DCP object now and associate the EAI in [Step 7](#label-dcp-setup-eai):
+You can also create the DCP object first:
 
 Copy code
 
 ```
 CREATE DATA CONNECTIVITY PROXY my_dcp_client;
+```
+
+Then associate the EAI with the DCP object and enable it. Skip this `ALTER` if you already set these properties when you created the
+object:
+
+Copy code
+
+```
+ALTER DATA CONNECTIVITY PROXY my_dcp_client
+  SET EXTERNAL_ACCESS_INTEGRATIONS = (my_private_source_eai)
+      ENABLED = TRUE;
 ```
 
 Attaching a network policy is optional. Use this only if you want a DCP-specific network policy that restricts which source IPs can connect
@@ -43,7 +101,7 @@ CREATE DATA CONNECTIVITY PROXY my_dcp_client
 You can also attach or change the policy later with `ALTER DATA CONNECTIVITY PROXY ... SET NETWORK_POLICY`. For more information, see
 [Controlling network traffic with network policies](/user-guide/network-policies).
 
-## Step 2: Generate a bootstrap token
+## Step 4: Generate a bootstrap token
 
 Generate a one-time bootstrap JWT that the agent uses to authenticate with Snowflake and receive its mTLS certificates. The second argument
 is the token validity in days:
@@ -60,14 +118,14 @@ Important
 
 The token format must be a Snowflake Access JWT. Tokens that begin with `PAT_` aren’t accepted and cause the agent to fail to start.
 
-## Step 3: Write the credentials file
+## Step 5: Write the credentials file
 
 On the agent host, write the token to a file. The agent reads this file at startup and during certificate rotation:
 
 Copy code
 
 ```
-echo '<token from Step 2>' > /etc/dcp-agent/secrets/dcp-bootstrap-token
+echo '<token from Step 4>' > /etc/dcp-agent/secrets/dcp-bootstrap-token
 chmod 600 /etc/dcp-agent/secrets/dcp-bootstrap-token
 ```
 
@@ -85,7 +143,7 @@ secrets manager API itself. Fetch the secret at deploy time or from a sidecar, t
 (`chmod 600`) and limit the IAM or RBAC identity that can read the secret.
 
 The following examples write the secret to `/etc/dcp-agent/secrets/dcp-bootstrap-token`. Adapt the secret name and then start the agent as
-in Step 4.
+in [Step 6](#label-dcp-setup-deploy-agent).
 
 AWS Secrets Manager:
 
@@ -127,7 +185,22 @@ When you rotate the bootstrap token, update the secret in the manager, rewrite t
 secret with a CSI driver or an init container as long as the file appears at `--sf-bootstrap-credentials` (or the default mount path)
 before the agent starts.
 
-## Step 4: Deploy the agent
+## Step 6: Deploy the agent
+
+Before you start the agent, confirm the following:
+
+- The network rule uses `MODE = DATA_CONNECTIVITY_PROXY_EGRESS` and lists the destination host and port
+  ([Step 1](#label-dcp-setup-network-rule)).
+- The EAI references that network rule and is enabled ([Step 2](#label-dcp-setup-eai)).
+- The DCP object is enabled and associated with the EAI ([Step 3](#label-dcp-setup-create-object)). In
+  `DESCRIBE DATA CONNECTIVITY PROXY` output, check the `ENABLED` and `EXTERNAL_ACCESS_INTEGRATIONS` columns.
+- The credentials file is in place on the agent host ([Step 5](#label-dcp-setup-credentials-file)).
+
+If the Snowflake workload that will use the connection already exists (for Openflow, the runtime), attach the same EAI to it now, as
+described in [Step 8](#label-dcp-setup-connector). If another team sets up the workload later, you can start the agent first. The agent
+connects to Snowflake and waits; workload connections can use it only after both EAI associations are complete, as described in
+[Step 8](#label-dcp-setup-connector).
+For the agent’s log events, see [Agent logs](/user-guide/data-connectivity-proxy-monitor#label-dcp-agent-logs).
 
 Pull and start the agent container, mounting the credentials file:
 
@@ -159,7 +232,7 @@ The agent starts, authenticates with the control plane using the bootstrap JWT, 
 relay. It uses a short-lived token for subsequent control plane requests. The bootstrap JWT is used again for certificate rotation or
 if the agent bootstraps again after a control plane reconnect.
 
-## Step 5: Verify the agent is connected
+## Step 7: Verify the agent is connected
 
 In Snowflake, describe the DCP client to confirm it shows a connected status:
 
@@ -169,68 +242,27 @@ Copy code
 DESCRIBE DATA CONNECTIVITY PROXY my_dcp_client;
 ```
 
-Confirm `AGENT_HEALTH` is `HEALTHY` and `AGENT_STATUS` is `DCP_AGENT_LIFECYCLE_CONNECTED`. For column details, see
-[Monitor Data Connectivity Proxy](/user-guide/data-connectivity-proxy-monitor).
+Check that `AGENT_STATUS` is `DCP_AGENT_LIFECYCLE_CONNECTED` and review `AGENT_HEALTH` and the individual status and failure-reason
+columns. `AGENT_HEALTH` can’t tell you whether a workload or EAI association is missing. Instead, investigate any reported
+authentication, certificate, or connectivity failures. For column details, see [Monitor Data Connectivity Proxy](/user-guide/data-connectivity-proxy-monitor).
 
-## Step 6: Create a network rule for the private destination
+A connected status confirms that the agent has an authenticated control connection to Snowflake. It doesn’t confirm that a Snowflake
+workload can route traffic through the agent, or that the agent can reach the destination. The agent’s local `/ready` endpoint reports
+only that the agent process finished starting and isn’t shutting down. [Step 8](#label-dcp-setup-connector) validates the path from the
+Snowflake workload to the destination.
 
-Create a network rule that names the host and port the agent should reach. Use a DNS hostname, not a raw IP address. Use
-`MODE = DATA_CONNECTIVITY_PROXY_EGRESS` and `TYPE = HOST_PORT`. Ordinary `MODE = EGRESS` rules aren’t applied to DCP.
+## Step 8: Configure the workload and validate connectivity
 
-Copy code
+Attach the same EAI to the Snowflake workload that uses the connection. For Openflow, attach the EAI to your Openflow runtime in the
+Openflow UI so the connector is allowed to open connections to the destination, then configure the connector to use the source FQDN and
+port as usual. You don’t need an explicit tunnel reference on the connector. For the UI steps, see
+[Attach the external access integration to the runtime](/user-guide/data-integration/openflow/setup-openflow-spcs-dcp#label-openflow-spcs-dcp-attach-eai). For current DCP availability, see
+[Data Connectivity Proxy](/user-guide/data-connectivity-proxy).
 
-```
-CREATE NETWORK RULE my_private_network_rule
-  MODE = DATA_CONNECTIVITY_PROXY_EGRESS
-  TYPE = HOST_PORT
-  VALUE_LIST = ('my-private-db.internal:5432');
-```
-
-If the destination has no DNS name, add a host entry that’s visible inside the agent container so the hostname in
-`VALUE_LIST` resolves there. Pass `--add-host <hostname>:<ip>` to the `docker run` command in
-[Step 4](#label-dcp-setup-deploy-agent). The agent container has its own `/etc/hosts` and doesn’t read the Docker
-host’s `/etc/hosts`, so editing the host’s file has no effect. If the name doesn’t resolve, the agent can still
-report `AGENT_HEALTH = HEALTHY` and list the name in `REACHABLE_DESTINATIONS`, but connections fail.
-
-If you don’t deploy with `docker run`, use the equivalent setting:
-
-- Docker Compose: `extra_hosts`
-- Kubernetes: `hostAliases`
-
-For more information, see [CREATE NETWORK RULE](/sql-reference/sql/create-network-rule).
-
-## Step 7: Create an external access integration and associate it with the DCP object
-
-Create an external access integration (EAI) that references the DCP network rule:
-
-Copy code
-
-```
-CREATE EXTERNAL ACCESS INTEGRATION my_private_source_eai
-  ALLOWED_NETWORK_RULES = (my_private_network_rule)
-  ENABLED = TRUE;
-```
-
-Traffic to destinations in that rule is eligible for DCP because the rule uses `MODE = DATA_CONNECTIVITY_PROXY_EGRESS`.
-
-Associate the EAI with the DCP object. Skip this `ALTER` if you already set `EXTERNAL_ACCESS_INTEGRATIONS` when you
-created the object:
-
-Copy code
-
-```
-ALTER DATA CONNECTIVITY PROXY my_dcp_client
-  SET EXTERNAL_ACCESS_INTEGRATIONS = (my_private_source_eai);
-```
-
-For more information, see [Creating and using an external access integration](/developer-guide/external-network-access/creating-using-external-network-access).
-
-## Step 8: Configure the connector
-
-Attach the same EAI to your Openflow runtime in the Openflow UI so the connector is allowed to open connections to the
-destination, then configure the connector to use the source FQDN and port as usual. You don’t need an explicit tunnel
-reference on the connector. For the UI steps, see
-[Attach the external access integration to the runtime](/user-guide/data-integration/openflow/setup-openflow-spcs-dcp#label-openflow-spcs-dcp-attach-eai).
+Then run the connector’s connectivity check, or start the workload and confirm that it connects to the destination. A successful
+workload connection validates more of the path than the agent checks in [Step 7](#label-dcp-setup-verify): from the Snowflake workload
+through the DCP object and the agent to the destination. If the workload can’t connect, see
+[Connector can’t reach a private source](/user-guide/data-connectivity-proxy-troubleshoot#label-dcp-ts-cannot-reach-source).
 
 ## Networking requirements
 
@@ -238,7 +270,7 @@ reference on the connector. For the UI steps, see
 
 The agent requires only outbound access on port 443. You don’t need to open inbound ports.
 
-Allow the control plane and fallback relay hostnames in the table below. In the default `DCP_CONNECTION_MODE=auto` mode, the agent
+Allow the control plane, fallback relay, and telemetry hostnames in the table below. In the default `DCP_CONNECTION_MODE=auto` mode, the agent
 also tries relay public IP addresses and uses the fallback hostname only if the direct attempt fails with a retryable connection
 error. If your network can’t allow the relay public IPs, set `DCP_CONNECTION_MODE=fallback-only` to skip the direct path.
 
@@ -259,6 +291,7 @@ hostname format only. It doesn’t mean the agent’s traffic transits that prov
 | `dcp.<org>-<account>.<region>.<cloud>.snowflake.com` | 443 | TLS | DCP control plane |
 | `dcp-proxy.<org>-<account>.<region>.<cloud>.snowflake.com` | 443 | TLS | Relay (direct path; the agent dials its public IP address) |
 | `dcp-proxy-fallback.<org>-<account>.<region>.<cloud>.snowflake.com` | 443 | TLS | Relay (fallback path), used in `fallback-only` mode or after a retryable direct failure in `auto` mode |
+| `<org>-<account>.telemetry.<locator>.snowflakecomputing.com` | 443 | TLS | Agent telemetry. Snowflake delivers this hostname to the agent at bootstrap. Connection history and some route-check stages stay empty until it’s reachable. |
 
 Expand
 
@@ -270,11 +303,11 @@ Required hostnames vary by cloud and region. To get the definitive list for your
 Copy code
 
 ```
-SELECT f.VALUE:host::STRING AS host,
-       f.VALUE:port::INT    AS port,
-       f.VALUE:type::STRING AS type
-FROM TABLE(FLATTEN(input => PARSE_JSON(SYSTEM$ALLOWLIST()))) f
-WHERE f.VALUE:type::STRING LIKE 'DCP%';
+SELECT endpoint.value:host::STRING AS host,
+       endpoint.value:port::INT    AS port,
+       endpoint.value:type::STRING AS type
+FROM TABLE(FLATTEN(input => PARSE_JSON(SYSTEM$ALLOWLIST()))) endpoint
+WHERE type LIKE 'DCP%' OR type = 'EXTERNAL_TELEMETRY';
 ```
 
 For more information about TLS inspection, see
@@ -284,7 +317,7 @@ For more information about TLS inspection, see
 
 If the agent host can’t reach the Snowflake hostnames directly, send the agent’s traffic through an HTTP proxy server that
 supports `CONNECT`. Set `HTTPS_PROXY` on the agent container. The following command is the command from
-[Step 4](#label-dcp-setup-deploy-agent) with the `HTTPS_PROXY` variable added:
+[Step 6](#label-dcp-setup-deploy-agent) with the `HTTPS_PROXY` variable added:
 
 Copy code
 
@@ -315,7 +348,7 @@ Also note:
 - If a network policy applies to the account or the DCP object, allow the proxy’s egress IP address. Snowflake sees
   connections from the proxy, not the agent host.
 - By default, telemetry doesn’t use the proxy. To route it through the proxy, set `AGENT_OTLP_ALLOW_PROXY=true` and configure
-  `HTTPS_PROXY` or `ALL_PROXY`. Allow `CONNECT` to the [telemetry hostname](#label-dcp-telemetry-endpoints) on port 443 too.
+  `HTTPS_PROXY` or `ALL_PROXY`. Allow `CONNECT` to the telemetry hostname on port 443 too.
   Telemetry doesn’t use `HTTP_PROXY`; `NO_PROXY` applies to it.
 
 ### Inspect agent traffic
@@ -327,7 +360,7 @@ relay path to public IP addresses. For details about what an inspecting proxy ca
 To allow inspection:
 
 1. Create a CA bundle from the agent image’s trust store and your proxy’s CA. On the agent host, use the same image tag you deploy in
-   [Step 4](#label-dcp-setup-deploy-agent):
+   [Step 6](#label-dcp-setup-deploy-agent):
 
    Copy code
 
@@ -342,7 +375,7 @@ To allow inspection:
    exempt from inspection. Make sure the container can read the resulting file, and rebuild the bundle if you update the agent
    image.
 2. Start the agent with the bundle mounted, `SSL_CERT_FILE` pointing to it, and `DCP_CONNECTION_MODE=fallback-only` so the agent
-   doesn’t use relay public IP addresses. Compared with the command in [Step 4](#label-dcp-setup-deploy-agent), this adds the CA
+   doesn’t use relay public IP addresses. Compared with the command in [Step 6](#label-dcp-setup-deploy-agent), this adds the CA
    bundle mount and the `SSL_CERT_FILE`, `HTTPS_PROXY`, and `DCP_CONNECTION_MODE` variables:
 
    Copy code
@@ -360,20 +393,12 @@ To allow inspection:
      -p 9092:9092 \
      snowflakedb/dcp-client:latest
    ```
-3. Confirm the agent is connected, as described in [Step 5](#label-dcp-setup-verify).
+3. Confirm the agent is connected, as described in [Step 7](#label-dcp-setup-verify).
 
 ### DNS
 
 The agent resolves Snowflake endpoint hostnames using standard public DNS. Don’t override those names to PrivateLink hostnames or
 PrivateLink IP addresses. Connecting the DCP agent through a PrivateLink endpoint isn’t supported.
-
-### Telemetry endpoints
-
-Snowflake delivers the telemetry hostname to the agent at bootstrap. Allow outbound TLS on port 443 to:
-
-`<org>-<account>.telemetry.<locator>.snowflakecomputing.com`
-
-Connection history and some route-check stages stay empty until this endpoint is reachable.
 
 ## High availability
 
@@ -483,7 +508,7 @@ you need to specify the exact version before the upgrade.
    `DCP_AGENT_LIFECYCLE_CONNECTED`. `AGENT_VERSION` is the last version reported by the DCP client; it doesn’t verify the image of every
    container when multiple instances use the same DCP object. For column details, see [Monitor Data Connectivity Proxy](/user-guide/data-connectivity-proxy-monitor).
 
-   Test a new connection from your Snowflake service to the private source and confirm that connector processing resumes. A running
+   Test a new connection from your Snowflake workload to the private source and confirm that connector processing resumes. A running
    container or a healthy status alone doesn’t verify source connectivity.
 
 ## Rotate the bootstrap token without downtime

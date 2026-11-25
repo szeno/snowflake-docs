@@ -269,11 +269,14 @@ do the following:
    ```
 4. Assign the tag to a new warehouse.
 
+   The following examples use the fully qualified tag name (`mydb.mysch.cost_center`) so that they work regardless of the
+   current database and schema in the session.
+
    Copy code
 
    ```
    USE ROLE tag_admin;
-   CREATE WAREHOUSE mywarehouse WITH TAG (cost_center = 'sales');
+   CREATE WAREHOUSE mywarehouse WITH TAG (mydb.mysch.cost_center = 'sales');
    ```
 5. Assign the tag to an existing warehouse.
 
@@ -281,7 +284,7 @@ do the following:
 
    ```
    USE ROLE tag_admin;
-   ALTER WAREHOUSE wh1 SET TAG cost_center = 'sales';
+   ALTER WAREHOUSE wh1 SET TAG mydb.mysch.cost_center = 'sales';
    ```
 6. Assign the tag to a column of an existing table.
 
@@ -290,7 +293,7 @@ do the following:
    ```
    ALTER TABLE hr.tables.empl_info
      MODIFY COLUMN job_title
-     SET TAG cost_center = 'marketing';
+     SET TAG mydb.mysch.cost_center = 'marketing';
    ```
 
 ## Delete a tag

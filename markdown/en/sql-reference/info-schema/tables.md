@@ -3,7 +3,7 @@
 This Information Schema view displays a row for each table and view in the specified (or current) database, including the views in the INFORMATION\_SCHEMA schema itself.
 
 See also:
-:   [COLUMNS view](/sql-reference/info-schema/columns) , [VIEWS view](/sql-reference/info-schema/views) , [TABLES view](/sql-reference/account-usage/tables) (Account Usage)
+:   [COLUMNS view](/sql-reference/info-schema/columns) , [VIEWS view](/sql-reference/info-schema/views) , [TABLES view](/sql-reference/account-usage/tables) (Account Usage) , [SHOW TABLES](/sql-reference/sql/show-tables)
 
 ## Columns
 

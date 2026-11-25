@@ -25,9 +25,9 @@ replication state and continuing to write to the same destination tables.
 
 Warning
 
-The MongoDB oplog must retain the history needed to resume from the saved change-stream position
-throughout the move. If the resume token expires before the new connector starts, a full data
-re-sync might be required. Keep the interruption within the source’s oplog retention window.
+The MongoDB oplog must still contain the saved change-stream position when the new connector
+starts. Keep the move inside the retention window described in
+[Set the oplog retention period](/user-guide/data-integration/openflow/connectors/mongodb/connect#label-mongodb-oplog-retention).
 
 ### Move the connector
 

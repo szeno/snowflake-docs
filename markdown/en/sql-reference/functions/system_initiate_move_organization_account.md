@@ -3,9 +3,9 @@ Categories:
 
 # SYSTEM$INITIATE\_MOVE\_ORGANIZATION\_ACCOUNT
 
-[Preview Feature](/release-notes/preview-features) — Open
+[Business Critical Feature](/user-guide/intro-editions)
 
-Available to all accounts that are Enterprise Edition (or higher).
+This feature requires Business Critical (or higher).
 
 To inquire about upgrading, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
@@ -50,6 +50,8 @@ Only users with the GLOBALORGADMIN role can call this function.
 
 ## Usage notes
 
+- The organization account must be Business Critical Edition (or higher). Snowflake uses replication groups to move account objects, and
+  replicating account objects requires Business Critical Edition (or higher).
 - You cannot sign in to the organization account in the new region until the initiation process is complete. To check the status of the
   process, call the [SYSTEM$SHOW\_MOVE\_ORGANIZATION\_ACCOUNT\_STATUS](/sql-reference/functions/system_show_move_organization_account_status) function.
 - After the initiation process completes, you can sign in to the organization account in the new region using its temporary name, but cannot

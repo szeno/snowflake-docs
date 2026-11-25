@@ -3,7 +3,7 @@
 Within Streamlit in Snowflake, a Streamlit app is a securable object that adheres to the
 [Snowflake access control framework](/user-guide/security-access-control-overview).
 Streamlit apps use a permission model that is based on owner’s rights. For more information, see [Understanding owner’s rights and Streamlit in Snowflake apps](/developer-guide/streamlit/object-management/owners-rights).
-You can also configure a container-runtime app to use restricted caller’s rights (Preview). For more information, see
+You can also configure a container-runtime app to use restricted caller’s rights. For more information, see
 [Restricted caller’s rights and Streamlit in Snowflake](/developer-guide/streamlit/features/restricted-callers-rights).
 
 The app owner and the owner of the schema containing the Streamlit app can determine which roles and users have

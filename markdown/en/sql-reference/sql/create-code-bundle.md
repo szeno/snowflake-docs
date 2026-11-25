@@ -15,7 +15,7 @@ External stages aren’t supported. To run source files once without creating a 
 
 This command supports the following variant:
 
-- [DEFINE CODE BUNDLE](#label-define-code-bundle-syntax): Declarative definition of a Code Bundle’s target state inside a DCM project. (Public Preview)
+- [DEFINE CODE BUNDLE](#label-define-code-bundle-syntax): Declarative definition of a Code Bundle’s target state inside a DCM project.
 
 See also:
 :   [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle), [ALTER CODE BUNDLE](/sql-reference/sql/alter-code-bundle), [DESCRIBE CODE BUNDLE](/sql-reference/sql/desc-code-bundle), [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles), [DROP CODE BUNDLE](/sql-reference/sql/drop-code-bundle), [Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles)
@@ -45,10 +45,6 @@ CREATE [ OR REPLACE ] CODE BUNDLE [ IF NOT EXISTS ] <database_name>.<schema_name
 ## Variant syntax
 
 ### DEFINE CODE BUNDLE
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
 
 DCM Projects uses `DEFINE CODE BUNDLE` statements to create and manage Code Bundles declaratively inside a DCM project, including
 the bundle lifecycle (`CREATE`, `ALTER`, and `DROP`) across environments. To learn more about DCM Projects, see

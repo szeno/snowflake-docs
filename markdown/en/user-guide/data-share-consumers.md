@@ -71,7 +71,7 @@ The output shows the following:
 | created_on                    | kind     | owner_account        | name          | database_name         | to               | owner        | comment                                | listing_global_name |                  |
 |-------------------------------+----------+----------------------+---------------+-----------------------+------------------+--------------+----------------------------------------|---------------------|
 | 2017-07-09 19:18:09.821 -0700 | INBOUND  | SNOW.XY12345         | SALES_S2      | UPDATED_SALES_DB      |                  |              | Transformed and updated sales data     |                     |
-| 2017-06-15 17:02:29.625 -0700 | OUTBOUND | SNOW.MY_TEST_ACCOUNT | SALES_S       | SALES_DB              | XY12345, YZ23456 | ACCOUNTADMIN |                                        |                     |
+| 2017-06-15 17:02:29.625 -0700 | INBOUND  | SNOW.XY12345         | SALES_S       |                       |                  |              |                                        |                     |
 +-------------------------------+----------+----------------------+---------------+-----------------------+----------------- -+--------------+----------------------------------------+---------------------+
 ```
 
@@ -169,7 +169,7 @@ Similarly, the output of SHOW SHARES and DESC SHARE includes the name of the dat
 > | created_on                    | kind     | owner_account        | name          | database_name         | to               | owner        | comment                                | listing_global_name |
 > |-------------------------------+----------+----------------------+---------------+-----------------------+------------------+--------------+----------------------------------------|---------------------|
 > | 2017-07-09 19:18:09.821 -0700 | INBOUND  | SNOW.XY12345         | SALES_S2      | UPDATED_SALES_DB      |                  |              | Transformed and updated sales data     |                     |
-> | 2017-06-15 17:02:29.625 -0700 | OUTBOUND | SNOW.MY_TEST_ACCOUNT | SALES_S       | SALES_DB              | XY12345, YZ23456 | ACCOUNTADMIN |                                        |                     |
+> | 2017-06-15 17:02:29.625 -0700 | INBOUND  | SNOW.XY12345         | SALES_S       |                       |                  |              |                                        |                     |
 > +-------------------------------+----------+----------------------+---------------+-----------------------+------------------+--------------+----------------------------------------+---------------------+
 > ```
 >
@@ -279,6 +279,9 @@ A role can grant IMPORTED PRIVILEGES on an imported database only when it either
 - Owns the imported database (that is, has the OWNERSHIP privilege on the database).
 - Was granted the MANAGE GRANTS global privilege.
 
+You can’t transfer ownership of an imported database with GRANT OWNERSHIP. For a workaround, see
+[Shared database (consumer account)](/sql-reference/sql/grant-ownership#label-grant-ownership-shared-database-consumer).
+
 #### Assigning IMPORTED PRIVILEGES to other roles
 
 You can assign this role to other roles using either Snowsight or SQL:
@@ -365,41 +368,47 @@ objects. This functionality is similar to creating and using streams on “local
 The role used to execute the SQL statements in this section must have the required grants on the shared table or secure view. For information,
 see [Granting privileges on an imported database](#label-granting-privileges-on-shared-database) (in this topic).
 
+You can’t create the stream in the shared database, because a shared database is read-only in the consumer account. Create the stream in
+a regular (non-shared) database and schema in your account, and reference the shared view or table by its fully qualified name.
+
 - To create streams on shared views:
 
   Copy code
 
   ```
-  CREATE STREAM <name> ON VIEW <shared_db>.<schema>.<view>;
+  CREATE STREAM <local_db>.<local_schema>.<stream_name> ON VIEW <shared_db>.<schema>.<view>;
   ```
 
-  For example, create a stream on the shared `aggregate_1_v` view in the `snow_sales.aggregates_eula` database and schema:
+  For example, create a stream in the local `my_db.my_schema` schema on the shared `aggregate_1_v` view in the `snow_sales.aggregates_eula`
+  database and schema:
 
   Copy code
 
   ```
-  CREATE STREAM aggregate_1_v_stream ON VIEW snow_sales.aggregates_eula.aggregate_1_v;
+  CREATE STREAM my_db.my_schema.aggregate_1_v_stream ON VIEW snow_sales.aggregates_eula.aggregate_1_v;
   ```
 - To create streams on shared tables:
 
   Copy code
 
   ```
-  CREATE STREAM <name> ON TABLE <shared_db>.<schema>.<table>;
+  CREATE STREAM <local_db>.<local_schema>.<stream_name> ON TABLE <shared_db>.<schema>.<table>;
   ```
 
-  For example, create a table stream on the shared `aggregate_1` table in the `snow_sales.aggregates_eula` database and schema:
+  For example, create a table stream in the local `my_db.my_schema` schema on the shared `aggregate_1` table in the
+  `snow_sales.aggregates_eula` database and schema:
 
   Copy code
 
   ```
-  CREATE STREAM aggregate_1_stream ON TABLE snow_sales.aggregates_eula.aggregate_1;
+  CREATE STREAM my_db.my_schema.aggregate_1_stream ON TABLE snow_sales.aggregates_eula.aggregate_1;
   ```
 
 For more information on creating streams, see [CREATE STREAM](/sql-reference/sql/create-stream).
 
 Note
 
+- The role that creates the stream must have the CREATE STREAM privilege on the local schema, in addition to the grants on the shared object.
 - The data provider must enable change tracking on views or tables before you can create streams on these objects. If you cannot
   create streams on a desired shared object, contact the data provider to consider enabling change tracking on the object.
 - To avoid allowing a stream to become stale, consume the stream records within a transaction during the retention period for the table.

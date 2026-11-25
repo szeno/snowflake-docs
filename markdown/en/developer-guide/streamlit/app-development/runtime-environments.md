@@ -32,7 +32,7 @@ The following table compares the features supported by warehouse runtimes and co
 |  | Doesn’t support caching between sessions. | Fully supports Streamlit’s caching features. |
 | Startup times | Slower per viewer session due to on-demand app creation. | Faster per viewer session but slower deployment due to container startup. |
 | Access | Requires ownership to edit. | Same as warehouse runtime. |
-|  | Uses owner’s rights for queries, limited similarly to owner’s rights stored procedures. | Uses owner’s rights for queries by default. Supports [restricted caller’s rights (Preview)](/developer-guide/streamlit/features/restricted-callers-rights) on some or all queries. |
+|  | Uses owner’s rights for queries, limited similarly to owner’s rights stored procedures. | Uses owner’s rights for queries by default. Supports [restricted caller’s rights](/developer-guide/streamlit/features/restricted-callers-rights) on some or all queries. |
 | Logging | Event table logging and tracing via the [telemetry framework](/developer-guide/logging-tracing/logging-tracing-overview). | Live console logs and historical event table logs. |
 
 Expand
@@ -59,7 +59,7 @@ With an external access integration, you can install Python packages from PyPI o
 package indexes that support the [simple repository API](https://peps.python.org/pep-0503/).
 This makes container runtimes more flexible. You’ll always have access to the latest
 version of Streamlit, including `streamlit-nightly` versions. Container runtimes also
-support [restricted caller’s rights (Preview)](/developer-guide/streamlit/features/restricted-callers-rights).
+support [restricted caller’s rights](/developer-guide/streamlit/features/restricted-callers-rights).
 
 Note
 

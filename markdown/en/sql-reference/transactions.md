@@ -81,6 +81,9 @@ If a DDL statement is followed immediately by a DML statement, that DML statemen
 
 Snowflake supports an [AUTOCOMMIT](/sql-reference/parameters#label-autocommit) parameter. The default setting for AUTOCOMMIT is TRUE (enabled).
 
+[Tasks](/user-guide/tasks-intro#label-tasks-sessions-parameters) require AUTOCOMMIT to be TRUE, and you can’t set AUTOCOMMIT to FALSE for a task.
+To run several statements in a task as a single unit of work, use an [explicit transaction](#label-transactions-starting-and-ending-explicitly).
+
 While AUTOCOMMIT is enabled:
 
 - Each statement outside an explicit transaction is treated as though it is inside its own implicit

@@ -4,9 +4,9 @@
 
 Available to all accounts.
 
-Pipeline Builder is a visual designer in Workspaces for orchestrating Snowflake Notebooks, Python files, ML Jobs, and SQL as a graph of
-[tasks](/user-guide/tasks-intro). Instead of writing `CREATE TASK` statements by hand, you add tasks to a canvas, connect them to set the
-order they run in, configure schedules and compute, and deploy.
+Pipeline Builder is a visual designer in Workspaces for orchestrating Snowflake Notebooks, Python files, ML Jobs, SQL, and dbt projects as a
+graph of [tasks](/user-guide/tasks-intro). Instead of writing `CREATE TASK` statements by hand, you add tasks to a canvas, connect them to
+set the order they run in, configure schedules and compute, and deploy.
 
 [![The Pipeline Builder canvas in Workspaces, showing task graphs of SQL, Notebook, Python, and SQL file tasks](/static/images/screens/pipeline-builder-overview.png)](/static/images/screens/pipeline-builder-overview.png)
 
@@ -17,7 +17,8 @@ them. Pipeline Builder does the rest.
 
 Pipeline Builder manages these objects for you:
 
-- **Tasks**: Each card on the canvas is a task. A task runs a notebook or Python file, an ML Job, a SQL statement, or a `.sql` file.
+- **Tasks**: Each card on the canvas is a task. A task runs a notebook or Python file, an ML Job, a SQL statement, a `.sql` file, or a
+  dbt project object.
 - **[Code Bundles](/developer-guide/code-bundles/code-bundles)**: When you add a `.py` or `.ipynb` file from your project to the canvas,
   Pipeline Builder creates a Code Bundle that packages the project’s code, or reuses one that already includes the file. The Code Bundle
   lets Snowflake run the code on a warehouse or compute pool. You don’t deploy the files yourself.
@@ -32,7 +33,7 @@ Pipeline Builder manages these objects for you:
 
 Use Pipeline Builder when you want to:
 
-- Chain notebooks, Python files, ML Jobs, or SQL so that each step runs after the steps it depends on.
+- Chain notebooks, Python files, ML Jobs, SQL, or dbt projects so that each step runs after the steps it depends on.
 - Build and review an orchestration graph visually before you deploy it.
 - Manage a pipeline’s lifecycle alongside related database objects, such as roles and grants, in one DCM project.
 
@@ -42,9 +43,11 @@ Before you build a pipeline, you need:
 
 - Access to [Workspaces](/user-guide/ui-snowsight/workspaces).
 - A database and schema for the pipeline’s objects. The objects can already exist in your account, or the same DCM project can define them.
-- A warehouse to run SQL tasks, and a compute pool if your notebooks or Python files run on Container Runtime for ML. These can also be defined
-  in the project.
+- A warehouse to run SQL and dbt tasks, and a compute pool if your notebooks or Python files run on Container Runtime for ML. These can also
+  be defined in the project.
 - The notebooks, Python files, ML Jobs, or SQL you want to orchestrate. Files must live inside the pipeline’s project folder.
+- For dbt tasks, a [dbt project object](/user-guide/data-engineering/dbt-projects-on-snowflake-understanding-dbt-project-objects) in
+  the schema of the task that will run it.
 
 ## Access control requirements
 
@@ -60,6 +63,7 @@ The role you use to deploy a pipeline needs the following privileges:
 | USAGE | Database, schema | Required on the database and schema that contain the pipeline’s objects. |
 | USAGE | Warehouse, compute pool | Required for the compute that your tasks use. |
 | USAGE | Integration | Required on any notification integration that a task graph uses for error or success notifications. |
+| USAGE | dbt project | Required on the dbt project object that a dbt task runs. |
 | OWNERSHIP | Task | All tasks in a task graph must be owned by the role that owns the graph. |
 
 Expand
@@ -71,8 +75,8 @@ privileges, see [Introduction to tasks](/user-guide/tasks-intro).
 
 ## Limitations
 
-- Pipeline Builder orchestrates tasks that run notebooks, Python files, ML Jobs, SQL, and `.sql` files. To run other Snowflake objects,
-  such as stored procedures, add a **SQL** task to the canvas and have it run that object.
+- Pipeline Builder orchestrates tasks that run notebooks, Python files, ML Jobs, SQL, `.sql` files, and dbt projects. To run other Snowflake
+  objects, such as stored procedures, add a **SQL** task to the canvas and have it run that object.
 - Pipeline Builder doesn’t build data transformations such as dynamic tables or views. You can define those objects in the same DCM project
   by editing its definition files.
 - All tasks in a task graph must be in the same schema, defined in the same DCM project, and owned by the same role.

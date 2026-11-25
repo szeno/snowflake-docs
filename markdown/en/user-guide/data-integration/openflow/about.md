@@ -187,7 +187,7 @@ BYOC deployments
     Note
 
     To use Snowflake Managed Token in BYOC deployments, you must first configure
-    [execute-as roles](/user-guide/data-integration/openflow/setup-openflow-byoc#label-deployment-byoc-setup-runtime-role) for your deployment.
+    [execute-as roles](/user-guide/data-integration/openflow/privileges#label-openflow-execute-as-role) for your deployment.
 
 ### When to use Snowflake Managed Token
 

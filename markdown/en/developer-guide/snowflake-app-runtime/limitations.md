@@ -23,7 +23,7 @@ This topic lists known limitations of Snowflake App Runtime.
 
 ## Deployment
 
-- Standard SPCS commands (`CREATE SERVICE`, `ALTER SERVICE`) don’t work
+- Standard Snowpark Container Services commands (`CREATE SERVICE`, `ALTER SERVICE`) don’t work
   with Application Services. Use the `APPLICATION SERVICE` variants instead.
 - An Application Service deploys exactly one package at a time.
 - `CREATE OR REPLACE APPLICATION SERVICE` isn’t supported. Use
@@ -38,9 +38,10 @@ This topic lists known limitations of Snowflake App Runtime.
   Builds that exceed the limit can be canceled and fail the deploy.
 - Remote builds have scoped outbound network access by default during the
   install and build steps. Account administrators can disable that automatic
-  access; builds that need npm or Google Fonts then fail unless developers
-  supply an EAI through `build_eai`. See
-  [Deploy an app](/developer-guide/snowflake-app-runtime/deploy).
+  access; builds that need npm, PyPI, or Google Fonts then fail unless
+  developers supply an external access integration (EAI) through `build_eai`.
+  For the default hosts, see
+  [Default outbound access during build](/developer-guide/snowflake-app-runtime/deploy#label-deploy-build-default-egress).
 - `ALTER APPLICATION SERVICE ... RESUME` can fail when the deployed runtime
   image is blocked. Upgrade the service to a new package version before
   resuming.
@@ -79,7 +80,7 @@ These limits apply to
   `LOG` type. Metrics, restart counts, and container lifecycle events aren’t
   available, and neither are the `--type metric` and `--type lifecycle`
   options of `snow app events`. See
-  [On serverless compute, live logs come from the running instance, so you can](/developer-guide/snowflake-app-runtime/observability#label-snowflake-app-runtime-observability-serverless-logs).
+  [Serverless app logs](/developer-guide/snowflake-app-runtime/observability#label-snowflake-app-runtime-observability-serverless-logs).
 - An existing Application Service keeps its compute type. To move an app to
   serverless compute, deploy a new service. See
   [Move an existing app to serverless compute](/developer-guide/snowflake-app-runtime/serverless#label-snowflake-app-runtime-serverless-switch).

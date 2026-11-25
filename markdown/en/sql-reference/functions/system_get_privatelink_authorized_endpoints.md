@@ -104,3 +104,49 @@ You can optionally use the following command to flatten the query result. For ex
 > > |  "123456789012"      |    "123456789012"   |
 > > +----------------------+---------------------+
 > > ```
+
+**Azure**
+
+Returns the authorized endpoints for your Snowflake account to use with Azure private connectivity for your Snowflake account on Azure:
+
+> Copy code
+>
+> ```
+> use role accountadmin;
+> select system$get_privatelink_authorized_endpoints();
+> ```
+
+Returns (endpoints for a Snowflake account on Azure, which include the link identifier):
+
+> Copy code
+>
+> ```
+> +----------------------+----------------------------------------------------------------------------------------------------------------------------+-----------------+
+> | KEY:ENDPOINT ID TYPE |   VALUE:ENDPOINT ID                                                                                                        | LINK IDENTIFIER |
+> +----------------------+----------------------------------------------------------------------------------------------------------------------------+-----------------+
+> |  "resourceId"        |    "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/my_rg/providers/microsoft.network/privateendpoints/my_pe" |  "AZURELINKID"  |
+> +----------------------+----------------------------------------------------------------------------------------------------------------------------+-----------------+
+> ```
+
+**Google Cloud**
+
+Returns the authorized endpoints for your Snowflake account to use with Google Cloud Private Service Connect for your Snowflake account on Google Cloud:
+
+> Copy code
+>
+> ```
+> use role accountadmin;
+> select system$get_privatelink_authorized_endpoints();
+> ```
+
+Returns (endpoints for a Snowflake account on Google Cloud):
+
+> Copy code
+>
+> ```
+> +----------------------+---------------------+
+> | KEY:ENDPOINT ID TYPE |   VALUE:ENDPOINT ID |
+> +----------------------+---------------------+
+> |  "projectId"         |    "my-project-123" |
+> +----------------------+---------------------+
+> ```

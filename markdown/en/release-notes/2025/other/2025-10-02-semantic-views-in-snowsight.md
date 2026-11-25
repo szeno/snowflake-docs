@@ -5,4 +5,4 @@ Creating and managing semantic views in Snowsight is now generally available and
 
 In Snowsight, you can use the database object explorer to create and manage semantic views.
 
-For information, see .
+For information, see [Semantic View Autopilot](/user-guide/views-semantic/autopilot).

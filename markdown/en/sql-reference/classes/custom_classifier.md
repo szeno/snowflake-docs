@@ -4,7 +4,7 @@
 
 Sensitive data classification requires Enterprise Edition or higher. To inquire about upgrading, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-[Create custom categories for sensitive data](/user-guide/classify-custom) enables data engineers to extend their data classification capabilities based on their own
+Data engineers can use [Create custom categories for sensitive data](/user-guide/classify-custom) to extend their data classification capabilities based on their own
 knowledge of their data.
 
 ## CUSTOM\_CLASSIFIER commands
@@ -15,6 +15,6 @@ knowledge of their data.
 
 ## CUSTOM\_CLASSIFIER methods
 
-- [<code className=”samp”><em>custom\_classifier</em></code>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex)
-- [<code className=”samp”><em>custom\_classifier</em></code>!DELETE\_CATEGORY](/sql-reference/classes/custom_classifier/methods/delete_category)
-- [<code className=”samp”><em>custom\_classifier</em></code>!LIST](/sql-reference/classes/custom_classifier/methods/list)
+- [<custom\_classifier>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex)
+- [<custom\_classifier>!DELETE\_CATEGORY](/sql-reference/classes/custom_classifier/methods/delete_category)
+- [<custom\_classifier>!LIST](/sql-reference/classes/custom_classifier/methods/list)

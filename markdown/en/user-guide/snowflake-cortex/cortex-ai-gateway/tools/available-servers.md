@@ -26,32 +26,41 @@ All serversPrivate Preview
 
 | Server | Status | Authentication | Additional administrator setup |
 | --- | --- | --- | --- |
+| [Adobe CX Coworker Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/available-servers#label-gateway-tools-server-adobe-cx-coworker) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Amplitude](#label-gateway-tools-server-amplitude) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Apiiro](#label-gateway-tools-server-apiiro) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Apollo](#label-gateway-tools-server-apollo) | Private Preview | OAuth | [GraphQL deployment and authorization](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-apollo) |
 | [Asana](#label-gateway-tools-server-asana) | Generally available | OAuth | [Workspace access; custom OAuth client if needed](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-asana) |
 | [Ashby](#label-gateway-tools-server-ashby) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Atlan](#label-gateway-tools-server-atlan) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Atlassian](#label-gateway-tools-server-atlassian) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Attentive](#label-gateway-tools-server-attentive) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Avalara Dev Documentation](#label-gateway-tools-server-avalara-dev-documentation) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Avalara Tax Content](#label-gateway-tools-server-avalara-tax-content) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [AvaTax](#label-gateway-tools-server-avatax) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Azure DevOps](#label-gateway-tools-server-azure-devops) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
+| [Bigdata.com](#label-gateway-tools-server-bigdata) | Private Preview | OAuth | [Create an OAuth client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-bigdata) |
 | [BigQuery](#label-gateway-tools-server-bigquery) | Generally available | OAuth | [API and MCP enablement; IAM roles; OAuth client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-bigquery) |
 | [Box](#label-gateway-tools-server-box) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Braze](#label-gateway-tools-server-braze) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Buildkite](#label-gateway-tools-server-buildkite) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Canva](#label-gateway-tools-server-canva) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [ClickUp](#label-gateway-tools-server-clickup) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Cloudflare Audit Logs](#label-gateway-tools-server-cloudflare-audit-logs) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Cloudflare Workers Observability](#label-gateway-tools-server-cloudflare-workers-observability) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [CloudZero](#label-gateway-tools-server-cloudzero) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Collibra](#label-gateway-tools-server-collibra) | Private Preview | OAuth | [Instance values; register a user application](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-collibra) |
 | [Context7](#label-gateway-tools-server-context7) | Generally available | None | [No provider credentials](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-personal-connections) |
 | [Context7 (Authenticated)](#label-gateway-tools-server-context7-oauth) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Cotality](#label-gateway-tools-server-cotality) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Datadog](#label-gateway-tools-server-datadog) | Generally available | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [dbt Labs](#label-gateway-tools-server-dbt-labs) | Generally available | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [Draw.io](#label-gateway-tools-server-drawio) | Generally available | None | [No provider credentials](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-personal-connections) |
+| [FactSet: AI-Ready Data](#label-gateway-tools-server-factset-ai-ready-data) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Fireflies.ai](#label-gateway-tools-server-fireflies) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [GitHub](#label-gateway-tools-server-github) | Generally available | OAuth | [Repository access; custom OAuth client if needed](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-github) |
 | [GitLab](#label-gateway-tools-server-gitlab) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Glean](#label-gateway-tools-server-glean) | Generally available | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [Gmail (Cortex)](#label-gateway-tools-server-n-google-gmail) | Generally available | OAuth | [Google APIs, scopes, and OAuth client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-google) |
 | [Gong](#label-gateway-tools-server-gong) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Google Calendar (Cortex)](#label-gateway-tools-server-n-google-calendar) | Generally available | OAuth | [Google APIs, scopes, and OAuth client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-google) |
@@ -63,9 +72,13 @@ All serversPrivate Preview
 | [Google Sheets (Cortex)](#label-gateway-tools-server-n-google-sheets) | Generally available | OAuth | [Google APIs, scopes, and OAuth client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-google) |
 | [Google Slides (Cortex)](#label-gateway-tools-server-n-google-slides) | Generally available | OAuth | [Google APIs, scopes, and OAuth client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-google) |
 | [Google Tasks (Cortex)](#label-gateway-tools-server-n-google-tasks) | Generally available | OAuth | [Google APIs, scopes, and OAuth client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-google) |
+| [Hightouch](#label-gateway-tools-server-hightouch) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Honeycomb](#label-gateway-tools-server-honeycomb) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [incident.io](#label-gateway-tools-server-incidentio) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Intercom](#label-gateway-tools-server-intercom) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [IPinfo](#label-gateway-tools-server-ipinfo) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Jedify](#label-gateway-tools-server-jedify) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Kensho](#label-gateway-tools-server-kensho) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [LaunchDarkly](#label-gateway-tools-server-launchdarkly) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Linear](#label-gateway-tools-server-linear) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Linx](#label-gateway-tools-server-linx) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
@@ -75,30 +88,48 @@ All serversPrivate Preview
 | [Microsoft Outlook](#label-gateway-tools-server-microsoft-outlook) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [Microsoft SharePoint](#label-gateway-tools-server-microsoft-sharepoint) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [Microsoft Teams](#label-gateway-tools-server-microsoft-teams) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
+| [Microsoft Work IQ](#label-gateway-tools-server-microsoft-work-iq) | Generally available | OAuth | [Register an Entra app and grant consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-work-iq) |
+| [Miro](#label-gateway-tools-server-miro) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Mixpanel](#label-gateway-tools-server-mixpanel) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Monday.com](#label-gateway-tools-server-monday) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Monte Carlo](#label-gateway-tools-server-monte-carlo) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Moody’s Credit](#label-gateway-tools-server-moodys-credit) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Navan](#label-gateway-tools-server-navan) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Neon](#label-gateway-tools-server-neon) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [New Relic](#label-gateway-tools-server-new-relic) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Nexla](#label-gateway-tools-server-nexla) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Notion](#label-gateway-tools-server-notion) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Observe](#label-gateway-tools-server-observe) | Generally available | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [Okta (Cortex)](#label-gateway-tools-server-n-okta) | Generally available | OAuth | [Organization domain; app integration and scopes](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-okta) |
+| [Omni](#label-gateway-tools-server-omni) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Outreach](#label-gateway-tools-server-outreach) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [PagerDuty](#label-gateway-tools-server-pagerduty) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Pantomath](#label-gateway-tools-server-pantomath) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [PayPal](#label-gateway-tools-server-paypal) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Plaid](#label-gateway-tools-server-plaid) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Prisma](#label-gateway-tools-server-prisma) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [S&P Global Energy: AI Ready Data](#label-gateway-tools-server-sp-global-energy-ai-ready-data) | Generally available | OAuth | [Request OAuth client credentials](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-sp-global-energy) |
 | [Salesforce](#label-gateway-tools-server-salesforce) | Generally available | OAuth | [External Client App and MCP scopes](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-salesforce) |
 | [Semgrep](#label-gateway-tools-server-semgrep) | Generally available | None | [No provider credentials](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-personal-connections) |
 | [Sentry](#label-gateway-tools-server-sentry) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [ServiceNow](#label-gateway-tools-server-servicenow) | Private Preview | OAuth | [Instance values; register an inbound OAuth integration](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-servicenow) |
 | [Sigma](#label-gateway-tools-server-sigma) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [Slack](#label-gateway-tools-server-slack) | Generally available | OAuth | [MCP-enabled application and scopes](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-slack) |
+| [Smartsheet](#label-gateway-tools-server-smartsheet) | Generally available | OAuth | [Register a Developer Tools app](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-smartsheet) |
 | [Snowflake](#label-gateway-tools-server-snowflake) | Generally available | OAuth | [MCP server object, privileges, and OAuth client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-snowflake-server) |
 | [Spinach](#label-gateway-tools-server-spinach) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Statsig](#label-gateway-tools-server-statsig) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Stripe](#label-gateway-tools-server-stripe) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Supernova.io](#label-gateway-tools-server-supernova) | Generally available | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
+| [TikTok for Business](#label-gateway-tools-server-tiktok-business) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Torii](#label-gateway-tools-server-torii) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Upwind](#label-gateway-tools-server-upwind) | Generally available | Client credentials | [API credentials, organization, and region](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-upwind) |
 | [Webflow](#label-gateway-tools-server-webflow) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Wispr Flow](#label-gateway-tools-server-wispr-flow) | Generally available | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Wiz](#label-gateway-tools-server-wiz) | Generally available | Client credentials | [Service account, scopes, and API endpoint](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-wiz) |
+| [Workday](#label-gateway-tools-server-workday) | Generally available | OAuth | [Instance values; register an external agent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-workday) |
 | [Wrike](#label-gateway-tools-server-wrike) | Generally available | OAuth | [Custom OAuth client if needed; user consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-wrike) |
+| [Zip](#label-gateway-tools-server-zip) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Zoom](#label-gateway-tools-server-zoom) | Generally available | OAuth | [General App and matching scopes](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-zoom) |
 | [ZoomInfo](#label-gateway-tools-server-zoominfo) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 
@@ -110,21 +141,55 @@ Show lessSee more
 | --- | --- | --- | --- |
 | [Apollo](#label-gateway-tools-server-apollo) | Private Preview | OAuth | [GraphQL deployment and authorization](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-apollo) |
 | [Ashby](#label-gateway-tools-server-ashby) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Atlan](#label-gateway-tools-server-atlan) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Attentive](#label-gateway-tools-server-attentive) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Azure DevOps](#label-gateway-tools-server-azure-devops) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
+| [Bigdata.com](#label-gateway-tools-server-bigdata) | Private Preview | OAuth | [Create an OAuth client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-bigdata) |
+| [Collibra](#label-gateway-tools-server-collibra) | Private Preview | OAuth | [Instance values; register a user application](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-collibra) |
+| [FactSet: AI-Ready Data](#label-gateway-tools-server-factset-ai-ready-data) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Gong](#label-gateway-tools-server-gong) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Jedify](#label-gateway-tools-server-jedify) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Kensho](#label-gateway-tools-server-kensho) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Meta Ads](#label-gateway-tools-server-meta-ads) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Microsoft OneDrive](#label-gateway-tools-server-microsoft-onedrive) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [Microsoft Outlook](#label-gateway-tools-server-microsoft-outlook) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [Microsoft SharePoint](#label-gateway-tools-server-microsoft-sharepoint) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [Microsoft Teams](#label-gateway-tools-server-microsoft-teams) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
 | [Monday.com](#label-gateway-tools-server-monday) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Monte Carlo](#label-gateway-tools-server-monte-carlo) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Moody’s Credit](#label-gateway-tools-server-moodys-credit) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Omni](#label-gateway-tools-server-omni) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [Outreach](#label-gateway-tools-server-outreach) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+| [Pantomath](#label-gateway-tools-server-pantomath) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
+| [ServiceNow](#label-gateway-tools-server-servicenow) | Private Preview | OAuth | [Instance values; register an inbound OAuth integration](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-servicenow) |
 | [Sigma](#label-gateway-tools-server-sigma) | Private Preview | OAuth | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
+| [Zip](#label-gateway-tools-server-zip) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 | [ZoomInfo](#label-gateway-tools-server-zoominfo) | Private Preview | OAuth | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
 
 Expand
 
 Show lessSee more
+
+## Adobe CX Coworker Gateway
+
+Access Adobe CX Enterprise tools (Real-Time CDP, Journey Optimizer, Customer Journey Analytics, Target, AEM, Workfront, and Marketo Engage) through a single governed MCP endpoint, scoped to your organization’s entitlements.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `adobe_cx_coworker` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Adobe CX Coworker Gateway resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
 ## Amplitude
 
@@ -241,6 +306,31 @@ Use an account with access to the Ashby resources you want the AI client to use.
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
+## Atlan
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Official Atlan MCP server. Search, explore, govern, and manage data assets through the Atlan context layer.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `atlan` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Atlan resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Atlassian
 
 Connect Jira issues and Confluence documentation to your AI client. Search enterprise knowledge, summarize work, and create issues or pages.
@@ -263,6 +353,31 @@ Use an account with access to the Atlassian resources you want the AI client to 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
 For more information, see [Atlassian connector capabilities](https://docs.natoma.ai/apps/atlassian-remote). For connection steps specific to Tools, use the workflow above.
+
+## Attentive
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Connect your Attentive account to AI clients to build, launch, and analyze messaging programs: campaigns, journeys, segments, email design, copy generation, and reporting.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `attentive` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Attentive resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
 ## Avalara Dev Documentation
 
@@ -361,6 +476,31 @@ Use an account with access to the Azure DevOps resources you want the AI client 
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
+## Bigdata.com
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Bigdata.com remote MCP server by RavenPack. Search financial news, filings, and transcripts for market intelligence and company research.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `bigdata` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Create an OAuth client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-bigdata) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Bigdata.com resources you want the AI client to use. Before enabling the server, [register an OAuth client with Bigdata.com](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-bigdata). Bigdata.com doesn’t support dynamic client registration, so you must enter your own client ID and secret.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## BigQuery
 
 Explore BigQuery datasets and table schemas and run SQL queries through Google’s hosted MCP server. Access to the underlying data depends on Google Cloud IAM permissions.
@@ -403,6 +543,27 @@ Use an account with access to the Box resources you want the AI client to use. R
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
 For more information, see [Box connector capabilities](https://docs.natoma.ai/apps/box). For connection steps specific to Tools, use the workflow above.
+
+## Braze
+
+Official Braze remote MCP server. Manage customer engagement campaigns, segments, users, and analytics.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `braze` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Braze resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
 ## Buildkite
 
@@ -528,6 +689,43 @@ Use an account with access to the CloudZero resources you want the AI client to 
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
+## Collibra
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Official Collibra remote MCP server. Query the data intelligence platform for catalog assets, governance policies, and lineage against your Collibra tenant.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `collibra` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Instance values; register a user application](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-collibra) |
+
+Expand
+
+Show lessSee more
+
+An administrator provides the following values before this server can be enabled:
+
+| Value | Description | Default |
+| --- | --- | --- |
+| `collibraHost` | Collibra tenant host (for example, `mycompany.collibra.com`), without `https://` or a path | None |
+
+Expand
+
+Show lessSee more
+
+For the full setup procedure, see [Setting up MCP servers needing additional configuration](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup).
+
+### Setup and authorization
+
+Use an account with access to the Collibra resources you want the AI client to use. Before enabling the server, [register an OAuth client with Collibra](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-collibra). Collibra doesn’t support dynamic client registration, so you must enter your own client ID and secret.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Context7
 
 Retrieve current library documentation and code examples for coding tasks. This server doesn’t require a user sign-in.
@@ -564,6 +762,27 @@ Show lessSee more
 ### Setup and authorization
 
 Use an account with access to the Context7 (Authenticated) resources you want the AI client to use. Review [review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## Cotality
+
+Cotality’s official remote MCP server (formerly CoreLogic). Property data, market and trend analytics, and climate risk intelligence, scoped to the tools your license includes.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `cotality` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Cotality resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
@@ -651,6 +870,31 @@ Show lessSee more
 
 No provider credentials are required. An administrator must still enable this server and grant access before users can discover it in CoCo.
 
+## FactSet: AI-Ready Data
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+FactSet AI-Ready Data MCP server. Unified access to FactSet’s financial content, including equity prices, fundamentals, consensus estimates, ownership, events and transcripts, supply chain, M&A, funds and ETFs, and macroeconomics.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `factset-ai-ready-data` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the FactSet resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Fireflies.ai
 
 Search meeting recordings, transcripts, and AI-generated notes in Fireflies.ai. Use meeting context to find decisions and follow-up work.
@@ -711,6 +955,39 @@ Show lessSee more
 ### Setup and authorization
 
 Use an account with access to the GitLab resources you want the AI client to use. Review [review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## Glean
+
+Search enterprise knowledge, read documents, search people, and chat with Glean’s AI assistant.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `glean` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
+
+Expand
+
+Show lessSee more
+
+An administrator provides the following values before this server can be enabled:
+
+| Value | Description | Default |
+| --- | --- | --- |
+| `gleanInstanceName` | Your Glean instance name: the part before `-be.glean.com` (for example, `snowflake` for `https://snowflake-be.glean.com`). Find it in your MCP server URL in Glean under **Settings** > **MCP**. | None |
+
+Expand
+
+Show lessSee more
+
+For the full setup procedure, see [Setting up MCP servers needing additional configuration](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup).
+
+### Setup and authorization
+
+Use an account with access to the Glean resources you want the AI client to use. Review [instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) before enabling the server.
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
@@ -940,6 +1217,27 @@ Use an account with access to the Google Tasks (Cortex) resources you want the A
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
+## Hightouch
+
+Hightouch MCP server for marketing activation. Discover your customer schema, build audiences, create and analyze journeys, generate emails and SMS, and produce ad creatives in natural language, scoped to your workspace permissions.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `hightouch` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Hightouch resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Honeycomb
 
 Honeycomb MCP Server - Query, analyze, and visualize observability data including traces, triggers, and SLOs using natural language.
@@ -998,6 +1296,77 @@ Show lessSee more
 ### Setup and authorization
 
 Use an account with access to the Intercom resources you want the AI client to use. Review [review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## IPinfo
+
+IPinfo MCP Server
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `ipinfo` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the IPinfo resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## Jedify
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Jedify remote MCP server. Query your organization’s Context Graph in plain language, edit and version the semantic layer, and build data apps on semantic functions.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `jedify` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Jedify resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## Kensho
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Kensho LLM-ready API MCP server by S&P Global. Query S&P Capital IQ financials and estimates, transactions, transcripts, key developments, and business relationships in natural language with source citations.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `kensho` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Kensho resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
@@ -1260,6 +1629,48 @@ Use an account with access to the Microsoft Teams resources you want the AI clie
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
+## Microsoft Work IQ
+
+Official Microsoft Work IQ MCP server. Ask questions grounded in your Microsoft 365 work data, including email, meetings, files, and chats.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `microsoft-work-iq` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Register an Entra app and grant consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-work-iq) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Microsoft Work IQ resources you want the AI client to use. Before enabling the server, [register a Microsoft Entra app and grant admin consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-work-iq). Microsoft Work IQ doesn’t support dynamic client registration, so you must enter your own client ID and secret.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## Miro
+
+Miro’s official remote MCP server. Read and write boards, items, diagrams, docs, images, and tables through the Miro MCP API. Admins must enable MCP Server in Miro org settings before users can connect.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `miro` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Miro resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Mixpanel
 
 Mixpanel MCP Server - Analyze product and replay data using conversational AI. Query events, session replays, funnels, and user behavior through natural language.
@@ -1306,6 +1717,77 @@ When connecting, complete the provider’s authorization flow and review the req
 
 For more information, see [Monday.com MCP servers](https://developer.monday.com/apps/docs/mcp-servers). For connection steps specific to Tools, use the workflow above.
 
+## Monte Carlo
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Official Monte Carlo hosted MCP server for data and AI observability. Check table health, trace field-level lineage, find downstream consumers, retrieve incidents, and create monitors.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `monte-carlo` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Monte Carlo resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## Moody’s Credit
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Moody’s GenAI-Ready Data MCP server for credit intelligence. Query credit assessments and company credit data, scoped to your Moody’s entitlements.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `moodys-credit` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Moody’s Credit resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## Navan
+
+Official Navan MCP server. Analyze travel and expense program data, including spend summaries, transaction details, and policy information.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `navan` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Navan resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Neon
 
 MCP server for interacting with Neon Management API and databases.
@@ -1346,6 +1828,27 @@ Use an account with access to the New Relic resources you want the AI client to 
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
+## Nexla
+
+Nexla MCP Server
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `nexla` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Nexla resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Notion
 
 Read, create, and update content in Notion pages, databases, and blocks. Use it to retrieve workspace knowledge and maintain documents.
@@ -1367,6 +1870,39 @@ Use an account with access to the Notion resources you want the AI client to use
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
 For more information, see [Notion connector capabilities](https://docs.natoma.ai/apps/notion). For connection steps specific to Tools, use the workflow above.
+
+## Observe
+
+Official Observe remote MCP server. Query metrics, traces, events, and logs for observability and monitoring.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `observe` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
+
+Expand
+
+Show lessSee more
+
+An administrator provides the following values before this server can be enabled:
+
+| Value | Description | Default |
+| --- | --- | --- |
+| `host` | Observe tenant host that you sign in at (for example, `123456789.observeinc.com` or `123456789.yourorg.observeinc.com`) | None |
+
+Expand
+
+Show lessSee more
+
+For the full setup procedure, see [Setting up MCP servers needing additional configuration](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup).
+
+### Setup and authorization
+
+Use an account with access to the Observe resources you want the AI client to use. Review [instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
 ## Okta (Cortex)
 
@@ -1398,6 +1934,31 @@ For the full setup procedure, see [Setting up MCP servers needing additional con
 ### Setup and authorization
 
 Use an account with access to the Okta (Cortex) resources you want the AI client to use. Review [organization domain; app integration and scopes](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-okta) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## Omni
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Official Omni hosted MCP server for analytics. Query your Omni semantic model in natural language, run saved queries, search dashboards and apps, and run multi-step agentic analysis, scoped to your Omni permissions.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `omni` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Omni resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
@@ -1447,6 +2008,43 @@ Use an account with access to the PagerDuty resources you want the AI client to 
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
+## Pantomath
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Official Pantomath remote MCP server for data observability. Triage incidents, trace lineage upstream and downstream, inspect pipeline and asset health, and review data quality checks against your Pantomath workspace.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `pantomath` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
+
+Expand
+
+Show lessSee more
+
+An administrator provides the following values before this server can be enabled:
+
+| Value | Description | Default |
+| --- | --- | --- |
+| `pantomathHost` | Pantomath workspace host (for example, `mycompany.pantomath.app`), without `https://` or a path | None |
+
+Expand
+
+Show lessSee more
+
+For the full setup procedure, see [Setting up MCP servers needing additional configuration](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup).
+
+### Setup and authorization
+
+Use an account with access to the Pantomath resources you want the AI client to use. Review [instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## PayPal
 
 Interact with PayPal’s payment ecosystem to process transactions, manage subscriptions, handle disputes, access customer payment data, generate financial reports, and monitor payment flows.
@@ -1468,6 +2066,27 @@ Use an account with access to the PayPal resources you want the AI client to use
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
+## Plaid
+
+Access bank account data, transaction history, and financial information through Plaid’s secure API. Verify account ownership, categorize spending, analyze financial patterns, and enable payment workflows while maintaining bank-level security and compliance.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `plaid` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Plaid resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Prisma
 
 Connect your AI client to Prisma’s remote MCP server for database development workflows. Review the tools available to your authorized Prisma account before enabling database operations.
@@ -1485,6 +2104,27 @@ Show lessSee more
 ### Setup and authorization
 
 Use an account with access to the Prisma resources you want the AI client to use. Review [review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## S&P Global Energy: AI Ready Data
+
+Official S&P Global Energy AI Ready Data (AIRD) remote MCP server. Semantically search energy and commodities market reports, news, commentaries, and fundamental analyses to ground agents and RAG workflows.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `sp-global-energy-ai-ready-data` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Request OAuth client credentials](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-sp-global-energy) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the S&P Global Energy: AI Ready Data resources you want the AI client to use. Before enabling the server, [register an OAuth client with S&P Global Energy: AI Ready Data](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-sp-global-energy). S&P Global Energy: AI Ready Data doesn’t support dynamic client registration, so you must enter your own client ID and secret.
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
@@ -1546,6 +2186,44 @@ Use an account with access to the Sentry resources you want the AI client to use
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
+## ServiceNow
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Connect to a ServiceNow MCP Server Console server. Available tools depend on the server configured in your instance. Requires an OAuth authorization-code client registered in ServiceNow; dynamic client registration is not supported.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `servicenow` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Instance values; register an inbound OAuth integration](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-servicenow) |
+
+Expand
+
+Show lessSee more
+
+An administrator provides the following values before this server can be enabled:
+
+| Value | Description | Default |
+| --- | --- | --- |
+| `serviceNowInstanceUrl` | ServiceNow instance hostname (for example, `your-company.service-now.com`) | None |
+| `mcpServerName` | Name of the MCP server in ServiceNow MCP Server Console (the last segment of its server URL). Optional. | `sn_mcp_server_default` |
+
+Expand
+
+Show lessSee more
+
+For the full setup procedure, see [Setting up MCP servers needing additional configuration](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup).
+
+### Setup and authorization
+
+Use an account with access to the ServiceNow resources you want the AI client to use. Before enabling the server, [register an OAuth client with ServiceNow](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-servicenow). ServiceNow doesn’t support dynamic client registration, so you must enter your own client ID and secret.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Sigma
 
 Note
@@ -1600,6 +2278,27 @@ Show lessSee more
 ### Setup and authorization
 
 Use an account with access to the Slack resources you want the AI client to use. Review [mcp-enabled application and scopes](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-slack) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## Smartsheet
+
+Official Smartsheet remote MCP server. Manage sheets, reports, dashboards, workspaces, folders, discussions, and attachments.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `smartsheet` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Register a Developer Tools app](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-smartsheet) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Smartsheet resources you want the AI client to use. Before enabling the server, [register an OAuth client with Smartsheet](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-smartsheet). Smartsheet doesn’t support dynamic client registration, so you must enter your own client ID and secret.
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
@@ -1702,6 +2401,60 @@ When connecting, complete the provider’s authorization flow and review the req
 
 For more information, see [Stripe connector capabilities](https://docs.natoma.ai/apps/stripe). For connection steps specific to Tools, use the workflow above.
 
+## Supernova.io
+
+Supernova MCP server with dynamic dataset endpoint.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `supernova` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) |
+
+Expand
+
+Show lessSee more
+
+An administrator provides the following values before this server can be enabled:
+
+| Value | Description | Default |
+| --- | --- | --- |
+| `designSystemId` | Supernova design system ID, from your `app.supernova.io` URL (for example, `60216`) | None |
+
+Expand
+
+Show lessSee more
+
+For the full setup procedure, see [Setting up MCP servers needing additional configuration](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup).
+
+### Setup and authorization
+
+Use an account with access to the Supernova.io resources you want the AI client to use. Review [instance values; provider access requirements](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-setup-values) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## TikTok for Business
+
+Official TikTok for Business remote MCP server. Manage TikTok Ads campaigns, reporting, audiences, catalogs, and creative assets.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `tiktok-business` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the TikTok for Business resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Torii
 
 Query SaaS applications, contracts, and spend data in Torii. The server also supports actions such as updating users, creating contracts, and running workflows, subject to your Torii permissions.
@@ -1763,6 +2516,27 @@ Use an account with access to the Webflow resources you want the AI client to us
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
+## Wispr Flow
+
+Wispr Flow MCP Server
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `wispr-flow` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Wispr Flow resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Wiz
 
 Wiz cloud security platform MCP Server with comprehensive security, compliance, and cost optimization tools
@@ -1781,6 +2555,40 @@ Show lessSee more
 
 An administrator supplies scoped service credentials. Follow [Wiz setup](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-wiz); this flow doesn’t use a callback URL or per-user consent.
 
+## Workday
+
+Workday Data Cloud Live Data Query MCP server. Explore catalogs, schemas, and tables and run read-only SQL queries against Workday data via OAuth.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `workday` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Instance values; register an external agent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-workday) |
+
+Expand
+
+Show lessSee more
+
+An administrator provides the following values before this server can be enabled:
+
+| Value | Description | Default |
+| --- | --- | --- |
+| `region` | Workday Agent Gateway region of your tenant: `us`, `eu`, `uk`, `ca`, `au`, `sg`, `in`, `jp`, or `sales` | None |
+| `tenantAlias` | Your Workday tenant alias (for example, `acme_prod1`) | None |
+
+Expand
+
+Show lessSee more
+
+For the full setup procedure, see [Setting up MCP servers needing additional configuration](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup).
+
+### Setup and authorization
+
+Use an account with access to the Workday resources you want the AI client to use. Before enabling the server, [register an OAuth client with Workday](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-workday). Workday doesn’t support dynamic client registration, so you must enter your own client ID and secret.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
 ## Wrike
 
 Create and update tasks and projects, manage folders and spaces, and retrieve work-management context in Wrike. Users authorize access with their own Wrike accounts.
@@ -1798,6 +2606,31 @@ Show lessSee more
 ### Setup and authorization
 
 Use an account with access to the Wrike resources you want the AI client to use. Review [custom oauth client if needed; user consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-wrike) before enabling the server.
+
+When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
+
+## Zip
+
+Note
+
+This server is in Private Preview. Its available tools and behavior might change.
+
+Access procurement requests, approvals, and vendors in Zip.
+
+| Property | Value |
+| --- | --- |
+| Server identifier | `zip` |
+| Authentication | OAuth |
+| Transport | Streamable HTTP |
+| Additional administrator setup | [Review provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) |
+
+Expand
+
+Show lessSee more
+
+### Setup and authorization
+
+Use an account with access to the Zip resources you want the AI client to use. Review [provider access and consent](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-provider-access) before enabling the server.
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 

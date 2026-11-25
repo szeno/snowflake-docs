@@ -475,7 +475,7 @@ Note
 This feature requires the `snowflake.core` package.
 
 Use `BatchInferenceTask` to run a batch inference job inside a
-[Snowflake task DAG](/developer-guide/snowpark/python/managing-tasks-with-python-api). This is
+[Snowflake task DAG](/developer-guide/snowflake-python-api/snowflake-python-managing-tasks). This is
 useful for scheduled or recurring batch inference, for multi-step DAGs that include inference, and
 for downstream tasks that read the inference output.
 

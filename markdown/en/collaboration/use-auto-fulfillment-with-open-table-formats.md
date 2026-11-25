@@ -74,7 +74,6 @@ For more information, see [Limitations](#label-auto-fulfillment-open-formats-lim
 Cross-Cloud Auto-Fulfillment for listings is subject to the following limitations:
 
 - You cannot replicate CATALOG or any CATALOG-related information.
-- Catalog integrations and external volumes that use private connectivity are not supported.
 - Iceberg tables in a catalog-linked database (CLD) are supported only when the CLD uses an Apache Iceberg™ REST catalog
   integration. Tables in CLDs that use other catalog integrations aren’t supported.
 - You share the tables in a CLD, not the CLD itself. Add the CLD’s tables to your listing’s data product, as described in

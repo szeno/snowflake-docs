@@ -103,6 +103,7 @@ By default, Openflow uses the [account event table](/developer-guide/logging-tra
 ## [Optional] Create a monitoring role
 
 A monitoring role lets data engineers or operations teams monitor Openflow without having the OPENFLOW\_ADMIN role.
+For the full privilege model, see [Openflow privileges](/user-guide/data-integration/openflow/privileges).
 
 - To create a monitoring role, run the following code:
 
@@ -115,6 +116,7 @@ A monitoring role lets data engineers or operations teams monitor Openflow witho
 
   CREATE ROLE IF NOT EXISTS <OPENFLOW_MONITOR_ROLE>;
   GRANT MONITOR ON OPENFLOW DEPLOYMENT <deployment_name> TO ROLE <OPENFLOW_MONITOR_ROLE>;
+  GRANT USAGE ON OPENFLOW DEPLOYMENT <deployment_name> TO ROLE <OPENFLOW_MONITOR_ROLE>;
   GRANT ROLE <OPENFLOW_MONITOR_ROLE> TO ROLE <OPENFLOW_ADMIN_ROLE>;
   GRANT ROLE <OPENFLOW_MONITOR_ROLE> TO USER <SNOWFLAKE_USER>;
   ```
@@ -128,9 +130,17 @@ A monitoring role lets data engineers or operations teams monitor Openflow witho
 
   CREATE ROLE IF NOT EXISTS <OPENFLOW_MONITOR_ROLE>;
   GRANT MONITOR ON INTEGRATION <OPENFLOW_DATAPLANE_INTEGRATION_NAME> TO ROLE <OPENFLOW_MONITOR_ROLE>;
+  GRANT USAGE ON INTEGRATION <OPENFLOW_DATAPLANE_INTEGRATION_NAME> TO ROLE <OPENFLOW_MONITOR_ROLE>;
   GRANT ROLE <OPENFLOW_MONITOR_ROLE> TO ROLE <OPENFLOW_ADMIN_ROLE>;
   GRANT ROLE <OPENFLOW_MONITOR_ROLE> TO USER <SNOWFLAKE_USER>;
   ```
+
+  Note
+
+  The Connectors Dashboard finds each deployment’s event table by reading the deployment’s metadata, which MONITOR
+  alone doesn’t allow. For gen 2 deployments, the role needs USAGE on the Openflow deployment. For gen 1 deployments,
+  the role needs USAGE on the data plane integration. Without it, a custom event table that’s set on the deployment
+  doesn’t appear in the dashboard’s **Event table** filter. The examples above grant USAGE in addition to MONITOR.
 
 ### Next steps
 

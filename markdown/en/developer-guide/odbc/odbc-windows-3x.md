@@ -77,9 +77,12 @@ To configure the ODBC driver in a Windows environment, create a DSN for the driv
 
       Note
 
-      - The ODBC driver supports additional parameters that are not displayed in the dialog. These parameters can only be set in the Windows registry using **regedit**.
+      - The ODBC driver supports additional parameters that are not displayed in the dialog. These parameters can only be set in the Windows registry using **regedit**. You don’t need to edit the registry for parameters that the dialog shows.
 
         For descriptions of all the parameters, see [ODBC configuration and connection parameters](/developer-guide/odbc/odbc-parameters).
+      - To use key pair authentication, set **Authenticator** to `snowflake_jwt`. Then enter the path to your private key file (for example, `C:\keys\rsa_key.p8`) in **PRIV\_KEY\_FILE**. If the key is encrypted, enter its passphrase in **PRIV\_KEY\_FILE\_PWD**. These two fields require ODBC driver version 3.9.0 or later. For more information, see [ODBC configuration and connection parameters](/developer-guide/odbc/odbc-parameters).
+      - Windows stores DSNs in the registry. If your organization’s policy blocks registry writes, you might not be able to create or change a DSN in the dialog. In that case, use a DSN-less connection string instead.
+      - Avoid saving **PRIV\_KEY\_FILE\_PWD** in a DSN, because DSN values are stored in the registry as plain text. Instead, supply the passphrase in the connection string when you connect.
       - Specifying a value in the **Authenticator** field is only required if you are using federated authentication. For more information, see the `authenticator` parameter description in [ODBC configuration and connection parameters](/developer-guide/odbc/odbc-parameters).
    4. Click **OK** to create the DSN.
 

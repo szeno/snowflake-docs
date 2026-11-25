@@ -55,18 +55,22 @@ Use code folding to collapse and expand large blocks of code, allowing you to fo
 2. Hover the mouse to the right of the line numbers. A code folding icon ([![Code folding icon to collapse and expand a code selection.](/static/images/workspaces/workspaces-code-fold-chevron-down.png)](/static/images/workspaces/workspaces-code-fold-chevron-down.png)) appears at the fold line.
 3. Toggle the icon to fold or unfold the section of code.
 
-### View multiple files or results in one layout
+### Split the editor pane
 
-Managing multiple files with tabs and split panes offers several advantages:
+Split the editor pane to work in multiple files at once. For example, reference one query while you write another. Each
+editor pane shows its own files and query results.
 
-- Compare code or results side by side: Quickly reference one worksheet query while working on another.
-- Multitask more efficiently: View different cells, outputs, or files at once with less switching.
+To split the editor pane, do one of the following:
 
-To adjust your Workspaces layout, select the vertical ellipsis ([![More actions for worksheet](/static/images/snowsight/snowsight-worksheet-vertical-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-vertical-ellipsis.png)) in the **Workspaces** pane and choose the appropriate option:
+- Hover over a file tab, select **More options** (**…**), and then select **Split right** or **Split down**.
+- In the top-right corner of the editor, select the settings icon, and then select **Split editor pane**.
+- Use the [keyboard shortcuts](#label-workspaces-keyboard-shortcuts) `control` + `\` (split horizontally) or
+  `control` + `shift` + `\` (split vertically).
 
-1. Split right
-2. Split down
-3. Close others
+To close the other tabs in a pane, hover over a tab, select **More options** (**…**), and then select **Close other tabs**.
+
+Splitting the editor pane changes the layout of the whole editor. To compare query results without splitting the editor, see
+[Pin and compare query results](#label-workspaces-pin-compare-results).
 
 ## Exploring query results
 
@@ -131,6 +135,36 @@ To view aggregate statistics for multiple cells:
 
 This feature is useful for quick calculations and data exploration without creating new queries.
 
+### Pin and compare query results
+
+By default, each query you run replaces the result that you are viewing. Pin a result to keep it open while you run other queries.
+
+**To pin a result:**
+
+- In the results area, hover over the result’s tab and select the pin icon (**Pin tab**).
+
+  The tab stays open when you run more queries, and new results open in a separate tab. A pinned tab always shows a filled pin icon.
+
+You can also pin a result from the **Query History** pane: hover over a query and select **Pin result**, or hold `option` (macOS) or
+`Alt` (Windows) and click the query.
+
+**To unpin a result:**
+
+- Select the filled pin icon (**Unpin tab**) on the pinned tab.
+
+**To close a pinned result:**
+
+Pinned tabs don’t show a close button, which protects them from being closed by accident.
+
+1. Select the filled pin icon to unpin the tab.
+2. Hover over the tab and select the close button (**X**).
+
+**To view results side by side:**
+
+1. Pin the result that you want to compare.
+2. Run another query, or open another result.
+3. Hover over the pinned result’s tab, select **More options** (**…**), and then select **Split right** or **Split down**.
+
 ## Keyboard shortcuts
 
 Workspaces provides keyboard shortcuts to help you quickly navigate, customize your view, and edit queries. The following table identifies
@@ -141,8 +175,8 @@ commonly used keyboard shortcuts:
 | Run selected | `command` + `return` | `CTRL` + `Enter` |
 | Run all | `command` + `shift` + `return` | `CTRL` + `Shift` + `Enter` |
 | Format SQL file | `command` + `shift` + `O` | `CTRL` + `Alt` + `O` |
-| Split pane horizontally | `control` + `\` | `CTRL` + `\` |
-| Split pane vertically | `control` + `shift` + `\` | `CTRL` + `Shift` + `\` |
+| Split editor pane horizontally | `control` + `\` | `CTRL` + `\` |
+| Split editor pane vertically | `control` + `shift` + `\` | `CTRL` + `Shift` + `\` |
 | Close focused tab | `control` + `W` | `CTRL` + `Q` |
 | Copy selected file | `command` + `C` | `CTRL` + `C` |
 | Cut selected file | `command` + `X` | `CTRL` + `X` |

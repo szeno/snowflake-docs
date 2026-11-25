@@ -22,7 +22,7 @@ query the historical data in the view.
 | CREDITS\_USED\_CLOUD\_SERVICES | NUMBER | Number of credits billed for cloud services in the day. Always *0* when the SERVICE\_TYPE is one of the Openflow types. |
 | CREDITS\_USED | NUMBER | Sum of CREDITS\_USED\_COMPUTE and CREDITS\_USED\_CLOUD\_SERVICES. |
 | CREDITS\_ADJUSTMENT\_CLOUD\_SERVICES | NUMBER | Number of credits [adjusted for cloud services](/user-guide/cost-understanding-compute#label-understanding-billing-for-cloud-services-usage). This is a negative value (e.g. `-9`). |
-| CREDITS\_BILLED | NUMBER | Total number of credits billed for the account in the day. This is a sum of CREDITS\_USED\_COMPUTE, CREDITS\_USED\_CLOUD\_SERVICES, and CREDITS\_ADJUSTMENT\_CLOUD\_SERVICES. |
+| CREDITS\_BILLED | NUMBER | Total number of credits billed for the account in the day. This is a sum of CREDITS\_USED\_COMPUTE, CREDITS\_USED\_CLOUD\_SERVICES, and CREDITS\_ADJUSTMENT\_CLOUD\_SERVICES. Credit prices can differ by service and pricing type, so this credit total alone does not determine the amount charged in currency. For AI Credit and Platform Credit pricing, see [Snowflake AI pricing](/user-guide/snowflake-cortex/pricing). To explore charges in currency, see [ORGANIZATION\_USAGE.USAGE\_IN\_CURRENCY\_DAILY](/organization-usage/usage_in_currency_daily). |
 
 Expand
 

@@ -668,7 +668,7 @@ For general information about roles and privilege grants for performing SQL acti
 - By default, a DML statement executed without explicitly starting a transaction is automatically committed on success or rolled back on
   failure at the end of the statement. This behavior is called *autocommit* and is controlled with the [AUTOCOMMIT](/sql-reference/parameters#label-autocommit) parameter.
   This parameter must be set to TRUE. If the AUTOCOMMIT parameter is set to FALSE at the account level, then set the parameter to
-  TRUE for the individual task (using ALTER TASK … SET AUTOCOMMIT = TRUE); otherwise, any DML statement executed by the task fails.
+  TRUE for the individual task (using ALTER TASK … SET AUTOCOMMIT = TRUE); otherwise, the task fails when it runs.
 - Only one task should consume data from a stream. Create multiple streams for the same table to be consumed by more than one task. When a
   task consumes the data in a stream using a DML statement, the stream advances the offset and change data is no longer available for the
   next task to consume.

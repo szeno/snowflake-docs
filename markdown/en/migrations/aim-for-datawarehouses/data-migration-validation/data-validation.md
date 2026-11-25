@@ -149,9 +149,19 @@ Copy code
 scai data validate revalidate <WORKFLOW_NAME>
 ```
 
-The parent workflow must have **finished**. Re-validation scope depends on what failed: an L1 failure regenerates the full set of queries for that table, while an L2 or L3 failure re-runs only the affected partitions and reuses the parent’s partition metadata. The shared Orchestrator and Worker must still be running.
+The parent workflow must have **finished** or **failed**. By default, AIM DMV reuses the parent’s `PARTITION_METADATA` when it’s available, skips the schema re-check, and re-runs only failing L2 or L3 partitions. If partition metadata isn’t available, it runs the full pipeline.
 
-There’s no workflow configuration property that controls re-validation scope. It’s derived from the parent workflow’s results.
+Use `--recheck-schema` to force a full pipeline for schema-failed tables:
+
+Copy code
+
+```
+scai data validate revalidate <WORKFLOW_NAME> --recheck-schema
+```
+
+This option is required to retry a schema-only failure when all data partitions passed. It sets `revalidationRecheckSchema: true` in the child workflow configuration. The default value is `false`.
+
+The Orchestrator must still be running. A Worker must also be running for external-source validation; Snowflake-to-Snowflake validation doesn’t use a Worker.
 
 AIM DMV retries at three different layers, and it’s worth keeping them apart:
 

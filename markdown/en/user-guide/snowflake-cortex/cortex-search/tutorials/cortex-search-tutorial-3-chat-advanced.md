@@ -21,6 +21,11 @@ The following prerequisites are required to complete this tutorial:
 
 - You have a Snowflake account and user with a role that grants the necessary
   privileges to create a database, tables, virtual warehouse objects, Cortex Search Services, and Streamlit apps.
+- Your Snowflake account is in a region where the [COMPLETE (SNOWFLAKE.CORTEX)](/sql-reference/functions/complete-snowflake-cortex) function and the
+  model used in this tutorial are available. For more information, see
+  [Function availability by region](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability). If your region doesn’t
+  support the model, [enable cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference)
+  at the account level before you start.
 
 Refer to the [Snowflake in 20 minutes](/user-guide/tutorials/snowflake-in-20minutes) for instructions to meet these requirements.
 

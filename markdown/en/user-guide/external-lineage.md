@@ -728,6 +728,9 @@ The user sending a request to remove lineage between objects must have the DELET
 
 ## Limitations and considerations
 
+- Lineage from the OpenLineage API connects Snowflake objects and the external datasets named in OpenLineage events.
+  It doesn’t automatically connect to objects that Horizon Catalog connectors collect, even when both describe the same
+  external table.
 - Snowflake doesn’t support OpenLineage version 2.
 - The retention period for external lineage events is one year.
 - Snowflake only accepts COMPLETE lineage events. Events with a different `eventType`, for example START or FAIL, are rejected with a 400

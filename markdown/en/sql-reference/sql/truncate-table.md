@@ -60,8 +60,11 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
-- Both [DELETE](/sql-reference/sql/delete) and TRUNCATE TABLE maintain deleted data for recovery purposes (i.e. using Time Travel) for the data retention period.
-  However, when a table is truncated, the load metadata cannot be recovered.
+- Both [DELETE](/sql-reference/sql/delete) and TRUNCATE TABLE maintain deleted data for recovery purposes (using Time Travel) for the data
+  retention period. However, when a table is truncated, the load metadata cannot be recovered.
+- To protect against an accidental truncate, you can use Time Travel, zero-copy cloning, backups, Fail-safe (Snowflake-only recovery),
+  and transactions with ROLLBACK. For a description of each safeguard, see
+  . For Time Travel details, see [Understanding & using Time Travel](/user-guide/data-time-travel).
 - Unlike rows that you truncate from a table, errors that you truncate from an error table can’t be recovered.
 - Truncating an error table removes every error in it, including errors from DML statements and from every load that
   writes to the base table. You can’t delete individual errors. To keep errors, copy them to another table before you
@@ -115,6 +118,28 @@ The following example truncates a table:
    |         0 |
    +-----------+
    ```
+
+### Recover a truncated table
+
+To recover the rows after an accidental truncate, clone the table as it was before the TRUNCATE statement, replacing `<query_id>` with
+the query ID of the TRUNCATE statement:
+
+Copy code
+
+```
+CREATE TABLE temp_test_truncate_restored CLONE temp_test_truncate
+  BEFORE(STATEMENT => '<query_id>');
+
+SELECT COUNT(*) FROM temp_test_truncate_restored;
+```
+
+```
++----------+
+| COUNT(*) |
+|----------|
+|       20 |
++----------+
+```
 
 ### Copy errors and then truncate an error table
 

@@ -17,7 +17,7 @@ detected in training data.
 
 ## Classification methods
 
-- [model\_name!PREDICT](/sql-reference/classes/classification/methods/predict)
+- [<model\_name>!PREDICT](/sql-reference/classes/classification/methods/predict)
 - [<model\_name>!SHOW\_CONFUSION\_MATRIX](/sql-reference/classes/classification/methods/show_confusion_matrix)
 - [<model\_name>!SHOW\_EVALUATION\_METRICS](/sql-reference/classes/classification/methods/show_evaluation_metrics)
 - [<model\_name>!SHOW\_FEATURE\_IMPORTANCE](/sql-reference/classes/classification/methods/show_feature_importance)

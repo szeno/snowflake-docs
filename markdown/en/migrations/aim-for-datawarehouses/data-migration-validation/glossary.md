@@ -94,7 +94,7 @@ A rule in the `RATE_LIMIT` metadata table that caps how many concurrently execut
 
 ## Re-validation
 
-A child workflow that re-runs only the failed partitions and levels of a finished validation workflow, created with `scai data validate revalidate`. Distinct from incremental validation, which skips unchanged partitions. See [Re-validating what failed](./data-validation#re-validating-what-failed).
+A child workflow that re-runs failed work from a finished or failed validation workflow, created with `scai data validate revalidate`. By default it reuses existing partition metadata, skips schema re-checks, and retries failing L2 or L3 partitions. Use `--recheck-schema` to force the full pipeline for schema-failed tables. Distinct from incremental validation, which skips unchanged partitions. See [Re-validating what failed](./data-validation#re-validating-what-failed).
 
 ## Query tag
 

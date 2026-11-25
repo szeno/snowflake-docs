@@ -85,6 +85,14 @@ Solution #2:
     [account identifier](/user-guide/admin-account-identifier#label-account-name) to connect to the Snowflake account. You should also check that this value matches the
     account identifier in the `iss` claim.
 
+    Note
+
+    The account identifier in the `iss` and `sub` claims must use all uppercase characters, and any periods (`.`) in
+    it must be replaced with hyphens (`-`). This requirement applies even if the identifier works for password-based
+    authentication, which is more permissive about casing and periods. If you use the
+    [account locator](/user-guide/admin-account-identifier#label-account-locator) form of the identifier, exclude any region information from it. For
+    more details, see [Using key-pair authentication](/developer-guide/sql-api/authenticating#label-sql-api-authenticating-key-pair).
+
 Solution #3:
 :   Double-check that the account identifier and user name in the `sub` claim match the corresponding values in the
     `iss` claim.

@@ -266,6 +266,11 @@ Renaming a task isn’t supported. Instead, you can clone the task, and then dro
 - The compute resources for individual runs of a task are either managed by Snowflake (i.e. the serverless compute model) or a
   user-specified virtual warehouse. To convert a task that relies on a warehouse to the serverless compute model, unset the
   `WAREHOUSE`.
+  To convert a serverless task to a task that relies on a warehouse, use `SET WAREHOUSE`. If the task has
+  `TARGET_COMPLETION_INTERVAL` set, unset it first. Otherwise, the statement fails with the error
+  “TARGET\_COMPLETION\_INTERVAL is only allowed for serverless Tasks.” Snowflake automatically clears the
+  `SERVERLESS_TASK_MIN_STATEMENT_SIZE`, `SERVERLESS_TASK_MAX_STATEMENT_SIZE`, and
+  `USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE` parameters.
 - If a task fails with an unexpected error, you can receive a notification about the error.
   For more information about configuring task error notifications, see [Set up alerts and notifications for tasks](/user-guide/tasks-errors).
 - The `OVERLAP_POLICY` parameter replaces the deprecated `ALLOW_OVERLAPPING_EXECUTION` parameter. For backward compatibility,

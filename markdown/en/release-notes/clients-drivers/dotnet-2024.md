@@ -70,14 +70,14 @@ Beginning with version 4.0.0, the .NET driver introduced the following breaking 
   - The configuration of the pool has been changed to a connection string driven approach. All properties that control the connection pool behavior can be now passed in the connection string. It is no longer possible to set connection pool properties by `SnowflakeDbConnectionPool` setters, such as `SnowflakeDbConnectionPool.SetTimeout`, `SetPooling`, or `SetMaxPoolSize`. Using `SnowflakeDbConnectionPool` setters now throws exceptions.
   - Previously, connections that altered the database, schema, role, or warehouse (for example, by executing the ALTER SESSION SET command) parameters, were pooled. The new default behavior for such cases destroys altered connections when closing does not return them to the pool. If you want to use altered connections in the pool you need to add `ChangedSession=OriginalPool` to your connection string.
   - Connections with external browser authentication or, some cases of KeyPair/JWT token authentication, are no longer stored in the pool by default. To enable pooling such connections you must add `poolingEnabled=true` to the connection string. For other authentication methods pooling is enabled by default.
-  - For more information about using connection pool, see [Using Connection Pools](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/ConnectionPooling.md).
+  - For more information about using connection pool, see [Using Connection Pools](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Client/ConnectionPooling.md).
 - `NONPROXYHOSTS` parameter behavior change:
 
   The behavior for `NONPROXYHOSTS` parameter has changed. Previously a host would not be proxied if its name contained the value specified in this parameter. Now the host is not proxied when it is exactly the value specified in the parameter. For instance, previously `NONPROXYHOSTS=c` would match any host containing “c”, such as “your-account.snowflakecomputing.com” as well. After the change, you have to specify the whole host, such as `NONPROXYHOSTS=your-account.snowflakecomputing.com`, to make it non-proxied.
 
 ### New features and improvements
 
-- Changed connection pool behavior with multiple pools (one per each unique connection string) and connection string driven configuration. For more information about using connection pool, see [Using Connection Pools](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/ConnectionPooling.md).
+- Changed connection pool behavior with multiple pools (one per each unique connection string) and connection string driven configuration. For more information about using connection pool, see [Using Connection Pools](https://github.com/snowflakedb/snowflake-connector-net/blob/master/doc/Client/ConnectionPooling.md).
 - Targeting to .netstandard 2.0.
 - Added a strong name signature to the driver assembly.
 - Added ability to set the `QueryTag` parameter in the connection string and on the `SnowflakeDbCommand` object to mark the connection and command queries with a tag.

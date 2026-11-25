@@ -291,7 +291,6 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE PRIVACY POLICY](/sql-reference/sql/create-privacy-policy) | Creates a new [privacy policy](/user-guide/diff-privacy/differential-privacy-admin-privacy-policies) or replaces an existing privacy policy. |
 | [CREATE PROCEDURE](/sql-reference/sql/create-procedure) | Creates a new [stored procedure](/developer-guide/stored-procedure/stored-procedures-usage). |
 | [CREATE PROJECTION POLICY](/sql-reference/sql/create-projection-policy) | Creates a new [projection policy](/user-guide/projection-policies) in the current/specified schema or replaces an existing projection policy. |
-| [CREATE PROVISIONED THROUGHPUT](/sql-reference/sql/create-provisioned-throughput) | Creates a new [Provisioned Throughput resource](/user-guide/snowflake-cortex/provisioned-throughput) or replaces an existing one. |
 | [CREATE REPLICATION GROUP](/sql-reference/sql/create-replication-group) | Creates a new [replication group](/user-guide/account-replication-intro#label-replication-and-failover-groups) of specified objects in the system. |
 | [CREATE RESOURCE MONITOR](/sql-reference/sql/create-resource-monitor) | Creates a new [resource monitor](/user-guide/resource-monitors). |
 | [CREATE RESTRICTED SESSION SCOPE](/sql-reference/sql/create-restricted-session-scope) | Creates a new [restricted session scope](/user-guide/restricted-session-scope). |

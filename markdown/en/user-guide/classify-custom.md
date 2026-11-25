@@ -50,7 +50,7 @@ score for a column against the threshold value and recommends a category that co
 - Custom classifier tag
 
 You can specify the threshold value for a custom classification instance by calling the
-[<code className=”samp”><em>custom\_classifier</em></code>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex) method on the instance.
+[<custom\_classifier>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex) method on the instance.
 
 Note
 

@@ -7,6 +7,25 @@ Snowpark Container Services is available to accounts in [AWS, Microsoft Azure, a
 The costs associated with using Snowpark Container Services can be categorized into storage cost, compute pool cost, and data
 transfer cost.
 
+## What you pay for
+
+The following table summarizes the resources that Snowpark Container Services bills for. For the rate of each resource, see the
+[Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
+
+| Resource | Billing basis | Where it appears |
+| --- | --- | --- |
+| Compute pool nodes | Credits per node, based on the instance family. Charged while the pool is in the IDLE, ACTIVE, STOPPING, or RESIZING state, but not STARTING or SUSPENDED. | SNOWPARK\_CONTAINER\_SERVICES\_HISTORY, METERING\_HISTORY, and METERING\_DAILY\_HISTORY (`SERVICE_TYPE = 'SNOWPARK_CONTAINER_SERVICES'`) |
+| Storage (image repository, stages, event tables) | Standard Snowflake storage rates. | Storage usage views (see [Exploring storage cost](/user-guide/cost-exploring-data-storage)) |
+| Block storage and snapshots | Storage rates in the Service Consumption Table. | Storage usage views |
+| Outbound data transfer | Data transfer rates by cloud and region. | DATA\_TRANSFER\_HISTORY (`TRANSFER_TYPE = 'SNOWPARK_CONTAINER_SERVICES'`) |
+| Internal data transfer | SPCS same-cloud, same-region rate. | DATA\_TRANSFER\_HISTORY (`TRANSFER_TYPE = 'INTERNAL'`) and INTERNAL\_DATA\_TRANSFER\_HISTORY |
+
+Expand
+
+Show lessSee more
+
+Local storage on a compute pool node is covered by the compute pool node cost and isn’t billed separately.
+
 ## Storage cost
 
 When you use Snowpark Container Services, storage costs associated with Snowflake, including the cost of Snowflake stage usage
@@ -51,6 +70,51 @@ The following views provide usage information:
   - In the [METERING\_DAILY\_HISTORY view](/sql-reference/organization-usage/metering_daily_history), use the
     `SERVICE_TYPE = SNOWPARK_CONTAINER_SERVICES` query filter.
 
+### Example queries
+
+The following query returns the credits that each compute pool used per day over the last 30 days:
+
+Copy code
+
+```
+SELECT
+    DATE_TRUNC('day', start_time) AS usage_date,
+    compute_pool_name,
+    SUM(credits_used) AS credits_used
+  FROM SNOWFLAKE.ACCOUNT_USAGE.SNOWPARK_CONTAINER_SERVICES_HISTORY
+  WHERE start_time >= DATEADD('day', -30, CURRENT_TIMESTAMP())
+  GROUP BY 1, 2
+  ORDER BY 1, 2;
+```
+
+To see hourly consumption, group by `start_time` instead of `DATE_TRUNC('day', start_time)`.
+
+The following query returns the daily credits that your account used for Snowpark Container Services:
+
+Copy code
+
+```
+SELECT usage_date, SUM(credits_used) AS credits_used
+  FROM SNOWFLAKE.ACCOUNT_USAGE.METERING_DAILY_HISTORY
+  WHERE service_type = 'SNOWPARK_CONTAINER_SERVICES'
+    AND usage_date >= DATEADD('day', -30, CURRENT_DATE())
+  GROUP BY usage_date
+  ORDER BY usage_date;
+```
+
+The following query returns the same information for each account in your organization:
+
+Copy code
+
+```
+SELECT account_name, usage_date, SUM(credits_used) AS credits_used
+  FROM SNOWFLAKE.ORGANIZATION_USAGE.METERING_DAILY_HISTORY
+  WHERE service_type = 'SNOWPARK_CONTAINER_SERVICES'
+    AND usage_date >= DATEADD('day', -30, CURRENT_DATE())
+  GROUP BY account_name, usage_date
+  ORDER BY account_name, usage_date;
+```
+
 ## Data transfer cost
 
 Data transfer is the process of moving data into (ingress) and out of (egress) Snowflake. For more information, see
@@ -81,6 +145,18 @@ considerations apply:
     schema. The `service_type` column identifies this cost as the `INTERNAL_DATA_TRANSFER` type.
   - Query the [USAGE\_IN\_CURRENCY\_DAILY view](/sql-reference/organization-usage/usage_in_currency_daily) in the ORGANIZATION USAGE
     schema. The `service_type` column identifies this cost as the `INTERNAL_DATA_TRANSFER` type.
+
+The following query returns the bytes transferred over the last 30 days by Snowpark Container Services and internal transfers:
+
+Copy code
+
+```
+SELECT transfer_type, SUM(bytes_transferred) AS bytes_transferred
+  FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_TRANSFER_HISTORY
+  WHERE transfer_type IN ('SNOWPARK_CONTAINER_SERVICES', 'INTERNAL')
+    AND start_time >= DATEADD('day', -30, CURRENT_TIMESTAMP())
+  GROUP BY transfer_type;
+```
 
 Note
 

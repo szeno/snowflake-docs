@@ -108,6 +108,9 @@ To get started with Semantic Views:
 3. Create a semantic view.
 
    You can use [one of these interfaces](#label-semantic-views-interfaces) to create a semantic view.
+
+   For a complete example that uses SQL to create a semantic view from the TPC-H sample data, see
+   [Example of using SQL to create a semantic view](/user-guide/views-semantic/example).
 4. Use the semantic view in the following ways:
 
    - Use [Cortex Agents](/user-guide/snowflake-cortex/cortex-agents) for natural language queries of your semantic view.

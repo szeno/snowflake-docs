@@ -137,6 +137,10 @@ Note
 
 For more information about these types of attacks, see [SQL injection](https://en.wikipedia.org/wiki/SQL_injection).
 
+Note
+
+Snowflake does not currently support variable binding in multi-statement SQL requests.
+
 You can execute multiple statements as a batch in the same way you execute queries with single statements, except that the query string
 contains multiple statements separated by semicolons. Note that multiple statements execute sequentially, not in parallel.
 The `MULTI_STATEMENT_COUNT` parameter specifies the exact number of statements the batch contains.

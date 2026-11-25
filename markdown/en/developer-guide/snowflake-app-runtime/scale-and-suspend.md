@@ -42,6 +42,10 @@ or enable it. See
 
 ### Set the idle timeout for a serverless app
 
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
 By default, Snowflake stops a serverless app after 3600 seconds (1 hour)
 without requests. To use a longer idle period, set `auto_suspend_secs` in
 [`app.yml`](/developer-guide/snowflake-app-runtime/app-yml):
@@ -60,6 +64,10 @@ Serverless apps always start on request, so you can’t set
 `auto_resume: false`. A request can’t start an app that you disabled.
 
 ### Disable and enable a serverless app
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
 
 Disabling stops a serverless app until you enable it again. No request can
 start a disabled app:
@@ -113,7 +121,11 @@ You can set instance counts and other properties with
 [`ALTER APPLICATION SERVICE`](/sql-reference/sql/alter-application-service)
 as well. That change isn’t permanent: the next `snow app deploy` puts the
 values back to what’s in `app.yml`, or to the defaults if those keys aren’t
-there. To keep a value, put it in `app.yml`.
+there. There are two
+[exceptions](/developer-guide/snowflake-app-runtime/app-yml#label-snowflake-apps-manifest-validation):
+`compute_resource` keeps its current value when omitted, and
+`execute_as_role` can’t change after the app is created. To keep a value,
+put it in `app.yml`.
 
 ## Next steps
 

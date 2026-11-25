@@ -6,7 +6,7 @@ This support applies to the Java, Python, Node.js, and C++ SDKs.
 
 ## Prerequisites
 
-- A Snowflake account with Snowpark Container Services available. For setup details, see [Common setup](/developer-guide/snowpark-container-services/common-setup).
+- A Snowflake account with Snowpark Container Services available. For setup details, see [Common setup](/developer-guide/snowpark-container-services/tutorials/common-setup).
 - A target table, role, and PIPE object in your Snowflake account. For setup details, see [Tutorial: Get started with Named Channels using the SDK](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-getting-started).
 - Snowpipe Streaming SDK version 1.5.0 or later for the language you use.
 - If your account or the service’s user has a [network policy](/user-guide/network-policies), a network rule of type `COMPUTE_POOL` that allows the compute pool running the service. See [If your account uses a network policy](#if-your-account-uses-a-network-policy).
@@ -195,7 +195,7 @@ If the token file is removed or becomes unreadable while the SDK is running, the
 ## Limitations
 
 - The SDK reads its workload-identity token from the local filesystem inside the SPCS container. Authentication isn’t supported by passing a bearer token in code; use the file-based path.
-- Network egress from your SPCS service to Snowflake must be permitted by your SPCS configuration. For details, see [Network egress](/developer-guide/snowpark-container-services/additional-considerations-services-jobs#egress-traffic).
+- Network egress from your SPCS service to Snowflake must be permitted by your SPCS configuration. For details, see [Network egress](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-egress).
 - Connections from the service are subject to account-level and user-level network policies, and they match only network rules of type `COMPUTE_POOL`. External access integrations don’t affect this. See [If your account uses a network policy](#if-your-account-uses-a-network-policy).
 
 ## Troubleshooting

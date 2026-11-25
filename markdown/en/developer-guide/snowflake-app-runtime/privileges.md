@@ -71,6 +71,10 @@ See [CREATE ARTIFACT REPOSITORY](/sql-reference/sql/create-artifact-repository) 
 
 ## Preview in Snowsight Workspaces
 
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
 Preview works in your own workspaces with no extra grants. Your role needs
 more only in these cases:
 

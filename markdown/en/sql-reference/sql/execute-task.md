@@ -128,6 +128,12 @@ EXECUTE TASK <name> RETRY GRAPH RUN GROUP '<graph_run_group_id>'
 
   Tasks always run with the privileges of the original owner role, even if a different role with the OPERATE privilege uses EXECUTE TASK to
   run the task.
+
+  EXECUTE TASK is a global privilege. You can’t grant it on an individual task. To let another role run a specific task, grant that
+  role the OPERATE privilege on the task (for example, `GRANT OPERATE ON TASK my_task TO ROLE my_role`). The role also needs the USAGE
+  privilege on the database and schema that contain the task. The owner role of the task or a role with the MANAGE GRANTS privilege
+  can grant privileges on the task. Granting the global EXECUTE TASK privilege requires a role with the MANAGE GRANTS privilege, such as
+  SECURITYADMIN.
 - By default, Snowflake runs tasks by using the system user with the privileges of the task owner role.
   To run a task as a specific user, configure the task with EXECUTE AS USER. For more information, see [Run tasks with user privileges](/user-guide/tasks-intro#label-user-based-security-for-tasks).
 - The SQL command can only execute a standalone task or the root task in a task graph. If a child task is input, the command returns a

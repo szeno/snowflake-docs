@@ -190,6 +190,8 @@ ALTER USER example_user SET RSA_PUBLIC_KEY='MIIBIjANBgkqh...';
 Note
 
 - Exclude the public key delimiters in the SQL statement.
+- Join the remaining lines of the public key into a single line with no line breaks. Tools such as `openssl` wrap the
+  key body across multiple lines in the `.pub` file, but `RSA_PUBLIC_KEY` only accepts a single-line value.
 
 ### Verify the user’s public key fingerprint
 
@@ -244,7 +246,7 @@ Update the client to use key pair authentication to connect to Snowflake.
 
 ## Configuring key-pair rotation
 
-Rotate and replace your public and private keys based on the expiration schedule you follow internally. Snowflake supports two
+Rotate and replace your public and private keys according to your organization’s own key-rotation policy. Snowflake supports two
 ways to rotate a key:
 
 - Rotate a named key pair with [ALTER USER … ROTATE KEY PAIR](/sql-reference/sql/alter-user-rotate-key-pair) (recommended).

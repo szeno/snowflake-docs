@@ -15,8 +15,40 @@ To use OAuth, follow these steps:
 
 1. Set up OAuth for authentication.
 
-   See [Introduction to OAuth](/user-guide/oauth-intro) for details on how to set up OAuth and get an OAuth token.
-2. Use Snowflake CLI to verify that you can use a generated OAuth token to connect to Snowflake:
+   See [Introduction to OAuth](/user-guide/oauth-intro) for details on how to set up OAuth.
+2. Get an OAuth token by calling the token endpoint of your Snowflake account.
+
+   First, get an authorization code from the authorization endpoint (`<snowflake_account_url>/oauth/authorize`).
+   Then, exchange the code for an access token by sending a POST request to `<snowflake_account_url>/oauth/token-request`:
+
+   Copy code
+
+   ```
+   curl -X POST "https://<account_identifier>.snowflakecomputing.com/oauth/token-request" \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "grant_type=authorization_code" \
+     -d "code=<authorization_code>" \
+     -d "redirect_uri=<redirect_uri>" \
+     -d "client_id=<client_id>" \
+     -d "client_secret=<client_secret>"
+   ```
+
+   The response contains the token in the `access_token` field. It also contains a `refresh_token` field. When the access token
+   expires, use the refresh token to get a new one:
+
+   Copy code
+
+   ```
+   curl -X POST "https://<account_identifier>.snowflakecomputing.com/oauth/token-request" \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "grant_type=refresh_token" \
+     -d "refresh_token=<refresh_token>" \
+     -d "client_id=<client_id>" \
+     -d "client_secret=<client_secret>"
+   ```
+
+   For the full list of request parameters and client authentication methods, see [Configure Snowflake OAuth for custom clients](/user-guide/oauth-custom).
+3. Use Snowflake CLI to verify that you can use a generated OAuth token to connect to Snowflake:
 
    - For Linux and MacOS systems
 
@@ -33,11 +65,11 @@ To use OAuth, follow these steps:
    ```
    $ snow connection test --account <account_identifier> --user <user> --authenticator=oauth --token=<oauth_token>
    ```
-3. In each API request you send, set the following headers:
+4. In each API request you send, set the following headers:
 
    - `Authorization: Bearer oauth_token`
 
-     where `oauth_token` is the generated OAuth token.
+     where `oauth_token` is the `access_token` value from the token response.
    - (Optional) `X-Snowflake-Authorization-Token-Type: OAUTH`
 
      If you omit the `X-Snowflake-Authorization-Token-Type` header, Snowflake determines the token type by examining the token.

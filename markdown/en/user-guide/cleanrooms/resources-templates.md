@@ -58,7 +58,7 @@ Tip
 
 To see which templates you have registered, call VIEW\_REGISTERED\_TEMPLATES.
 
-See [Run an analysis](/user-guide/cleanrooms/demo-flows/basic-multiparty-collab#label-dcr-collab-run-an-analysis) to learn how to run an analysis.
+See [Running analyses and activations](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collab-run-an-analysis) to learn how to run an analysis.
 
 ## Template design
 

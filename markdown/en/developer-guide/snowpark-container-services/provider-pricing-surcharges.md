@@ -117,7 +117,7 @@ WHERE charge_type='SPCS_COMPUTE_POOL_SURCHARGE';
 
 - You can combine compute pool surcharges with a base charge, but not with any other
   usage-based pricing model. If you have both a base charge and compute pool surcharges, the base charge won’t be reflected in MONETIZED\_DAILY\_USAGE views or the MARKETPLACE\_DISBURSEMENT\_REPORT views. However, both the base charge and the surcharge appear on the invoice.
-- Compute pool surcharges can’t be combined with subscription-based pricing.
+- Compute pool surcharges can’t be combined with flat-fee pricing.
 - Compute pool surcharges are calculated per day, not per hour.
 - Compute pool surcharges are only calculated in US dollars.
 - Time-based trials are supported. Other types of trials (usage-based or limited functionality)

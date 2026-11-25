@@ -1,6 +1,6 @@
 # Permission modes
 
-Permission modes control when CoCo stops to ask before the agent runs tools that touch your machine, your code, or your Snowflake account. Every chat has an **approval mode** (Default Approvals or Bypass Approvals) that determines when the agent pauses for confirmation and when it acts on its own.
+Permission modes control when CoCo stops to ask before the agent runs tools that touch your machine, your code, or your Snowflake account. Every chat has an **approval mode** (Default Approvals, Auto (*Preview*), or Bypass Approvals) that determines when the agent pauses for confirmation and when it acts on its own.
 
 Important
 
@@ -13,6 +13,7 @@ The approval mode picker lives in the bottom-left of the chat input. Switch at a
 | Mode | Icon | Behavior |
 | --- | --- | --- |
 | **Default Approvals** | shield | CoCo uses your configured per-tool, per-edit, and per-URL approval settings. New or risky tool calls prompt for confirmation. This is the recommended setting for everyday use. |
+| **Auto** (*Preview*) | shield with a check mark | CoCo runs routine actions without asking and asks you only when an action looks risky or doesn’t match your intent. See [Auto mode (Preview)](#label-cortex-code-desktop-auto-mode). |
 | **Bypass Approvals** | warning | Every tool call is auto-approved without prompting. Use sparingly, in trusted contexts only. |
 
 Expand
@@ -79,6 +80,58 @@ A prompt-injection attack via a webpage, file, or model output can cause the age
 
 Administrators can disable Bypass Approvals fleet-wide with the `permissions.dangerouslyAllowAll` managed setting. When it’s blocked, the mode picker shows Bypass Approvals disabled with a “Blocked by your organization” message, and anyone who previously enabled it is reset to Default Approvals. See [Managed settings](/user-guide/cortex-code/cortex-code-desktop/managed-settings).
 
+## Auto mode (*Preview*)
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+Auto mode runs routine actions without a prompt and checks each remaining action against what you asked for. You see a
+prompt only when an action looks risky or doesn’t match your intent. You get most of the speed of bypass mode with much
+of the safety of default approvals. Auto mode is opt-in currently and isn’t the default mode.
+
+Each action that CoCo proposes passes through these checks before it runs:
+
+1. **Routine actions run without a prompt.** Reading files, editing files in your workspace, and running read-only SQL
+   (such as `SELECT`, `SHOW`, and `DESCRIBE`) are approved automatically.
+2. **An LLM classifier reviews everything else.** The classifier checks each action against your requests and earlier
+   actions in the session.
+
+Auto mode fails safe. If the classifier errors or times out, CoCo shows the normal approval prompt.
+
+Auto mode adds checks. It doesn’t replace your existing controls:
+
+- Deny and ask rules, and administrator-managed settings, still apply.
+- Snowflake role-based access control (RBAC) still applies to every query.
+
+Note the following limitations:
+
+- **Auto mode isn’t a security boundary.** It reduces risk, but its decisions are probabilistic, and the classifier can
+  make mistakes. Don’t use it as your only control for sensitive environments.
+- **Local code isn’t sandboxed in CoCo CLI and CoCo Desktop.** Scripts and Python that run on your machine aren’t
+  confined. If you need confined execution, use CoCo in Snowsight, which runs in a sandboxed environment.
+
+Snowflake recommends the following setup:
+
+- **Turn on AI\_GUARDRAILS for production or sensitive environments.** Auto mode checks what the agent does.
+  [AI\_GUARDRAILS](/user-guide/snowflake-cortex/cortex-ai-guardrails) checks what the agent reads, such as tool outputs
+  that might contain prompt-injected instructions. Auto mode doesn’t turn on AI\_GUARDRAILS. Only account administrators
+  can enable it.
+- **Use managed settings to set policy.** Administrators can block bypass mode with the
+  `permissions.dangerouslyAllowAll` setting. Auto mode never relaxes managed settings. See
+  [Managed settings](/user-guide/cortex-code/managed-settings).
+
+Auto mode is in preview, and its behavior will change based on your feedback. Send us cases where:
+
+- CoCo prompted you too often for routine work.
+- CoCo blocked an action that you wanted it to run.
+- CoCo ran an action that you expected it to block.
+
+To send feedback, contact your Snowflake account team, who will relay it to Product and Engineering.
+
+To turn on Auto mode in CoCo Desktop, open the approval mode picker in the bottom-left of the chat input and select
+**Auto**.
+
 ## Reset tool confirmations
 
 Every “Always allow” choice and every per-workspace approval you grant is remembered between sessions. To clear them and have the agent prompt again from a clean slate:
@@ -92,6 +145,7 @@ This helps when you accidentally chose “Always allow” or “allow in this wo
 
 - **New project or task you don’t fully trust.** Default Approvals.
 - **Untrusted source** (a prompt copied from the internet, a file from a customer, a web page being fetched). Default Approvals.
+- **Everyday work where you want fewer prompts and still want checks.** Auto (*Preview*). See [Auto mode (Preview)](#label-cortex-code-desktop-auto-mode).
 - **Highly repetitive, well-understood task in a sandboxed branch** (for example, a codemod across many files). Bypass Approvals can be reasonable. Flip back as soon as the task is done.
 - **Running an automation overnight.** Default Approvals. An automation that hits a confirmation prompt will stall, but that’s safer than auto-approving a runaway agent. To avoid stalls, use *Run now* once on a new automation and approve the tools it needs; future runs proceed without prompting. See *Automations* > *Permissions*.
 

@@ -187,6 +187,14 @@ After the files are on the stage, you can:
        $$;
    ```
 
+   Important
+
+   Scheduled notebooks that use a warehouse are subject to two timeouts. The effective timeout is the lower of the task’s `USER_TASK_TIMEOUT_MS` value (default: 3600000 ms, or 60 minutes) and the warehouse’s [STATEMENT\_TIMEOUT\_IN\_SECONDS](/sql-reference/parameters#label-statement-timeout-in-seconds) value, if set. If a notebook runs longer, Snowflake cancels it mid-run and the task shows a generic failure. Notebooks often run longer than ad hoc SQL queries, so check these settings before you schedule one:
+
+   - Set `USER_TASK_TIMEOUT_MS` on the task to cover the expected run time.
+   - Check the warehouse timeout by running `SHOW PARAMETERS LIKE 'STATEMENT_TIMEOUT_IN_SECONDS' FOR WAREHOUSE <warehouse_name>;`.
+   - Consider a [serverless task](/user-guide/tasks-intro#label-tasks-compute-resources-serverless) (omit `WAREHOUSE`). Warehouse-level timeouts don’t apply, but `USER_TASK_TIMEOUT_MS` still does.
+
    For information about passing parameters to scheduled notebooks, see [Running notebooks with parameters](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-parameters).
 
    When the notebook needs authenticated outbound access, define the external access integrations and secrets in the Code Bundle’s `code_bundle.yml`

@@ -278,8 +278,7 @@ Where:
     > Use the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command to transfer the ownership for scheduled
     > refreshes. For more information, see [Grant OWNERSHIP to transfer full control](/user-guide/dynamic-tables/privileges#label-dynamic-tables-manage-ownership).
     >
-    > The primary role is the role that owns the dynamic table and secondary roles will match
-    > the DEFAULT\_SECONDARY\_ROLES property of the user.
+    > The refresh uses the invoking session’s current primary role and secondary-role selection.
 
 `SET ...`
 :   Specifies one or more properties/parameters to set for the table (separated by blank
@@ -819,9 +818,8 @@ Copy code
 ALTER DYNAMIC TABLE my_dynamic_table DROP CLUSTERING KEY;
 ```
 
-Perform a manual refresh of `my_dynamic_table` using the user, secondary roles, and warehouse settings
-from the current session. This ensures that the refresh operation runs with the exact context
-of the user session.
+Perform a manual refresh of `my_dynamic_table` using the current session’s user, primary role,
+secondary-role selection, and active warehouse.
 
 Copy code
 

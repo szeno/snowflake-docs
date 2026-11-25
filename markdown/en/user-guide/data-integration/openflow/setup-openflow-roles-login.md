@@ -6,7 +6,7 @@ Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and 
 
 Openflow BYOC deployments are available to all accounts in AWS [Commercial regions](/user-guide/intro-regions#label-na-general-regions).
 
-To use Openflow, you must configure roles and permissions in your Snowflake account, and set up a database. This topic describes how to set up the necessary roles and permissions.
+To use Openflow, you must configure roles and permissions in your Snowflake account, and set up a database. This topic describes how to set up the necessary roles and permissions. For the privilege model, including `OWNERSHIP`, `USAGE`, `OPERATE`, and `MONITOR`, see [Openflow privileges](/user-guide/data-integration/openflow/privileges).
 
 Note
 
@@ -39,9 +39,9 @@ The **Openflow Admin role** is used by a deployment engineer to set up Openflow 
    ```
 4. Grant the admin role and secondary roles to a user.
 
-   To prevent issues with login, when you create an Openflow user, Snowflake recommends that you also assign and set default secondary roles to that user. This is helpful because Openflow doesn’t allow users with the following roles to log in: ACCOUNTADMIN, ORGADMIN, GLOBALORGADMIN, or SECURITYADMIN. While a user is logged in, Openflow can authorize actions using any of the user’s roles, not just the default role.
+   When you create an Openflow user, grant the Openflow administrator role and set it as `DEFAULT_ROLE`. Runtime sign-in fails when the default role is `ACCOUNTADMIN`, `ORGADMIN`, `GLOBALORGADMIN`, or `SECURITYADMIN`. While the user is signed in, Openflow can authorize actions with any of that user’s roles.
 
-   Setting `DEFAULT_SECONDARY_ROLES = ('ALL')` is recommended but not required. Users who don’t have it set can select a role by using the role picker in the Openflow UI. The selected role must hold the required Openflow grants, and in gen 2, deployments are visible only through that role.
+   Setting `DEFAULT_SECONDARY_ROLES = ('ALL')` is recommended but not required. Users who don’t have it set can select a role by using the role picker in the Openflow UI. The selected role must hold the required Openflow grants, and in gen 2, deployments are visible only through that role. For details, see [Openflow privileges](/user-guide/data-integration/openflow/privileges).
 
    Substitute <OPENFLOW\_USER> with the appropriate username:
 
@@ -64,8 +64,8 @@ Log in to Openflow by performing the following steps:
 
 ### Troubleshooting login issues
 
-- If you can log into Snowflake but can’t log into Openflow, try the following:
-  - Try changing your role to something other than ACCOUNTADMIN, ORGADMIN, GLOBALORGADMIN, or SECURITYADMIN.
+- If you can sign in to Snowflake but can’t sign in to a runtime, try the following:
+  - Set the user’s `DEFAULT_ROLE` to a role other than `ACCOUNTADMIN`, `ORGADMIN`, `GLOBALORGADMIN`, or `SECURITYADMIN`.
   - If you rely on secondary roles for Openflow privileges, add default secondary roles to the user:
 
     Copy code

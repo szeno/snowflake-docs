@@ -18,6 +18,7 @@ attributing cost to the right entities within your organization and monitoring c
 Understand:
 :   Gaining visibility into your Snowflake cost begins with understanding the basic concepts of Snowflake cost, including
     the different usage types that incur cost and the factors that determine the cost of using Snowflake resources.
+    For example, storage is billed monthly based on the average number of on-disk bytes stored each day, not a single day’s snapshot. For more information, see [Understanding storage cost](/user-guide/cost-understanding-data-storage).
     [Learn More](/user-guide/cost-understanding-overall)
 
 Explore:

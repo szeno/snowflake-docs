@@ -1,4 +1,4 @@
-# <code className=”samp”><em>custom\_classifier</em></code>!LIST
+# <custom\_classifier>!LIST
 
 [Enterprise Edition Feature](/user-guide/intro-editions)
 
@@ -41,7 +41,7 @@ Copy code
 ```
 
 Each field value corresponds to the value that you specify when calling the
-[<code className=”samp”><em>custom\_classifier</em></code>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex) method.
+[<custom\_classifier>!ADD\_REGEX](/sql-reference/classes/custom_classifier/methods/add_regex) method.
 
 ## Access control requirements
 

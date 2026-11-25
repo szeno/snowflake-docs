@@ -3,7 +3,7 @@ Schema:
 
 # USERS view
 
-This Account Usage view can be used to query a list of all users in the account.
+This Account Usage view can be used to query a list of all users in the account. The data is retained for 365 days (1 year).
 
 ## Columns
 

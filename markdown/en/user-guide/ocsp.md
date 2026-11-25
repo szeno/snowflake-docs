@@ -130,6 +130,13 @@ WHERE type ILIKE ANY ('OCSP%');
 +-----------------------+---------------------------------------------------------------+------+
 ```
 
+Note
+
+If your account name contains underscores, register DNS CNAME records for both the underscore and the dashed variant of each
+OCSP host. Some clients, such as the Python connector and dbt-snowflake, substitute `-` for `_` in the host name. If the dashed host
+doesn’t resolve, OCSP name resolution fails. Because OCSP checks fail open, you see only a warning. To get the dashed variants,
+see the `privatelink-dashed-urls-for-duo` key in [SYSTEM$GET\_PRIVATELINK\_CONFIG](/sql-reference/functions/system_get_privatelink_config).
+
 ## OCSP certification checks require Port 80
 
 All communication with Snowflake happens using port 443. However, OCSP certification checks are transmitted over port 80. If your workstation is behind a firewall, make sure that

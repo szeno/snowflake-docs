@@ -50,7 +50,7 @@ about how these costs are incurred, see [Auto-fulfillment costs](/collaboration/
 
 The following limitations exist on cross-region collaboration:
 
-- Data offerings that reference external or Apache Iceberg™ tables can’t be shared with collaborators in a different
+- Data offerings that reference external tables can’t be shared with collaborators in a different
   cloud or region than the collaboration owner.
 - Every collaborator must have a different [account locator](/user-guide/admin-account-identifier#label-account-locator).
 - See [additional considerations when enabling cross-region collaboration](/collaboration/provider-listings-auto-fulfillment#label-listings-auto-fulfill-considerations).

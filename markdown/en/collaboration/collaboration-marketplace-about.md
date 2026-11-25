@@ -30,7 +30,7 @@ After you join the Snowflake Marketplace, you can do the following:
 
   - Publish listings for free-to-use datasets to generate interest and new opportunities among the Snowflake customer base.
   - Publish listings with samples of datasets that can be provided on request or customized for a specific consumer.
-  - Share live datasets securely and in real-time without creating copies of the data or imposing data integration tasks on the consumer.
+  - Share live datasets securely and in real time without creating copies of the data or imposing data integration tasks on the consumer.
   - (Preview) Share public listings in Virtual Private Snowflake (VPS) deployments.
   - Eliminate the costs of building and maintaining APIs and data pipelines to deliver data to customers.
 

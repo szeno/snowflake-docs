@@ -100,7 +100,7 @@ established asynchronously. Use `DESC ZEROCOPY CONNECTOR` to check the
 current state.
 
 If your SAP® Business Data Cloud tenant requires private connectivity, the connector connects over AWS PrivateLink. For the
-requirements and how to check the status, see [SAP® BDC Connect for Snowflake Zerocopy Connector: Private connectivity](/user-guide/data-integration/zero-copy/sap-sql/private-connectivity).
+requirements and how to check the status, see [SAP® BDC Connect for Snowflake Zero-Copy Connector: Private connectivity](/user-guide/data-integration/zero-copy/sap-sql/private-connectivity).
 
 ### Verify connector state
 

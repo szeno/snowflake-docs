@@ -54,6 +54,7 @@ Show lessSee more
 | `useSnowpipeForResults` | `Boolean` |  | When `true` (default), L2/L3 results from Worker-based workflows are ingested via Snowpipe. Snowflake-to-Snowflake workflows ignore this flag and never use Snowpipe. Set it to `false` when the workflow has [accepted transformations](#accepted-transformations); the Snowpipe results path is rejected for them. |
 | `queryModifiers` | `QueryModifiers` |  | Optional SQL hints for source queries. Default is unset (no hints). See [Anti-locking and query modifiers](#anti-locking-and-query-modifiers). |
 | `intervalHandling` | `String` (`"interval"`, `"varchar"`) |  | How `INTERVAL` columns are compared. Defaults to `"interval"`, matching the target’s native interval type. See [INTERVAL data type handling](#interval-data-type-handling). |
+| `targetProfile` | `String` (`"aimv"`) |  | Teradata only. Set `"aimv"` when the targets are tables that AIM for Virtualization created and the migration used `targetProfile: "aimv"`. Case-insensitive. See [Validating AIM for Virtualization tables](#aim-for-virtualization-target-profile). |
 | `periodHandling` | `String` (`"period"`, `"varchar"`) |  | Teradata only. How `PERIOD` columns are compared. Defaults to `"period"`. See [PERIOD data type handling](#period-data-type-handling). |
 | `validationCustomNormalizationRules` | `Array` |  | Preferred, granular normalization overrides by data type, column, or column pattern. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
 | `validationCustomNormalizations` | `Object` |  | Legacy, workflow-wide overrides for L2/L3 normalization SQL templates, keyed only by data type. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
@@ -63,7 +64,7 @@ Show lessSee more
 | `defaultTableConfiguration` | `Object` |  | Shared defaults inherited by every table, view, and object entry. Per-entry properties override them, and a nested `synchronization` block is merged field by field. See [Incremental validation](#incremental-validation). |
 | `synchronization` | `SynchronizationStrategy` |  | Enables incremental validation, which re-validates only changed partitions. Usually set once under `defaultTableConfiguration`. See [Incremental validation](#incremental-validation). |
 | `cleanUpTransientResources` | `String` (`"never"`, `"on-success"`, `"always"`) |  | When to delete this workflow’s intermediate stage files under the validation `TASK_RESULTS` stage. Defaults to `"on-success"`. Underscores are accepted, so `on_success` also works. Set `"never"` to keep the files while debugging. See [Cleaning up transient resources](./data-migration-configuration-reference#cleaning-up-transient-resources). |
-| `revalidationRecheckSchema` | `Boolean` |  | Applies only to [re-validation](../data-migration-validation/data-validation#re-validating-what-failed). When `true`, a table whose schema validation failed is re-validated from the start, so L1 runs again. When `false` (default), re-validation reuses the parent workflow’s partitions and re-runs only the failed data partitions, so L1 isn’t checked again. |
+| `revalidationRecheckSchema` | `Boolean` |  | Applies only to [re-validation](../data-migration-validation/data-validation#re-validating-what-failed). When `true`, a table whose schema validation failed is re-validated from the start, so L1 runs again. When `false` (default), re-validation reuses the parent workflow’s partitions and re-runs only the failed data partitions, so L1 isn’t checked again. See [Re-validation](#re-validation). |
 
 Expand
 
@@ -590,9 +591,9 @@ Some per-entry properties accept more than one spelling. Use the documented came
 | Target row filter | `targetWhereClause` | — |
 | L3 index columns (source) | `indexColumnList` | `index_column_list` |
 | L3 index columns (target) | `targetIndexColumnList` | `target_index_column_list` |
-| Partition columns | `columnNamesToPartitionBy` | `partitionColumn` (legacy, single column) |
-| Rows per partition | `targetPartitionSizeRows` | `targetRowsPerPartition` (legacy) |
-| MB per partition | `targetPartitionSizeMb` | `targetMbPerPartition` (legacy) |
+| Partition columns | `columnNamesToPartitionBy` | — |
+| Rows per partition | `targetPartitionSizeRows` | — |
+| MB per partition | `targetPartitionSizeMb` | — |
 
 Expand
 
@@ -638,6 +639,7 @@ Three rules apply:
 | `includeCountDistinct` | `Boolean` |  | Per-table override for `includeCountDistinct`. A `validationConfiguration.includeCountDistinct` on the same entry wins. See [L2 distinct count](#l2-distinct-count). |
 | `applyMetricColumnModifier` | `Boolean` |  | Per-table override for `applyMetricColumnModifier`. |
 | `intervalHandling` | `String` (`"interval"`, `"varchar"`) |  | Per-table override of the workflow-level `intervalHandling` setting. See [INTERVAL data type handling](#interval-data-type-handling). |
+| `targetProfile` | `String` (`"aimv"`) |  | Teradata only. Per-table override of the workflow-level `targetProfile` setting. See [Validating AIM for Virtualization tables](#aim-for-virtualization-target-profile). |
 | `periodHandling` | `String` (`"period"`, `"varchar"`) |  | Per-table override of the workflow-level `periodHandling` setting. See [PERIOD data type handling](#period-data-type-handling). |
 | `validationCustomNormalizationRules` | `Array` |  | Per-table normalization overrides. Take precedence over workflow-level rules for matching columns. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
 | `synchronization` | `SynchronizationStrategy` |  | Per-table incremental validation strategy. Overrides `defaultTableConfiguration.synchronization` field by field. See [Incremental validation](#incremental-validation). |
@@ -793,9 +795,11 @@ tables:
 
 ## Anti-locking and query modifiers
 
-Anti-locking hints are **off by default** and work the same way as in migration: they apply to source queries only and are set with `queryModifiers` at the workflow root or per table. See [Anti-locking and query modifiers](./data-migration-configuration-reference#anti-locking-and-query-modifiers) for per-platform behavior and configuration.
+Anti-locking hints are **off by default** and work the same way as in migration: they apply to source queries only and can be set in Worker TOML, at the workflow root (`queryModifiers`), in `defaultTableConfiguration`, or on a table or view. Each later level overrides the earlier ones property by property with non-null values: Worker TOML, then the workflow root, then `defaultTableConfiguration`, then per-table or per-view. See [Anti-locking and query modifiers](./data-migration-configuration-reference#anti-locking-and-query-modifiers) for per-platform behavior and configuration.
 
 The validation-specific consideration: `WITH (NOLOCK)` and similar read-uncommitted hints allow dirty reads that can produce false `MISMATCH` results. The impact is usually stronger at row-level validation (byte-exact hashing) than at metrics validation (aggregates compared within tolerance). Enable these hints only when source locking is actually blocking your workflow, ideally against a low-write window.
+
+For BigQuery, modifiers apply to customer-table row, cell, column-metrics, and row-count scans, but not to catalog-only queries against `INFORMATION_SCHEMA` or `__TABLES__`. In a mixed metadata query, the inner customer-table `COUNT(*)` scan uses modifiers and the outer catalog query doesn’t.
 
 ## INTERVAL data type handling
 
@@ -830,6 +834,35 @@ Expand
 Show lessSee more
 
 Set `periodHandling` at the workflow root, under `defaultTableConfiguration`, or on a per-table entry. A per-table value wins over the workflow root. The setting applies only to Teradata sources.
+
+## Validating AIM for Virtualization tables
+
+If you migrated Teradata tables into tables that AIM for Virtualization created, using `targetProfile: "aimv"` (see [Loading into AIM for Virtualization tables](./data-migration-configuration-reference#aim-for-virtualization-target-profile)), set the same `targetProfile` on the validation workflow. Set it at the workflow root, under `defaultTableConfiguration`, or on an individual table; a per-table value wins. Nothing checks that the migration and validation workflows use the same value, so set it on both.
+
+With `targetProfile: "aimv"` set:
+
+- **Schema validation (L1)** accepts `NUMBER` targets for source `INTERVAL` columns and `FLOAT` targets for source `NUMBER` columns with no declared precision.
+- **Row-level validation (L3)** compares `INTERVAL` columns in the same units the migration wrote (total months or total microseconds) and compares `FLOAT` values the way the migration wrote them.
+- **Metrics validation (L2)** can’t compare `INTERVAL` columns: the source metrics measure interval values and the target metrics measure numbers. Turn metrics validation off for tables with `INTERVAL` columns by setting `metricsValidation: false` in that table’s `validationConfiguration`. L1 and L3 still check them.
+
+Copy code
+
+```
+targetProfile: aimv
+tables:
+  - fullyQualifiedName: SALES_DB.orders
+    targetDatabase: TARGET_DB
+    targetSchema: PUBLIC
+    targetName: ORDERS
+  - fullyQualifiedName: SALES_DB.contract_terms   # has INTERVAL columns
+    targetDatabase: TARGET_DB
+    targetSchema: PUBLIC
+    targetName: CONTRACT_TERMS
+    validationConfiguration:
+      metricsValidation: false
+```
+
+Setting `targetProfile` on a workflow whose source isn’t Teradata is rejected.
 
 ## Customizing normalization and metrics
 
@@ -1126,13 +1159,41 @@ L3 row validation requires schema validation. The workflow is rejected if you se
 
 Set these rules at the workflow root or on an individual table entry. Per-table rules win for matching columns.
 
+## Re-validation
+
+By default, a re-validation child workflow reuses the parent’s `PARTITION_METADATA`, skips schema re-checks, and re-runs only failing L2 or L3 partitions. If partition metadata isn’t available, AIM DMV runs the full pipeline.
+
+Set `revalidationRecheckSchema: true` to force schema re-checks and the full pipeline for schema-failed tables:
+
+Copy code
+
+```
+revalidationRecheckSchema: true
+```
+
+This setting is required to retry a schema-only failure when all data partitions passed. The SCAI CLI sets it when you run `scai data validate revalidate <WORKFLOW_NAME> --recheck-schema`. The migration plugin exposes the same behavior as `validate_data(mode="revalidate", recheck_schema=true)`.
+
+## SnowConvert AI CLI YAML compatibility
+
+`scai data validate create-workflow` submits the workflow file as written. The Orchestrator validates it first and rejects any key it doesn’t recognize, so use the documented field names:
+
+| YAML field | Behavior |
+| --- | --- |
+| `partitionColumn`, `targetRowsPerPartition`, `targetMbPerPartition` | Rejected. Use `columnNamesToPartitionBy`, `targetPartitionSizeRows`, and `targetPartitionSizeMb`. |
+| `chunkNumber` | Rejected. Use `targetPartitionSizeRows` or `targetPartitionSizeMb`. |
+| `rowValidationMode` | The CLI rejects the deprecated `row` and `cell` values. Hybrid is the only runtime path. |
+
+Expand
+
+Show lessSee more
+
 ## Worker configuration
 
 Workers reuse the same TOML format as Data Migration. See [Data migration configuration reference](./data-migration-configuration-reference#worker-configuration) for the full property list, including custom extraction plugin setup, [supported vaults](./data-migration-configuration-reference#supported-vaults), and [environment variables](./data-migration-configuration-reference#environment-variables).
 
 Validation objects such as the results stage and file format live in the validation metadata schema. When you override its name, the Worker’s `[application].snowflake_schema_for_data_validation_metadata` key must match the Orchestrator’s `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_VALIDATION_METADATA`. See [Matching metadata locations between the Orchestrator and Workers](./data-migration-configuration-reference#matching-metadata-locations).
 
-Workers that execute validation tasks must have the validation runtime available. The `[connections.source.*]` section matches the source platform documented on each [Validating Data from …](../data-migration-validation/data-validation) page.
+Workers that execute external-source validation tasks must have the validation runtime available. Snowflake-to-Snowflake validation doesn’t use a Worker. The `[connections.source.*]` section matches the source platform documented on each [Validating Data from …](../data-migration-validation/data-validation) page.
 
 ## Observability
 

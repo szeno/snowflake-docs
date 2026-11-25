@@ -42,8 +42,8 @@ Before you configure Openflow to use DCP, make sure you have:
 - An execute-as role for the runtime, with `USAGE` on the DCP external access
   integration. See [Set up Openflow - Snowflake Deployment: Create the execute-as role and external access integrations](/user-guide/data-integration/openflow/setup-openflow-spcs-create-rr).
 - An existing Data Connectivity Proxy object that’s enabled. See
-  [Create a DCP object in Snowflake](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-create-object).
-- A DCP agent deployed where it can:
+  [Create a DCP object and associate the EAI](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-create-object).
+- (Required before you test connector connectivity) A DCP agent deployed where it can:
   - Make outbound TCP/TLS connections on port 443 to Snowflake DCP endpoints.
     See [Outbound ports](/user-guide/data-connectivity-proxy-setup#label-dcp-outbound-ports).
   - Resolve Snowflake DNS names. See [DNS](/user-guide/data-connectivity-proxy-setup#label-dcp-dns).
@@ -52,10 +52,17 @@ Before you configure Openflow to use DCP, make sure you have:
 
 ## Configure Openflow to use the proxy
 
-After the proxy object is enabled and the agent is connected, complete the
-following steps to ensure Openflow connectors can connect to your data source.
-To verify the agent is connected, see
+After the proxy object is enabled, complete the following steps to ensure
+Openflow connectors can connect to your data source. You can create the network
+rule and external access integration and attach the integration to the runtime
+before you deploy the agent. Before you test connectivity from the connector,
+make sure the agent is connected. To verify the agent is connected, see
 [Verify the agent is connected](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-verify).
+
+If you already completed
+[Steps 1–3 of the DCP setup guide](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-network-rule), the network rule and external
+access integration already exist, and the integration is already associated with the DCP object. Skip to
+[Grant the execute-as role and Openflow admin access to the integration](#label-openflow-spcs-dcp-grant-eai).
 
 The following diagram shows where each component runs and how the connection is
 established:
@@ -98,14 +105,15 @@ CREATE EXTERNAL ACCESS INTEGRATION IF NOT EXISTS <DCP_EAI_NAME>
   ENABLED = TRUE;
 ```
 
-Associate the integration with the DCP object if you didn’t set
-`EXTERNAL_ACCESS_INTEGRATIONS` when you created the proxy:
+Associate the integration with the DCP object, and make sure the object is enabled, if you didn’t set
+`EXTERNAL_ACCESS_INTEGRATIONS` and `ENABLED` when you created the proxy:
 
 Copy code
 
 ```
 ALTER DATA CONNECTIVITY PROXY <DCP_NAME>
-  SET EXTERNAL_ACCESS_INTEGRATIONS = (<DCP_EAI_NAME>);
+  SET EXTERNAL_ACCESS_INTEGRATIONS = (<DCP_EAI_NAME>)
+      ENABLED = TRUE;
 ```
 
 ### Grant the execute-as role and Openflow admin access to the integration
@@ -173,6 +181,9 @@ CREATE OPENFLOW RUNTIME <DATABASE>.<SCHEMA>.<RUNTIME_NAME>
 Adding or removing integrations with `ALTER OPENFLOW RUNTIME` requires
 `OWNERSHIP` on the runtime. To confirm which integrations are attached, run
 `DESCRIBE OPENFLOW RUNTIME` and check the `external_integrations` column.
+
+You can start the agent before the runtime has the integration. The runtime can use the connection only after the integration is
+attached. For the agent’s log events, see [Agent logs](/user-guide/data-connectivity-proxy-monitor#label-dcp-agent-logs).
 
 ### Configure the connector with the private DNS name
 

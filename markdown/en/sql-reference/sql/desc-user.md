@@ -85,6 +85,7 @@ The `property` column can include the following properties of the user:
 | `CUSTOM_LANDING_PAGE_URL` | Reserved for future use. |
 | `CUSTOM_LANDING_PAGE_URL_FLUSH_NEXT_UI_LOAD` | Reserved for future use. |
 | `IS_FROM_ORGANIZATION_USER` | If TRUE, the user was imported from a global [organization user](/user-guide/organization-users). |
+| `ALLOWED_INTERFACES` | List of Snowflake interfaces that the user is allowed to access. The value is `('ALL')` or one or more of `'SNOWFLAKE_INTELLIGENCE'`, `'STREAMLIT'`. |
 
 Expand
 
@@ -185,5 +186,6 @@ DESCRIBE USER my_user;
 | PASSWORD_LAST_SET_TIME                     | 2020-10-08 01:33:13.43  | null    | The timestamp on which the last non-null password was set for the user. Default to null if no password has been set yet.                   |
 | CUSTOM_LANDING_PAGE_URL                    | null                    | null    | Reserved for future use                                                                                                                    |
 | CUSTOM_LANDING_PAGE_URL_FLUSH_NEXT_UI_LOAD | false                   | false   | Reserved for future use                                                                                                                    |
+| ALLOWED_INTERFACES                         | [ALL]                   | null    | List of interfaces this user is allowed to access                                                                                          |
 +--------------------------------------------+-------------------------+---------+--------------------------------------------------------------------------------------------------------------------------------------------+
 ```

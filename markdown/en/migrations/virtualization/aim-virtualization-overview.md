@@ -94,7 +94,7 @@ While there are no technical limits to virtualization, Snowflake AIM for Virtual
 The transition to Snowflake follows a non-disruptive, phased approach which allows IT leaders to:
 
 - **Analyze:** Use the Snowflake AIM for Virtualization assessment to inspect Teradata schema and query logs and determine workload compatibility.
-- **Synchronize:** Move initial data and schemas into Snowflake.
+- **Synchronize:** Move initial data and schemas into Snowflake. To load and validate Teradata data in the tables that Snowflake AIM for Virtualization creates, see [Loading into AIM for Virtualization tables](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#aim-for-virtualization-target-profile) and [Validating AIM for Virtualization tables](/migrations/aim-for-datawarehouses/manual-migration/data-validation-configuration-reference#aim-for-virtualization-target-profile).
 - **Repoint:** Update application connection strings (JDBC/ODBC) to the Snowflake AIM for Virtualization endpoint.
 - **Verify:** Execute dual-run testing to confirm parity between Teradata and Snowflake results.
 - **Transition:** Cut over production traffic (for example, by changing a central DNS record) and decommission the legacy Teradata system.

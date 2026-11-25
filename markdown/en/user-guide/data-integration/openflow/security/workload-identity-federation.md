@@ -582,12 +582,11 @@ Record the provider resource name (used as the audience above), because it’s r
 
 ### Grant access to the workload identity principal
 
-Note
+You can either grant IAM roles directly to the workload identity principal, or have the federated credentials
+impersonate a Google service account that holds the roles.
 
-Service account impersonation isn’t currently supported. Grant roles directly to the workload identity principal.
-
-Grant the required IAM roles directly to the principal that corresponds to the Snowflake secret. The principal is
-derived from the `workload_identity_federation_subject` value:
+To grant roles directly, grant the required IAM roles to the principal that corresponds to the Snowflake secret. The
+principal is derived from the `workload_identity_federation_subject` value:
 
 ```
 principal://iam.googleapis.com/projects/<PROJECT_NUMBER>/locations/global/workloadIdentityPools/openflow-pool/subject/<SUBJECT>
@@ -604,6 +603,21 @@ gcloud storage buckets add-iam-policy-binding gs://<BUCKET_NAME> \
 ```
 
 Adapt the role and resource to what the Openflow runtime needs to access.
+
+Use service account impersonation when the target service only accepts Google service accounts or users. For example,
+Cloud SQL IAM database authentication requires the database user to be a service account or a user, and a workload
+identity principal can’t be a Cloud SQL database user. Grant the roles to the service account, then allow the
+principal to create tokens for it:
+
+Copy code
+
+```
+gcloud iam service-accounts add-iam-policy-binding <SERVICE_ACCOUNT_EMAIL> \
+    --role="roles/iam.serviceAccountTokenCreator" \
+    --member="principal://iam.googleapis.com/projects/<PROJECT_NUMBER>/locations/global/workloadIdentityPools/openflow-pool/subject/<SUBJECT>"
+```
+
+Then set **Target Service Account** on the GCP Credentials Controller Service.
 
 ### Configure the external access integration
 
@@ -631,9 +645,8 @@ CREATE EXTERNAL ACCESS INTEGRATION openflow_gcs_eai
 GRANT USAGE ON INTEGRATION openflow_gcs_eai TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
 ```
 
-Note
-
-`iamcredentials.googleapis.com` isn’t required, because service account impersonation isn’t used.
+If you use service account impersonation, also allow `iamcredentials.googleapis.com:443`, which is used to create
+the service account token.
 
 After you create the external access integration, associate it with your runtime. See
 [Set up Openflow - Snowflake Deployment: Configure allowed domains for Openflow connectors](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list).
@@ -653,6 +666,9 @@ controller service:
 - **Subject Token Type**: leave the default (`urn:ietf:params:oauth:token-type:jwt`).
 - **Scope**: leave the default (`https://www.googleapis.com/auth/cloud-platform`) unless a narrower scope is required.
 - **STS Token Endpoint**: leave the default (`https://sts.googleapis.com/v1/token`).
+- **Target Service Account**: leave empty when roles are granted directly to the principal. To use service account
+  impersonation, set the email of the service account, for example
+  `openflow-runtime@<PROJECT_ID>.iam.gserviceaccount.com`.
 
 Enable the controller service. Select **Verify** to confirm that tokens can be exchanged.
 

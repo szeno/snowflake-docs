@@ -28,6 +28,10 @@ the current certificate. `LAST_HEARTBEAT_AT` is the last heartbeat timestamp; he
 
 For current state, use DESCRIBE. Event history records when a status was entered, not what is true now.
 
+`AGENT_STATUS = DCP_AGENT_LIFECYCLE_CONNECTED` means the agent has an authenticated control connection to Snowflake. It doesn’t by
+itself confirm that a Snowflake workload can route traffic through the agent, or that the agent can reach the destination. A successful
+workload connection validates the path from the Snowflake workload through the DCP object and the agent to the destination.
+
 The output includes the following columns:
 
 | Column | Description |
@@ -224,6 +228,31 @@ docker run ... snowflakedb/dcp-client:latest \
 `--metrics-addr` and `DCP_METRICS_ADDRESS` take precedence over it. Setting `DCP_METRICS_ADDRESS` to an empty value disables
 the metrics and `/ready` endpoints altogether.
 
+## Agent logs
+
+For a Docker deployment, view agent logs with `docker logs dcp-agent`. Set the log level with `--log-level` or `DCP_LOG_LEVEL`
+(default `info`). See [Data Connectivity Proxy reference](/user-guide/data-connectivity-proxy-reference).
+
+### Link pool starvation warning
+
+The agent logs this event at `WARN` level:
+
+```
+agent link pool starved: live proxies with zero free links
+```
+
+The agent logs it when at least one proxy that it has a live session with has no idle data links. It starts after a five-second
+startup grace period and repeats at most once every 30 seconds while the condition continues. The event includes these fields:
+
+- `starved_proxies`: the proxies that have no idle links.
+- `free_total`: idle links across all proxies. This can be greater than zero when only some proxies have no idle links.
+- `in_flight`: the number of pooled link tasks that the agent is running.
+
+The warning means that the agent isn’t keeping idle links ready for that proxy, for example because workload connections are using
+links faster than the agent replaces them or because the agent can’t establish new links. It doesn’t identify the cause by itself,
+and its absence doesn’t confirm end-to-end connectivity. If the warning persists, or workload connections fail, investigate the
+accompanying errors and the agent’s connectivity to the relay.
+
 ## Health check
 
 Run the agent health check to validate connectivity without starting the data-plane workers:
@@ -238,7 +267,10 @@ docker run --rm \
   --sf-bootstrap-credentials /etc/dcp-agent/secrets/dcp-bootstrap-token
 ```
 
-The health check runs the full bootstrap sequence (verifying that the control plane is reachable, the token is valid, the portal is
-reachable, and the proxy is reachable) and prints a structured pass/fail result for each step.
+The health check runs the full bootstrap sequence (verifying that the control plane is reachable, the token is valid, and the proxy is
+reachable) and prints a structured pass/fail result for each step. The proxy check confirms that each relay accepts a TLS connection
+from the agent. It doesn’t test the data path or connect to the private destination.
 
 A local `/ready` HTTP endpoint is also available on the agent at `127.0.0.1:9092/ready` for container orchestration health probes.
+It returns `200 OK` after the agent process finishes starting, and `503` before then or while the agent is shutting down. It doesn’t
+check routes or destination reachability.
