@@ -120,11 +120,11 @@ ALTER NOTEBOOK DB_NAME.SCHEMA_NAME.NOTEBOOK_NAME ADD LIVE VERSION FROM LAST;
 - `SCHEMA_NAME` is the name of the schema that contains the notebook
 - `NOTEBOOK_NAME` is the name of the notebook
 
-## Create a notebook from a Git repository
+## Work with notebook files in Git
 
-You can sync your notebook development with a Git repository. Then you can create Snowflake Notebooks from notebooks in that Git repository.
-
-To create a notebook from a file in Git, see [Create a notebook from a file in a Git repository](/user-guide/ui-snowsight/notebooks-snowgit#label-snowsight-notebooks-git-create).
+To work with notebook files from a Git repository, including creating, editing, committing, and pushing them,
+[migrate to Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-migrate) and use a
+[Git workspace](/user-guide/ui-snowsight/workspaces-git).
 
 ## Duplicate an existing notebook
 

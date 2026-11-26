@@ -748,7 +748,7 @@ None
 
 This FDM indicates that the SSIS Bulk Insert Task `CheckConstraints` option behavior differs in Snowflake. In SQL Server, `CheckConstraints=False` (the default for bulk insert) disables CHECK constraint validation during the load for better performance.
 
-In Snowflake, constraints are always validated during data loading. However, Snowflake’s constraint enforcement is different from SQL Server—NOT NULL constraints are enforced, but CHECK, UNIQUE, and FOREIGN KEY constraints are not enforced (they are informational only).
+In Snowflake, constraints are always validated during data loading. However, Snowflake’s constraint enforcement is different from SQL Server: NOT NULL and CHECK constraints are enforced, but UNIQUE and FOREIGN KEY constraints are not enforced (they are informational only).
 
 ### Converted Code
 
@@ -771,8 +771,8 @@ END;
 ### Best Practices
 
 - Review constraint requirements for data integrity
-- NOT NULL constraints are enforced by Snowflake
-- CHECK, UNIQUE, and FOREIGN KEY constraints are informational only
+- NOT NULL and CHECK constraints are enforced by Snowflake
+- UNIQUE and FOREIGN KEY constraints are informational only
 - Implement data validation logic in your ETL process if strict constraint checking is required
 - Use the Snowflake AIM Agent for Data Warehouses to get AI-powered explanations and actionable solutions for this FDM
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)

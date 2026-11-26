@@ -204,7 +204,7 @@ FROM <left_hand_table_expression> INNER JOIN LATERAL ( <inline_view> )
 
 Note
 
-*&lt;inline\_view>* must not be a table name.
+*<inline\_view>* must not be a table name.
 
 And, the single LATERAL statement is shown below:
 
@@ -855,7 +855,7 @@ EXEC QUERY_WITH_OUTPUT_PARAMS;
 
 ##### Results
 
-| &lt;anonymous> |
+| <anonymous> |
 | --- |
 | 32 |
 
@@ -950,7 +950,7 @@ EXEC QUERY_WITH_BOTH_PARAMS;
 
 ##### Results
 
-| &lt;anonymous> | &lt;anonymous> |
+| <anonymous> | <anonymous> |
 | --- | --- |
 | 24 | 4 |
 
@@ -1079,7 +1079,7 @@ EXEC QUERY_PARAMS_NOT_IN_ORDER_OF_DEF_2;
 
 ##### Results
 
-| &lt;anonymous> | &lt;anonymous> |
+| <anonymous> | <anonymous> |
 | --- | --- |
 | 24 | 4 |
 
@@ -1087,7 +1087,7 @@ Expand
 
 Show lessSee more
 
-| &lt;anonymous> | &lt;anonymous> |
+| <anonymous> | <anonymous> |
 | --- | --- |
 | 24 | 4 |
 
@@ -1246,7 +1246,7 @@ EXEC QUERY_WITH_DIRECT_PARAMS_VALUES_ALL;
 
 ##### Results
 
-| &lt;anonymous> | &lt;anonymous> |
+| <anonymous> | <anonymous> |
 | --- | --- |
 | 24 | 4 |
 

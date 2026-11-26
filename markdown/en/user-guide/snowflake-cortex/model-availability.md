@@ -113,7 +113,8 @@ Show lessSee more
 | Model | AI Functions | Cortex Inference | Cortex Agents / CoWork | Agent Evaluations | CoCo |
 | --- | --- | --- | --- | --- | --- |
 | `mistral-large2` | Legacy | Legacy |  |  |  |
-| `mistral-large3` | \* |  |  |  |  |
+| `mistral-large3` | ✔ |  |  |  |  |
+| `ministral-3-8b` | ✔ |  |  |  |  |
 | `mixtral-8x7b` | Legacy |  |  |  |  |
 | `mistral-7b` | Legacy | Legacy |  |  |  |
 
@@ -419,7 +420,8 @@ Cross-regionNorth AmericaEuropeAsia-Pacific
 | Model | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `mistral-large2` | Legacy | Legacy | Legacy | Legacy |  |  | Legacy | Legacy | Legacy | Legacy | Legacy | Legacy |  | Legacy |  |
-| `mistral-large3` | \* | \* | \* |  |  |  |  | \* | \* |  |  |  |  |  |  |
+| `mistral-large3` | ✔ | ✔ | ✔ |  |  |  |  | ✔ | ✔ |  |  |  |  |  |  |
+| `ministral-3-8b` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `mixtral-8x7b` | Legacy | Legacy | Legacy | Legacy |  |  | Legacy | Legacy | Legacy | Legacy | Legacy | Legacy |  | Legacy |  |
 | `mistral-7b` | Legacy | Legacy |  | Legacy |  |  |  | Legacy | Legacy | Legacy |  |  |  |  |  |
 

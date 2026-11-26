@@ -537,10 +537,29 @@ Creates a new hybrid table that contains the results of a query:
 >
 > - Column definitions
 > - A PRIMARY KEY constraint
-> - Other constraints, as needed (UNIQUE, NOT NULL, FOREIGN KEY, CHECK)
+> - Other constraints, as needed (UNIQUE, NOT NULL, CHECK)
 > - Secondary indexes (and any INCLUDE columns)
 >
 > The schema of the new hybrid table can’t be inferred from a SELECT statement.
+>
+> You can’t define a FOREIGN KEY constraint in a CTAS statement, in either the inline or the out-of-line
+> form. The statement fails and no table is created. If you use CREATE OR REPLACE, an existing table with
+> the same name is left unchanged:
+>
+> ```
+> 391471 (0A000): A foreign key constraint definition in CTAS statements on hybrid tables is not supported.
+> ```
+>
+> To load a table that needs a foreign key, create the table with the constraint, then load it with
+> [COPY INTO <table>](/sql-reference/sql/copy-into-table) or [INSERT INTO … SELECT](/sql-reference/sql/insert). If the
+> table also has a CHECK constraint, use INSERT INTO … SELECT, because COPY INTO can’t load a hybrid
+> table that has a CHECK constraint.
+>
+> Alternatively, create and load the table with CTAS, then add the constraint with
+> [ALTER TABLE](/sql-reference/sql/alter-table). The backing index builds in the background, so use
+> [SHOW INDEXES](/sql-reference/sql/show-indexes) to confirm that it reaches `ACTIVE`. If the status is
+> `BUILD VALIDATION FAILURE`, some existing rows violate the constraint. For how to recover, see
+> [Add and drop constraints on an existing hybrid table](#label-hybrid-table-online-constraints).
 
 The number of column names specified must match the number of [SELECT](/sql-reference/sql/select) list items in the query.
 

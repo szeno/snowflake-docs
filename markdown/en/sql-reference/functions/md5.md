@@ -24,7 +24,7 @@ MD5_HEX(<msg>)
 ## Arguments
 
 `msg`
-:   A string expression, the message to be hashed.
+:   A string expression, the message to be hashed. The input is limited by the maximum size of the VARCHAR data type, 134217728 bytes (128 MB). For more information, see [String & binary data types](/sql-reference/data-types-text).
 
 ## Returns
 

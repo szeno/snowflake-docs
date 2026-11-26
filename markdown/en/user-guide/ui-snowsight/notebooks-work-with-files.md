@@ -43,7 +43,7 @@ To persist your files across notebook sessions:
 
 - [Store files in a Snowflake stage](#label-snowsight-file-stage)
 - [Use Snowsight to upload files into a notebook](#label-snowsight-notebooks-add-files-from-local)
-- [Sync with files from Git](#label-snowsight-notebooks-sync-git)
+- [Keep notebook files in Git](#label-snowsight-notebooks-sync-git)
 
 ### Store files in a Snowflake stage
 
@@ -155,11 +155,11 @@ PUT 'file://test.json' 'snow://notebook/SNOWPUBLIC.NOTEBOOKS.ADMIN_SPCS/versions
 
 Before running these commands, make sure you have set the appropriate database, schema, and warehouse in your SnowSQL session.
 
-### Sync with files from Git
+### Keep notebook files in Git
 
-If your notebook is connected to Git, then any files in the same Git folder as your notebook will be displayed in the **Files** tab.
-
-For more information on working with files in Git, see [Sync notebooks with a Git repository](/user-guide/ui-snowsight/notebooks-snowgit).
+To keep notebook files in a Git repository, including committing and pushing changes,
+[migrate to Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-migrate) and use a
+[Git workspace](/user-guide/ui-snowsight/workspaces-git).
 
 ## Referencing files in notebooks
 

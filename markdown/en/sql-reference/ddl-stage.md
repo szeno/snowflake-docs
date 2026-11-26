@@ -34,7 +34,7 @@ A file format encapsulates information, such as file type (CSV, JSON, etc.) and 
 
 ## Git repository management
 
-A Snowflake [Git repository stage](/developer-guide/git/git-overview) represents a local Git repository in Snowflake.
+A Snowflake [Git repository clone](/developer-guide/git/git-overview) is a read-only copy of a remote Git repository in Snowflake.
 
 - [CREATE GIT REPOSITORY](/sql-reference/sql/create-git-repository)
 - [ALTER GIT REPOSITORY](/sql-reference/sql/alter-git-repository)

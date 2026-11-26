@@ -35,7 +35,7 @@ Show lessSee more
 
 | Guide | Description |
 | --- | --- |
-| [Sync Snowflake Notebooks with Git](/user-guide/ui-snowsight/notebooks-snowgit) | Version control your notebook for collaboration and development. |
+| [Integrate workspaces with a Git repository](/user-guide/ui-snowsight/workspaces-git) | Version control your notebook files in a Git workspace after you [migrate to Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-migrate). |
 | [Work with files in notebooks](/user-guide/ui-snowsight/notebooks-work-with-files) | Manage and work with files in your notebook environment. |
 | [Schedule notebook runs](/user-guide/ui-snowsight/notebooks-schedule) | Schedule notebooks to run and execute code within Snowflake. |
 | [Troubleshoot errors in Snowflake Notebooks](/user-guide/ui-snowsight/notebooks-troubleshoot) | Troubleshoot errors that may occur while you’re using Snowflake Notebooks. |

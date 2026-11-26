@@ -514,7 +514,7 @@ FROM concatenation_demo;
 | concat\_string\_number |
 | --- |
 | Hello has number 42 |
-| &lt;NULL> |
+| <NULL> |
 | Redshift has number -7 |
 
 Expand
@@ -524,8 +524,8 @@ Show lessSee more
 | concat\_string\_date |
 | --- |
 | Hello on 2023-12-01 |
-| &lt;NULL> |
-| &lt;NULL> |
+| <NULL> |
+| <NULL> |
 
 Expand
 
@@ -581,7 +581,7 @@ FROM
 | concat\_string\_number |
 | --- |
 | Hello has number 42 |
-| &lt;NULL> |
+| <NULL> |
 | Redshift has number -7 |
 
 Expand
@@ -591,8 +591,8 @@ Show lessSee more
 | concat\_string\_date |
 | --- |
 | Hello on 2023-12-01 |
-| &lt;NULL> |
-| &lt;NULL> |
+| <NULL> |
+| <NULL> |
 
 Expand
 

@@ -2,9 +2,9 @@
 
 ## Specific CLI arguments
 
-The following CLI arguments are specific for executing migrations with **SnowConvert AI CLI for Teradata**
+The following CLI arguments are specific to executing migrations with **SnowConvert AI CLI for Teradata**.
 
-### `--displaceDatabaseAsSchema`
+#### `--displaceDatabaseAsSchema`
 
 This flag must be used with the `-s` parameter. When used it will maintain Teradata’s database name qualification as Snowflake’s data warehouse, contrary to its default behavior where it becomes a schema on Snowflake code. Let’s look at an example where `-s customSchema` is included:
 
@@ -54,7 +54,7 @@ String value for the Default TIMEZONE format (Default: `"GMT-5"`).
 
 #### `-p, --scriptTargetLanguage <TARGET_LANGUAGE>`
 
-The string value specifies the target language to convert Bteq and Mload script files. Currently supported values are **SnowScript** and **Python**. The default value is set to **Python**.
+The string value specifies the target language to convert BTEQ and MLOAD script files. Currently supported values are **SnowScript** and **Python**. The default value is set to **Python**.
 
 #### `-n, --SessionMode <SESSION_MODE>`
 
@@ -64,7 +64,7 @@ The string value specifies the Session Mode of the input code. Currently support
 
 #### `--replaceDeleteAllToTruncate`
 
-Flag to indicate whether Delete All statements must be replaced with Truncate or not. This will generate SSC-EWI-TD0037 when the replacement is done. Example:
+Flag to indicate whether `DELETE ALL` statements must be replaced with `TRUNCATE`. This will generate SSC-EWI-TD0037 when the replacement is done. Example:
 
 Copy code
 
@@ -123,7 +123,7 @@ EXEC(DELETE FROM SB_EDP_SANDBOX_LAB.PUBLIC.USER_LIST,[])
 
 #### `--splitPeriodDatatype`
 
-This flag is used to indicate that the tool should migrate any use of the `PERIOD` datatype as two separate `DATETIME` fields that will hold the original period begin and end values, anytime a period field or function is migrated using this flag SSC-FDM-TD0004 will be added to warn about this change.
+This flag is used to indicate that the tool should migrate any use of the `PERIOD` datatype as two separate `DATETIME` fields that will hold the original period begin and end values. Any time a period field or function is migrated using this flag, SSC-FDM-TD0004 is added to warn about this change.
 
 Copy code
 

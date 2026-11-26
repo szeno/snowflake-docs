@@ -61,7 +61,7 @@ There are two collaboration models for Streamlit in Snowflake app authoring in w
 
 - **Git-backed workspaces**: Work well for teams familiar with source control. They allow
   editing app code both in Snowsight and locally on your machine, using Git as the
-  syncing mechanism. For setup instructions, see [Sync Streamlit in Snowflake apps with a Git repository](/developer-guide/streamlit/features/git-integration).
+  syncing mechanism. For setup instructions, see [Integrate workspaces with a Git repository](/user-guide/ui-snowsight/workspaces-git).
 - **Shared workspaces**: Support collaborative editing for teams that don’t want to use Git.
   Anyone with access to a shared workspace can run a Streamlit app in it. Only the workspace
   owner role can deploy the app. For more information, see

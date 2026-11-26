@@ -2,7 +2,15 @@
 
 Creates a Snowflake Git repository clone in the schema or replaces an existing Git repository clone.
 
+A Git repository clone is read-only. Snowflake objects and code, such as stored procedures, UDFs, and tasks, can reference files in the
+clone. They use the version of each file from the most recent [fetch](/sql-reference/sql/alter-git-repository).
+
 For an overview, see [Using a Git repository in Snowflake](/developer-guide/git/git-overview).
+
+Tip
+
+To create and edit files, manage branches, and commit and push changes from Snowsight, Snowflake recommends
+[Git workspaces](/user-guide/ui-snowsight/workspaces-git) instead of a Git repository clone.
 
 See also:
 :   [ALTER GIT REPOSITORY](/sql-reference/sql/alter-git-repository), [DESCRIBE GIT REPOSITORY](/sql-reference/sql/desc-git-repository), [DROP GIT REPOSITORY](/sql-reference/sql/drop-git-repository),

@@ -228,7 +228,7 @@ Once your account is connected, you can:
   create a new Git workspace. Connect to your repository using OAuth2 or a public
   repository URL, then clone your repo into the workspace and iterate from there.
 
-For full instructions including ongoing sync and pushing changes, see [Sync Streamlit in Snowflake apps with a Git repository](/developer-guide/streamlit/features/git-integration).
+For full instructions including ongoing sync and pushing changes, see [Integrate workspaces with a Git repository](/user-guide/ui-snowsight/workspaces-git).
 
 ### Shared workspaces
 

@@ -38,7 +38,7 @@ Show lessSee more
 | --- | --- |
 | [COALESCE](https://www.postgresql.org/docs/12/functions-conditional.html) ( value *[, …]* ) | [COALESCE](https://docs.snowflake.com/en/sql-reference/functions/coalesce) ( *expression*, *expression*, … ) |
 | [GREATEST](https://www.postgresql.org/docs/12/functions-conditional.html) ( value [, …] ) | [GREATEST\_IGNORE\_NULLS](https://docs.snowflake.com/en/sql-reference/functions/greatest_ignore_nulls) ( <expr1> [, <expr2> … ] ) |
-| [LEAST](https://www.postgresql.org/docs/12/functions-conditional.html) ( value [, …] ) | [LEAST\_IGNORE\_NULLS](https://docs.snowflake.com/en/sql-reference/functions/least_ignore_nulls) ( &lt;expr1> [, &lt;expr2> … ]) |
+| [LEAST](https://www.postgresql.org/docs/12/functions-conditional.html) ( value [, …] ) | [LEAST\_IGNORE\_NULLS](https://docs.snowflake.com/en/sql-reference/functions/least_ignore_nulls) ( <expr1> [, <expr2> … ]) |
 | [NULLIF](https://www.postgresql.org/docs/12/functions-conditional.html) | [NULLIF](https://docs.snowflake.com/en/sql-reference/functions/nullif)   *Notes: PostgreSQL’s NULLIF ignores trailing spaces in some string comparisons, unlike Snowflake. Therefore, the transformation adds RTRIM for equivalence.* |
 
 Expand
@@ -151,7 +151,7 @@ PostgreSQL and Snowflake results may differ in scale.
 | [REPLACE](https://www.postgresql.org/docs/12/functions-string.html) | [REPLACE](https://docs.snowflake.com/en/sql-reference/functions/replace) |
 | [REVERSE](https://www.postgresql.org/docs/12/functions-string.html) | [REVERSE](https://docs.snowflake.com/en/sql-reference/functions/reverse) |
 | [SPLIT\_PART](https://www.postgresql.org/docs/12/functions-string.html) | [SPLIT\_PART](https://docs.snowflake.com/en/sql-reference/functions/split_part)    *Notes: Snowflake and* PostgreSQL *handle SPLIT\_PART differently with case-insensitive collations.* |
-| [STRPOS](https://www.postgresql.org/docs/12/functions-string.html) (*string*, *substring* ) | [POSITION](https://docs.snowflake.com/en/sql-reference/functions/position) ( &lt;expr1> IN &lt;expr> ) |
+| [STRPOS](https://www.postgresql.org/docs/12/functions-string.html) (*string*, *substring* ) | [POSITION](https://docs.snowflake.com/en/sql-reference/functions/position) ( <expr1> IN <expr> ) |
 | [SUBSTRING](https://www.postgresql.org/docs/12/functions-string.html) | [*SUBSTRING*](https://docs.snowflake.com/en/sql-reference/functions/substr)    *Notes:* Snowflake partially supports this function. PostgreSQL’s `SUBSTRING`, with a non-positive `start_position`, calculates `start_position + number_characters` (returning ‘’ if the result is non-positive). Snowflake’s behavior differs. |
 | [TRANSLATE](https://www.postgresql.org/docs/12/functions-string.html) | [TRANSLATE](https://docs.snowflake.com/en/sql-reference/functions/translate) |
 | [TRIM](https://www.postgresql.org/docs/12/functions-string.html) | [*TRIM*](https://docs.snowflake.com/en/sql-reference/functions/trim)    *Notes:* PostgreSQL *uses keywords (BOTH, LEADING, TRAILING) for trim; Snowflake uses TRIM, LTRIM, RTRIM.* |

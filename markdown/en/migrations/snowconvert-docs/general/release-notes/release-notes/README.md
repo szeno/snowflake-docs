@@ -6352,7 +6352,7 @@ Improved recovery on Redshift procedures written with Python.
 
 ### New Features 🚀
 
-New [Data Validation framework integration](../../user-guide/data-validation) for SQL Server End-to-End experience: Now, users can validate their data after migrating it. The Data Validation framework offers the following validations:
+New [Data Validation framework integration](/migrations/aim-for-datawarehouses/manual-migration/data-validation) for SQL Server End-to-End experience: Now, users can validate their data after migrating it. The Data Validation framework offers the following validations:
 Schema validation: Validate the table structure to attest the correct mappings among datatypes.
 Metrics validation: Generate metrics of the data stored in a table, ensuring the consistency of your data post-migration.
 

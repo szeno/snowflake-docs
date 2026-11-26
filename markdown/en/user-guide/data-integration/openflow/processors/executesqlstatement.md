@@ -23,7 +23,8 @@ Openflow includes two processors with similar names that run SQL in different wa
   bind parameters, which helps protect against SQL injection. The processor passes each evaluated value to the database
   separately from the SQL text, so the database treats it as data. A value that contains quotes or SQL keywords can’t
   change the structure of the statement. Each expression must be the entire value of a parameter.
-  For example, `VALUES ('${name}')` is valid, but `VALUES ('Mr. ${name}')` is not.
+  For example, `VALUES ('${name}')` is valid. With `VALUES ('Mr. ${name}')`, the processor doesn’t return an error. It
+  writes the literal value `Mr. ?` instead.
 - **[ExecuteSQL](/user-guide/data-integration/openflow/processors/executesql)** (Apache NiFi, `nifi-standard-nar`): Runs
   SQL text as written, either from its **SQL Query** property or from the content of the incoming FlowFile.
 

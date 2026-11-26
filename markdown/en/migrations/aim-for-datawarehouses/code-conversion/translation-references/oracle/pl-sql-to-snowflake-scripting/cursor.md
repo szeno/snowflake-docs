@@ -254,7 +254,7 @@ $$;
 
 ### 4. Parameterized Cursor
 
-You can use “?” In the filter condition of the cursor at the declaration section define the bind variable. While opening the cursor we can add the additional syntax “USING &lt;bind\_variable\_1 >” to pass the bind variable.
+You can use “?” In the filter condition of the cursor at the declaration section define the bind variable. While opening the cursor we can add the additional syntax “USING <bind\_variable\_1 >” to pass the bind variable.
 
 Below are some examples of scenarios that can occur in the use of parameters in cursors:
 

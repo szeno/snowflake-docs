@@ -487,7 +487,7 @@ Some options available in PostgreSQL for the sequence statement are not supporte
 The unsupported options are:
 
 - Unlogged.
-- AS &lt;data\_type>.
+- AS <data\_type>.
 - MinValue.
 - MaxValue.
 - No MinValue.

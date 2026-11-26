@@ -216,6 +216,11 @@ execution-time limitations.
   require regional endpoints or private endpoints. For more details, see
   [Supported platforms](#label-external-functions-supported-platforms). For more details about Amazon API Gateway regional and
   private endpoints, see [Choosing your endpoint type: Regional endpoint vs. Private endpoint](/sql-reference/external-functions-creating-aws-planning#label-external-functions-aws-endpoint-type).
+- For an AWS external function, the URL of the proxy service can contain only alphanumeric characters, underscores, and
+  hyphens in the API ID and stage segments. The resource path can also contain forward slashes (`/`) and periods (`.`).
+  Amazon API Gateway supports a wider set of characters, but Snowflake doesn’t. For more details about
+  Amazon API Gateway, see the
+  [Amazon API Gateway known issues](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-known-issues.html#api-gateway-known-issues-rest-apis).
 - Only functions, not stored procedures, can be written using the external functions feature.
 - [Future grants](/sql-reference/sql/grant-privilege#label-grant-privilege-schema-future-grants) of privileges on external functions are not supported.
 

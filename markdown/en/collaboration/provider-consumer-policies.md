@@ -212,6 +212,30 @@ and shared with the listing, as described in the [Listing practices](#label-list
 
   Snowflake may use these representative example prompts to evaluate AI object functionality during the listing review process.
 
+#### Remote MCP servers
+
+Consumers discover Remote MCP servers on Snowflake Marketplace, enable them through Cortex AI Gateway, and use them in Cortex Code and other
+MCP-compatible AI clients. The following requirements apply to Remote MCP servers attached to Snowflake Marketplace listings, in addition to the
+policies above.
+
+- **Security and data handling disclosure.** Providers must make the following available to Consumers in the listing description or in
+  publicly linked documentation:
+
+  - What data tools access and send to the Provider’s server.
+  - Whether any tools perform write, create, update, delete, or other destructive operations.
+  - How prompts and query context are handled, including logging, retention, and use for model training.
+  - Any external APIs or services the server calls beyond its primary endpoint.
+- **Endpoint ownership.** Providers must own or control the endpoints and domains their server connects to.
+- **Tool description integrity.** Tool descriptions must not contain hidden, obfuscated, or encoded instructions. All guidance exposed to the
+  AI must be human-readable. Tool descriptions must not direct the AI to retrieve or execute instructions from external sources at runtime.
+- **Runtime data and behavior boundaries.** Servers may only access the session or query context needed to run the requested tool.
+  Collecting extra conversation data, including for logging, is prohibited. Servers must not coerce the AI into calling other tools, or
+  interfere with its ability to call other approved tools in a session.
+- **Provider accountability and change management.** Providers are solely responsible for the availability, security, and ongoing compliance
+  of their server. Snowflake doesn’t operate or endorse it. Providers must keep their disclosures complete and accurate, and must notify
+  Consumers and Snowflake before making breaking changes, such as renaming tools, changing tool input schemas, or changing the server
+  endpoint URL, authentication method, or OAuth configuration.
+
 ### Product Access
 
 Generally, Providers may delist their Products at any time so that new Consumers do not discover them. To delete a listing, Providers must allow Consumers who are accessing or using the applicable Product to continue to access and use the Product for the time periods specified in Snowflake’s “listing retirement” requirements in the Documentation.

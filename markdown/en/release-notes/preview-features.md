@@ -159,7 +159,6 @@ The following features are currently available for preview, listed roughly in th
 | Snowflake Connector for PostgreSQL | Open | July 2024 | [About the Snowflake Connector for PostgreSQL](/connectors/postgres6/about) |  |
 | Snowflake Connector for MySQL | Open | July 2024 | [About the Snowflake Connector for MySQL](/connectors/mysql6/about) |  |
 | VS Code extension | Open | July 2024 | [Edit the Snowflake `connections.toml` file](/user-guide/vscode-ext#label-edit-toml) |  |
-| Snowflake Native SDK for Connectors | Open | June 2024 | [Snowflake Native SDK for Connectors](/developer-guide/native-apps/connector-sdk/about-connector-sdk) |  |
 | EXECUTE IMMEDIATE FROM template file | Open | May 2024 | [EXECUTE IMMEDIATE FROM](/sql-reference/sql/execute-immediate-from) | Execute a template file using the Jinja2 templating language. |
 | Snowflake Connector for Google Analytics Raw Data | Open | January 2024 | [Snowflake Connector for Google Analytics Raw Data](/connectors/google/gard/gard-connector-about) |  |
 | Snowflake Connector for Google Analytics Aggregate Data | Open | January 2024 | [Snowflake Connector for Google Analytics Aggregate Data](/connectors/google/gaad/gaad-connector-about) |  |

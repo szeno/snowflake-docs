@@ -325,3 +325,6 @@ ALTER POSTGRES INSTANCE <name> REMOVE VIRTUAL NETWORK PEER <peer_name>;
 
 Instead of using the Snowflake Postgres instance’s public `hostname`, connections from a peered VPC should use the internal DNS
 hostname. The internal hostname is the same as the public hostname, but with `i` prepended.
+
+For example, if the public hostname is `abc123xyz.myorg-myaccount.us-west-2.aws.postgres.snowflake.app`, the internal hostname is
+`iabc123xyz.myorg-myaccount.us-west-2.aws.postgres.snowflake.app`. The `i` is prepended directly to the first label, with no separator.

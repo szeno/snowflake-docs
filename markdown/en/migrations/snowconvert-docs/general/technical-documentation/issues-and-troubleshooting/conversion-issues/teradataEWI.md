@@ -2837,7 +2837,7 @@ Unfortunately, this syntax generates ambiguity when trying to convert a CAST to 
 
 Thus, without context about the expression to be CAST, there is no sure way to differentiate when we are dealing with an actual case of CAST or a function that accepts DATE or TIME as parameters.
 
-In other words, it is required to know whether `<expression>` is a column or a user-defined function (UDF). To achieve this, when converting the code, one must add the `CREATE TABLE` or `CREATE FUNCTION` from which &lt;expression> is dependant on.
+In other words, it is required to know whether `<expression>` is a column or a user-defined function (UDF). To achieve this, when converting the code, one must add the `CREATE TABLE` or `CREATE FUNCTION` from which <expression> is dependant on.
 
 E.g. check the following `SELECT` statement. With no context about `AMBIGUOUS_EXPR`, we have no way to determine if we are dealing with a function call or CAST to `DATE`. However, we do know that `COL1 (DATE)` is indeed a CAST since `COL1` is a column from the table `TAB`.
 

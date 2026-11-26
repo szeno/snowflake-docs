@@ -36,11 +36,11 @@ Release notes for Native SDK for Connectors Java library.
 
 - New `PUBLIC.RESET_CONFIGURATION()` procedure that resets the configuration wizard state.
   Additional callbacks let you perform custom operations during the procedure flow.
-  See also [Reset configuration](../../developer-guide/native-apps/connector-sdk/flow/reset_configuration).
+  See also [Snowflake Native SDK for Connectors (Deprecated)](/developer-guide/native-apps/connector-sdk/about-connector-sdk).
 - New `PUBLIC.RECOVER_CONNECTOR_STATE(STRING)` procedure that resets the connector state.
-  See also [Recover connector state](/developer-guide/native-apps/connector-sdk/reference/core_reference#label-connectors-native-sdk-recover-connector-state).
+  See also [Snowflake Native SDK for Connectors (Deprecated)](/developer-guide/native-apps/connector-sdk/about-connector-sdk).
 - New `TASK_REACTOR.REMOVE_INSTANCE(STRING)` procedure that removes a Task Reactor instance.
-  See also [Remove instance](/developer-guide/native-apps/connector-sdk/reference/task_reactor_reference#label-connectors-native-sdk-task-reactor-remove-instance).
+  See also [Snowflake Native SDK for Connectors (Deprecated)](/developer-guide/native-apps/connector-sdk/about-connector-sdk).
 - `com.snowflake.connectors.application.configuration.connector.ConnectorConfigurationKey`:
 
   - Added new `CORTEX_WAREHOUSE` key.
@@ -129,16 +129,16 @@ Release notes for Native SDK for Connectors Java library.
 - Resource management procedures:
 
   - Introduced new callbacks to the `PUBLIC.CREATE_RESOURCE()` procedure that let you perform custom operations during the procedure flow.
-    See also [Create resource](../../developer-guide/native-apps/connector-sdk/flow/ingestion-management/create_resource).
+    See also [Snowflake Native SDK for Connectors (Deprecated)](/developer-guide/native-apps/connector-sdk/about-connector-sdk).
   - New `PUBLIC.ENABLE_RESOURCE()` procedure that enables a disabled resource.
     Additional callbacks let you perform custom operations during the procedure flow.
-    See also [Enable resource](../../developer-guide/native-apps/connector-sdk/flow/ingestion-management/enable_resource).
+    See also [Snowflake Native SDK for Connectors (Deprecated)](/developer-guide/native-apps/connector-sdk/about-connector-sdk).
   - New `PUBLIC.DISABLE_RESOURCE()` procedure that disables an enabled resource.
     Additional callbacks let you perform custom operations during the procedure flow.
-    See also [Disable resource](../../developer-guide/native-apps/connector-sdk/flow/ingestion-management/disable_resource).
+    See also [Snowflake Native SDK for Connectors (Deprecated)](/developer-guide/native-apps/connector-sdk/about-connector-sdk).
   - New `PUBLIC.UPDATE_RESOURCE()` procedure that updates ingestion configurations of a particular resource.
     Additional callbacks let you perform custom operations during the procedure flow.
-    See also [Update resource](../../developer-guide/native-apps/connector-sdk/flow/ingestion-management/update_resource).
+    See also [Snowflake Native SDK for Connectors (Deprecated)](/developer-guide/native-apps/connector-sdk/about-connector-sdk).
 - `com.snowflake.connectors.util.sql.SqlTools`:
 
   - Added `asVarchar()` method that is expected to replace `varcharArgument()` method.

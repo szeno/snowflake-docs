@@ -27,10 +27,10 @@ Release notes of the Native SDK Example Java GitHub Connector.
 
 - Added backend internal implementations of resource management procedures handlers and their callbacks:
 
-  - Implementations for `PUBLIC.CREATE_RESOURCE()` callbacks available in [com.snowflake.connectors.example.ingestion.create](https://github.com/snowflakedb/connectors-native-sdk/tree/main/templates/connectors-native-sdk-template/src/main/java/com/snowflake/connectors/example/ingestion/create).
-  - Implementations for `PUBLIC.ENABLE_RESOURCE()` procedure and its’ callbacks available in [com.snowflake.connectors.example.ingestion.enable](https://github.com/snowflakedb/connectors-native-sdk/tree/main/templates/connectors-native-sdk-template/src/main/java/com/snowflake/connectors/example/ingestion/enable).
-  - Implementations for `PUBLIC.DISABLE_RESOURCE()` procedure and its’ callbacks available in [com.snowflake.connectors.example.ingestion.disable](https://github.com/snowflakedb/connectors-native-sdk/tree/main/templates/connectors-native-sdk-template/src/main/java/com/snowflake/connectors/example/ingestion/disable).
-  - Implementations for `PUBLIC.UPDATE_RESOURCE()` procedure and its’ callbacks available in [com.snowflake.connectors.example.ingestion.update](https://github.com/snowflakedb/connectors-native-sdk/tree/main/templates/connectors-native-sdk-template/src/main/java/com/snowflake/connectors/example/ingestion/update).
+  - Implementations for `PUBLIC.CREATE_RESOURCE()` callbacks available in `com.snowflake.connectors.example.ingestion.create`.
+  - Implementations for `PUBLIC.ENABLE_RESOURCE()` procedure and its’ callbacks available in `com.snowflake.connectors.example.ingestion.enable`.
+  - Implementations for `PUBLIC.DISABLE_RESOURCE()` procedure and its’ callbacks available in `com.snowflake.connectors.example.ingestion.disable`.
+  - Implementations for `PUBLIC.UPDATE_RESOURCE()` procedure and its’ callbacks available in `com.snowflake.connectors.example.ingestion.update`.
 - Changes in UI `Data sync` tab related to resource management:
 
   - Displaying values of `resource_id`, `name` and `resource_ingestion_definition_id` for each created resource in resources list.

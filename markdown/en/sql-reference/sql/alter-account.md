@@ -485,8 +485,9 @@ For `TENANT_TYPE` and `DOMAIN_NAMES`, you can also use a role that has been gran
     `EDITION = { 'STANDARD' | 'ENTERPRISE' | 'BUSINESS_CRITICAL' }`
     :   Sets the [Snowflake edition](/user-guide/intro-editions) for the specified account.
 
-        Only [organization administrators](/user-guide/organization-administrators) can change the edition of an account in the organization.
-        Run the command from an account other than the account whose edition you’re changing.
+        Only [organization administrators](/user-guide/organization-administrators) can change the edition of an account: use the GLOBALORGADMIN role in the
+        organization account, or the ORGADMIN role in an ORGADMIN-enabled account. The target can be any account in the organization, including the account
+        you’re signed in to.
 
         For upgrade and downgrade requirements, same-day downgrade restrictions, VPS Edition, and regional availability, see
         [Working with account editions](/user-guide/organizations-manage-accounts-editions).

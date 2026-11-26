@@ -127,7 +127,7 @@ Copy code
 
 ### Known Limitations
 
-- Snowflake constraints are informational only, so SQL Server workflows that depend on enabling or disabling constraints must be redesigned manually.
+- Snowflake enforces only NOT NULL and CHECK constraints; UNIQUE and FOREIGN KEY constraints are informational only, so SQL Server workflows that depend on enabling or disabling constraints must be redesigned manually.
 - This section only covers the `CHECK CONSTRAINT` action. Unsupported `CHECK` constraint definitions may still emit [SSC-EWI-0035](../../issues-and-troubleshooting/conversion-issues/generalEWI#ssc-ewi-0035).
 
 ### Related Issues
@@ -627,7 +627,7 @@ ON DELETE NO ACTION;
 
 Note
 
-Constraints are not enforced in Snowflake, excepting NOT NULL.
+Constraints are not enforced in Snowflake, except for NOT NULL and CHECK.
 
 Primary and Foreign Key are only used for documentation purposes more than design constraints.
 

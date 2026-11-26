@@ -20,7 +20,9 @@ data engineering workflows, all within the same interface.
   datasets from the Snowflake Marketplace.
 - Write SQL or Python code and quickly compare results with cell-by-cell development and execution.
 - Interactively visualize your data using embedded Streamlit visualizations and other libraries like Altair, Matplotlib, or seaborn.
-- Integrate with Git to collaborate with effective version control. See [Sync notebooks with a Git repository](/user-guide/ui-snowsight/notebooks-snowgit).
+- Integrate with Git to collaborate with effective version control by using
+  [Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-migrate) in a
+  [Git workspace](/user-guide/ui-snowsight/workspaces-git).
 - Contextualize results and make notes about different results with Markdown cells and charts.
 - Run your notebook on a schedule to automate pipelines. See [Schedule notebook runs](/user-guide/ui-snowsight/notebooks-schedule).
 - Make use of the role-based access control and other data governance functionality available in Snowflake to allow other users

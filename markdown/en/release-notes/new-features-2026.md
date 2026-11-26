@@ -288,6 +288,7 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Nov 25, 2026: Snowflake Native Apps support for FedRAMP on Azure for apps with containers (General availability)](/release-notes/2026/other/2026-11-25-native-apps-spcs-azure-gov-ga)
 - [Nov 23, 2026: CoCo Desktop v2.1.0](/release-notes/2026/other/2026-11-23-coco-desktop-v2-1-0)
 - [Nov 23, 2026: Support for multiple tag-based row access policies (Preview)](/release-notes/2026/other/2026-11-23-multiple-tag-based-row-access-policies)
 - [Nov 20, 2026: AI\_COMPLETE adds support for Snowflake Decision (Preview)](/release-notes/2026/other/2026-11-20-ai-complete-snowflake-decision-public-preview)
@@ -319,7 +320,6 @@ For more recent releases and feature updates, see [Snowflake server release note
 - [Nov 16, 2026: Create, evaluate, and optimize Cortex AI Functions with Cortex AI Function Studio (General availability)](/release-notes/2026/other/2026-11-16-cortex-ai-function-studio-ga)
 - [Nov 16, 2026: Iceberg table properties in SQL (General availability)](/release-notes/2026/other/2026-11-16-iceberg-table-properties-ga)
 - [Nov 16, 2026: Openflow Snowflake Deployments in Azure government regions (General availability)](/release-notes/2026/other/2026-11-16-openflow-snowflake-deployments-azure-gov-ga)
-- [Nov 16, 2026: SCIM provisioning for organization users and organization user groups (Private preview)](/release-notes/2026/other/2026-11-16-organization-scim-private-preview)
 - [Nov 16, 2026: SHOW GRANTS TO … INCLUDE HIERARCHY (General availability)](/release-notes/2026/other/2026-11-16-show-grants-include-hierarchy)
 - [Nov 13, 2026: AI\_TRANSCRIBE delivers improved transcription accuracy](/release-notes/2026/other/2026-11-13-ai-transcribe-accuracy-improvements)
 - [Nov 13, 2026: Many-to-many relationships in semantic views (Preview)](/release-notes/2026/other/2026-11-13-semantic-views-many-to-many-preview)

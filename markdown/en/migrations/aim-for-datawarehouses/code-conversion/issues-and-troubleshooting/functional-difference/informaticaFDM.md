@@ -924,7 +924,7 @@ This is one-time deployment guidance rather than a per-task annotation, so it is
 Copy code
 
 ```
-<ATTRIBUTE NAME ="Parameter Filename" VALUE ="C:&#x5c;Users&#x5c;Administrator&#x5c;Desktop&#x5c;params.txt"/>
+<ATTRIBUTE NAME ="Parameter Filename" VALUE ="C:\Users\Administrator\Desktop\params.txt"/>
 ```
 
 ##### Output Code:
@@ -1765,7 +1765,7 @@ This issue is reported when an expression references `$PMFolderName`. There is n
 Copy code
 
 ```
-<TRANSFORMFIELD DATATYPE="string" DEFAULTVALUE="ERROR(&apos;transformation error&apos;)" EXPRESSION="$PMFolderName" EXPRESSIONTYPE="GENERAL" NAME="FolderName" PORTTYPE="OUTPUT" PRECISION="100" SCALE="0"/>
+<TRANSFORMFIELD DATATYPE="string" DEFAULTVALUE="ERROR('transformation error')" EXPRESSION="$PMFolderName" EXPRESSIONTYPE="GENERAL" NAME="FolderName" PORTTYPE="OUTPUT" PRECISION="100" SCALE="0"/>
 ```
 
 ##### Output Code:

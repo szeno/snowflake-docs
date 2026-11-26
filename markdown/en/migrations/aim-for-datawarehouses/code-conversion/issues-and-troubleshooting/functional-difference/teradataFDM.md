@@ -367,7 +367,7 @@ Non-literal delimiters with spaces need their backslash escaped in Snowflake.
 Copy code
 
 ```
-SELECT NVP('store = whole foods&#x26;&#x26;store: ?Bristol farms','store', '&#x26;&#x26;', valueDelimiter, 2);
+SELECT NVP('store = whole foods&&store: ?Bristol farms','store', '&&', valueDelimiter, 2);
 ```
 
 ##### Generated Code
@@ -2997,7 +2997,7 @@ FROM
 
 - If the converted column is only used as a date (comparisons, filters, date arithmetic), the conversion is functionally equivalent and no action is needed.
 - If the column is used in a string context (e.g., concatenation, display, assignment to `VARCHAR`), wrap the expression with `TO_VARCHAR` and the appropriate Snowflake format string. For example: `TO_VARCHAR(TO_DATE(capture_date), 'YYYY/MM/DD')`.
-- Review the Snowflake [TO\_VARCHAR](/sql-reference/functions/to_varchar) documentation for supported format models.
+- Review the Snowflake [TO\_VARCHAR](/sql-reference/functions/to_char) documentation for supported format models.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
 
 ## SSC-FDM-TD0047

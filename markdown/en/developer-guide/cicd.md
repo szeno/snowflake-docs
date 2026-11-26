@@ -4,7 +4,7 @@ Use your CI/CD system to deploy to Snowflake. Snowflake publishes integrations f
 
 Note
 
-You do not need to create a Git repository object in Snowflake to deploy from CI/CD. The pipeline checks out your repository on its runner and deploys to Snowflake using the appropriate command. Create a [Git repository in Snowflake](/developer-guide/git/git-overview) only when Snowflake needs access to files in the repository.
+You do not need to create a Git repository object in Snowflake to deploy from CI/CD. The pipeline checks out your repository on its runner and deploys to Snowflake using the appropriate command. To develop with repository files in Snowsight, use a [Git workspace](/user-guide/ui-snowsight/workspaces-git). When Snowflake code such as tasks or stored procedures needs to reference repository files, use a Git repository clone. For more information, see [Git integration in Snowflake](/developer-guide/git/git-overview).
 
 For broader DevOps concepts including declarative object management and environment strategy, see [DevOps with Snowflake](/developer-guide/builders/devops-with-snowflake).
 

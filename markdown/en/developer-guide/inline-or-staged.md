@@ -21,7 +21,7 @@ When using a staged handler, you can do the following:
 
 - Use code you manage separately in a Git repository you’re using from Snowflake.
 
-  For more information, see [How Snowflake works with a remote Git repository](/developer-guide/git/git-overview#label-integrating-git-repository-how-it-works).
+  For more information, see [How a Git repository clone works](/developer-guide/git/git-overview#label-integrating-git-repository-how-it-works).
 - Use previously compiled code, such as when you already have compiled output but don’t have the source.
 - Use handler code that might be too large to paste into the SQL statement with which you create the function or procedure.
   In-line code has an upper limit on the source code size.

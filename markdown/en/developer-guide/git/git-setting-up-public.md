@@ -144,7 +144,8 @@ these steps:
      ALLOWED_AUTHENTICATION_SECRETS = (my_git_secret)
      ENABLED = TRUE;
    ```
-3. Create a Git repository clone as described in [Create a Snowflake Git repository clone](#label-git-create-clone-public).
+3. Create a workspace connected to a Git repository as described in [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace). Alternatively, create a
+   Git repository clone as described in [Create a Snowflake Git repository clone](#label-git-create-clone-public).
 
 ## Configure for no authentication
 
@@ -167,7 +168,8 @@ To set up Snowflake to use a Git repository without authenticating, follow these
      API_ALLOWED_PREFIXES = ('https://example.com/my-account')
      ENABLED = TRUE;
    ```
-2. Create a Git repository clone as described in [Create a Snowflake Git repository clone](#label-git-create-clone-public).
+2. Create a workspace connected to a Git repository as described in [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace). Alternatively, create a
+   Git repository clone as described in [Create a Snowflake Git repository clone](#label-git-create-clone-public).
 
 ## Create a Snowflake Git repository clone
 
@@ -176,7 +178,8 @@ fetched from the remote repository.
 
 Note
 
-For information on creating a Git workspace in Snowsight, see [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace).
+To create and edit files, manage branches, and commit and push changes from Snowsight, Snowflake recommends a Git
+workspace instead of a Git repository clone. For more information, see [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace).
 
 A Git repository clone in Snowflake specifies the following details:
 

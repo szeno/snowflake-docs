@@ -207,13 +207,10 @@ For more information, see [External network access in Streamlit in Snowflake](/d
 
 ### Git integration
 
-Integrate Streamlit apps with Git repositories for version control and change tracking:
+To keep Streamlit app code in a Git repository for version control and change tracking, develop the app in a Git workspace. This
+lets you maintain an audit trail of code changes and run code review processes before you deploy changes to production apps.
 
-- Grant appropriate privileges on Git repository objects (READ, WRITE, or OWNERSHIP).
-- Use Git integration to maintain audit trails of code changes.
-- Implement code review processes before deploying changes to production apps.
-
-For more information, see [Sync Streamlit in Snowflake apps with a Git repository](/developer-guide/streamlit/features/git-integration).
+For more information, see [Integrate workspaces with a Git repository](/user-guide/ui-snowsight/workspaces-git).
 
 ### Private connectivity
 

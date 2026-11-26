@@ -98,6 +98,10 @@ CREATE [ OR ALTER ] EXTERNAL FUNCTION ...
 :   This is the invocation URL of the proxy service (e.g. API Gateway or API Management service) and resource through
     which Snowflake calls the remote service.
 
+    For AWS, the URL can contain only alphanumeric characters, underscores, and hyphens in the API ID and stage segments.
+    The resource path can also contain forward slashes (`/`) and periods (`.`). For more details, see
+    [Creation-time limitations and requirements](/sql-reference/external-functions-introduction#label-external-functions-limitations-creation).
+
 ## Optional parameters
 
 `SECURE`

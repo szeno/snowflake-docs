@@ -3,10 +3,7 @@
 Examples in this topic describe how to use files from a remote Git repository when developing Snowflake applications and how to execute SQL
 scripts in a Git repository clone.
 
-Be sure to see the following, which describe other ways to interact with a Git repository clone.
-
-- [Sync Streamlit in Snowflake apps with a Git repository](/developer-guide/streamlit/features/git-integration)
-- [Sync notebooks with a Git repository](/user-guide/ui-snowsight/notebooks-snowgit)
+To create and edit files, manage branches, and commit and push changes, see [Integrate workspaces with a Git repository](/user-guide/ui-snowsight/workspaces-git).
 
 ## Use a Git repository file as a stored procedure handler
 

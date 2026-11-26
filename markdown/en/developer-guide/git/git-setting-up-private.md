@@ -167,7 +167,8 @@ Git repository.
      in the GitHub documentation.
 
    For more information on the SQL command for creating a secret, see the [CREATE SECRET](/sql-reference/sql/create-secret).
-3. Create a Git repository clone as described in [Create a Snowflake Git repository clone](#label-git-create-clone-private).
+3. Create a workspace connected to a Git repository as described in [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace). Alternatively, create a
+   Git repository clone as described in [Create a Snowflake Git repository clone](#label-git-create-clone-private).
 
 ## Create a Snowflake Git repository clone
 
@@ -176,7 +177,8 @@ fetched from the remote repository.
 
 Note
 
-For information on creating a Git workspace in Snowsight, see [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace).
+To create and edit files, manage branches, and commit and push changes from Snowsight, Snowflake recommends a Git
+workspace instead of a Git repository clone. For more information, see [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace).
 
 A Git repository clone in Snowflake specifies the following details:
 

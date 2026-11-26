@@ -477,7 +477,8 @@ Show lessSee more
 - When referencing objects in SQL cells, you must use fully qualified object names, unless you are referencing object names in a specified
   database or schema. See [Changing the session context for a notebook](/user-guide/ui-snowsight/notebooks-sessions#label-notebooks-callers-rights).
 - Notebook drafts are saved every three seconds.
-- You can use [Git integration](/user-guide/ui-snowsight/notebooks-snowgit) to maintain notebook versions.
+- To maintain notebook versions in Git, [migrate to Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-migrate)
+  and use a [Git workspace](/user-guide/ui-snowsight/workspaces-git).
 - You can configure an idle timeout setting to automatically shut down the notebook session once the setting is met. For information,
   see [Idle time and reconnection](/user-guide/ui-snowsight/notebooks-setup#label-notebooks-idle-time-property).
 - Notebook cell results are only visible to the user who ran the notebook and are cached across sessions. Reopening a notebook displays

@@ -89,7 +89,7 @@ Snowflake supports:
 > |  | Microsoft Azure | Microsoft Azure Private Link | Virtual Private Snowflake | Government regions |
 > | --- | --- | --- | --- | --- |
 > | Snowflake Native App Framework (without containers) | Generally available | Generally available | Not yet supported | Generally available |
-> | Snowflake Native App Framework (with containers) | Generally available | Generally available | Not yet supported | Not yet supported |
+> | Snowflake Native App Framework (with containers) | Generally available | Generally available | Not yet supported | Generally available |
 >
 > Expand
 >
@@ -116,7 +116,6 @@ The following limitations apply to Snowflake Native App support for government r
 - Providers publishing apps from government regions can
   only share listings within the same organization.
 - Department of Defense (DoD) regions are not supported.
-- Apps with containers are not yet supported in Azure government regions.
 
 ## Limitations on Virtual Private Snowflake (VPS)
 

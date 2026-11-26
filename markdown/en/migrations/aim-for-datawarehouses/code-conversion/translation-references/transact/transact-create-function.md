@@ -1083,7 +1083,7 @@ BEGIN
  SET @employees = (SELECT count(*) FROM employee)
  DECLARE @type VARCHAR(15)
  SET @type = 'small_team'
- IF (@employees &#x3C; 8)
+ IF (@employees < 8)
  BEGIN
   INSERT @new_team VALUES (@type, @team_name)
   RETURN
@@ -1309,7 +1309,7 @@ BEGIN
 DECLARE @name VARCHAR(30) = 'Another Department'
 WHILE @name = 'Another Department'
 BEGIN
- IF (@department_id &#x3C; 3)
+ IF (@department_id < 3)
  BEGIN
   SET @name = 'engineering'
  END

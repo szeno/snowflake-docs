@@ -13,20 +13,20 @@ Most of the [MultiLoad Commands](https://docs.teradata.com/reader/u5g65Je3hpMChJ
 | Commands | Transformation Status | Note |
 | --- | --- | --- |
 | ACCEPT | Commented | ​ |
-| [BEGIN MLOAD](begin-mload.md) | **Transformed** | ​​The node is commented out since the transformation occurs in other related statements instead. |
+| [BEGIN MLOAD](#begin-mload) | **Transformed** | ​​The node is commented out since the transformation occurs in other related statements instead. |
 | BEGIN DELETE MLOAD | Commented | ​ |
 | DATEFORM | Commented | ​ |
-| DELETE | **Partially transformed** | Check [known issues](begin-mload.md#known-issues).​ |
+| DELETE | **Partially transformed** | Check [known issues](#known-issues).​ |
 | DISPLAY | Commented | ​ |
-| [DML LABEL](begin-mload.md#.dml-label) | **Transformed** | ​ |
+| [DML LABEL](#dml-label) | **Transformed** | ​ |
 | END MLOAD | **Transformed** | ​​Commented out since is not necessary for the transformation of the BEGIN MLOAD. |
 | EOC | Commented | ​ |
-| [FIELD](begin-mload.md#.layout-.field-and-.filler) | **Transformed** | ​ |
-| [FILLER](begin-mload.md#.layout-.field-and-.filler) | **Transformed** | This command needs to be with a FIELD and LAYOUT command to be converted. |
+| [FIELD](#layout-field-and-filler) | **Transformed** | ​ |
+| [FILLER](#layout-field-and-filler) | **Transformed** | This command needs to be with a FIELD and LAYOUT command to be converted. |
 | IF, ELSE, and ENDIF | Commented | ​ |
-| [IMPORT](begin-mload.md#.import) | **Transformed** | ​ |
+| [IMPORT](#import) | **Transformed** | ​ |
 | INSERT | **Transformed** | This is taken as a Teradata Statement, so it doesn’t appear in this chapter. |
-| [LAYOUT](begin-mload.md#.layout-.field-and-.filler) | **Transformed** | This command needs to be with a FIELD and FILLER command to be converted. |
+| [LAYOUT](#layout-field-and-filler) | **Transformed** | This command needs to be with a FIELD and FILLER command to be converted. |
 | LOGDATA | Commented | ​ |
 | LOGMECH | Commented | ​ |
 | LOGOFF | Commented | ​ |

@@ -2,11 +2,7 @@
 
 This topic describes how to perform common repository operations using SQL commands and Snowsight.
 
-You can also use the following features with Git, each of which includes its own way to perform Git operations:
-
-- [Workspaces](/user-guide/ui-snowsight/workspaces-git#label-integrate-a-git-repository)
-- [Streamlit apps](/developer-guide/streamlit/features/git-integration)
-- [Snowflake notebooks](/user-guide/ui-snowsight/notebooks-snowgit)
+To create and edit files, manage branches, and commit and push changes, use [Git workspaces](/user-guide/ui-snowsight/workspaces-git#label-integrate-a-git-repository).
 
 Note
 

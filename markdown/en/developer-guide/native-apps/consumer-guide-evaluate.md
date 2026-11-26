@@ -68,6 +68,14 @@ posture.
 themselves, grant the app access to your data. See
 for the full list.
 
+**Access to account metadata:**
+
+An app granted `IMPORTED PRIVILEGES` on the `SNOWFLAKE` database gains access to all objects in that
+database. This includes object metadata and historical usage data, such as compute consumption and
+storage usage. Access to the `SNOWFLAKE` database should be proportionate to the app’s needs. For
+more information, see
+[Grant the IMPORTED PRIVILEGES privilege](/developer-guide/native-apps/ui-consumer-granting-privs#label-native-apps-consumer-imported-privileges).
+
 **App Spec requests (higher risk, requiring explicit approval):**
 
 App Specs are requests for capabilities that go beyond creating operational resources, for example,

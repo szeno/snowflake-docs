@@ -5,11 +5,11 @@ Before you start, make sure that your system meets the minimum requirements list
 - MacOS
   - Ventura 13.3.1 or higher
   - 4 GB of RAM or higher\*
-  - Python ≥ 3.10 or < 3.14 for the [Data Validation feature](../user-guide/data-validation)
+  - Python ≥ 3.10 or < 3.14 for the [Data Validation feature](/migrations/aim-for-datawarehouses/manual-migration/data-validation)
 - Windows
   - Windows 11 or later
   - 4 GB of RAM or higher\*
-  - Python ≥ 3.10 or < 3.14 for the [Data Validation feature](../user-guide/data-validation)
+  - Python ≥ 3.10 or < 3.14 for the [Data Validation feature](/migrations/aim-for-datawarehouses/manual-migration/data-validation)
 
 \*The amount of RAM available affects the speed of assessment and conversion executions and the amount of code that can be processed at once (more is better).
 

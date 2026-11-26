@@ -1771,7 +1771,7 @@ WHERE
 - @return\_status
 - ;number
 - @module\_\_name\_v\_ar
-- WITH RECOMPILE, WITH RESULT SETS NONE, WITH &lt;result set definition>
+- WITH RECOMPILE, WITH RESULT SETS NONE, WITH <result set definition>
 
 ### Related EWIs
 
@@ -3096,7 +3096,7 @@ $$
     BEGIN
 
         ITERATION := 1;
-        WHILE (:ITERATION &#x3C; 100) LOOP
+        WHILE (:ITERATION < 100) LOOP
             IF (:ITERATION = 10) THEN
                 BREAK;
             ELSE

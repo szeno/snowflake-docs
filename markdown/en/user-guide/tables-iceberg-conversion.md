@@ -34,10 +34,6 @@ When you convert an Iceberg table, Snowflake doesn’t lock down or assume sole 
 To prevent table corruption, ensure that you monitor or stop any non-Snowflake writes
 (such as automated maintenance jobs) to your external storage location.
 
-Note
-
-Iceberg partitioning is removed when you convert a table.
-
 ## File lifecycle after conversion
 
 After you convert a table, Snowflake is the catalog for that table. Snowflake manages every file that belongs to the table:

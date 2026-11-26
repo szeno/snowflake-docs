@@ -16,9 +16,26 @@ Workspaces can be local to Snowflake, or you can sync workspaces in development 
 - [Commit and push updated files](#label-commit-and-push-workspaces-changes) back to your Git repository.
 - [View and resolve any conflicts](#label-resolve-workspaces-conflicts) directly in Workspaces.
 
+Use a Git workspace to edit, commit, and push files in a Git repository from Snowflake, including the files for the following:
+
+- [Streamlit apps](/developer-guide/streamlit/streamlit-in-workspaces/streamlit-in-workspaces-create-run)
+- [Notebooks](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
+- [dbt projects](/user-guide/data-engineering/dbt-projects-on-snowflake-using-workspaces)
+- [Snowflake App Runtime apps](/developer-guide/snowflake-app-runtime/workspaces)
+
+### Git workspace ownership
+
+A Git workspace is always owned by the user who creates it, not by a role. You can’t share a Git workspace with other users or
+roles, so each user who wants to work with the repository creates their own Git workspace.
+
+If Snowflake code such as tasks or stored procedures needs to reference files in a Git repository, use a
+[Git repository clone](/developer-guide/git/git-overview#label-integrating-git-repository-how-it-works) instead. A Git repository
+clone is a read-only object that’s owned by a role, so Snowflake objects can reference its files.
+
 ### Create a Git workspace
 
 To develop and maintain files directly in Snowsight, you can create a workspace connected to a Git repository.
+An existing private or shared workspace can’t be connected to a Git repository.
 
 Note
 

@@ -32,7 +32,7 @@ Snowflake Native App based Connectors to easily ingest data from an external dat
 SDK outlines best practices to ingest data and customize application flows, along with ready-to-use code blocks for your own ingestion
 logic.
 
-For more information see [Snowflake Native SDK for Connectors](/developer-guide/native-apps/connector-sdk/about-connector-sdk).
+For more information see [Snowflake Native SDK for Connectors (Deprecated)](/developer-guide/native-apps/connector-sdk/about-connector-sdk).
 
 ### Snowflake Notebooks — *Preview*
 

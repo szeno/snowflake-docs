@@ -97,4 +97,4 @@ For SQL Server databases, you can use SnowConvert AI to complete the following t
 
 - [Deployment](../../../user-guide/deployment)
 - [Data migration](../../../user-guide/data-migration)
-- [Data validation](../../../user-guide/data-validation)
+- [Data validation](/migrations/aim-for-datawarehouses/manual-migration/data-validation)

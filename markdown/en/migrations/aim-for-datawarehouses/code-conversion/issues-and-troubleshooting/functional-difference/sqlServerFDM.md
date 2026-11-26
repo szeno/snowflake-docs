@@ -2631,11 +2631,11 @@ CALL SYSTEM$SEND_SNOWFLAKE_NOTIFICATION(SNOWFLAKE.NOTIFICATION.TEXT_PLAIN('See a
 
 ## SSC-FDM-TS0053
 
-WITH CHECK clause removed. Snowflake constraints are informational only and not enforced.
+WITH CHECK clause removed. Snowflake FOREIGN KEY constraints are informational only and not enforced.
 
 ### Description
 
-This message is shown when an `ALTER TABLE ... WITH CHECK ADD CONSTRAINT ... FOREIGN KEY ...` statement is converted. The `WITH CHECK` clause is removed because Snowflake constraints are informational and are not enforced, so the validation semantics do not apply.
+This message is shown when an `ALTER TABLE ... WITH CHECK ADD CONSTRAINT ... FOREIGN KEY ...` statement is converted. The `WITH CHECK` clause is removed because Snowflake FOREIGN KEY constraints are informational and are not enforced, so the validation semantics do not apply.
 
 #### Code Example
 
