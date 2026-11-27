@@ -9,13 +9,14 @@ This topic describes how to use release channels to manage and publish multiple 
 
 ## Privileges required to use release channels
 
-To use release channels, you must use a role that has been granted the MANAGE RELEASES privilege. This privilege allows you to:
+To use release channels, use a role with the following privileges on the application package, depending on the operation:
 
-- Enable release channels on the application package.
-- Enable the QA and ALPHA release channels.
-- Register and deregister versions and patches.
-- Add versions and patches.
-- Set the release directive.
+- `MANAGE VERSIONS` to register and deregister versions and add patches.
+- `MANAGE RELEASES` to enable and configure release channels, add or remove versions from a channel, and manage release directives.
+
+Enabling release channels on an existing application package requires both `MODIFY` and `MANAGE RELEASES` on the application package.
+
+A role with `OWNERSHIP` on the application package can perform both sets of operations. Creating versions or patches also requires the appropriate privileges on the source stage and its parent database and schema.
 
 ## Enable release channels for an application package
 

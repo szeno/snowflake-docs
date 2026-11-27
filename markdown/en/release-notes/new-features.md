@@ -167,14 +167,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 27, 2026: Continuous and bulk file loading with CoCo (General availability)](/release-notes/2026/other/2026-10-27-file-loading-coco-ga)
 - [October 27, 2026: Cortex Code skills for interactive analytics](/release-notes/2026/other/2026-10-27-interactive-cortex-code-skills)
 - [Oct 27, 2026: OpenAI GPT-6.1 Terra (Preview)](/release-notes/2026/other/2026-10-27-openai-gpt-61-terra-preview)
-- [Oct 26, 2026: CoCo Desktop v1.23.0](/release-notes/2026/other/2026-10-26-coco-desktop-v1-23-0)
-- [Oct 26, 2026: Custom error messages for feature policy rules](/release-notes/2026/other/2026-10-26-feature-policy-rule-error-messages)
-- [Oct 26, 2026: Cloning databases that contain hybrid tables (General availability)](/release-notes/2026/other/2026-10-26-hybrid-table-database-clone-ga)
-- [Oct 26, 2026: Secondary indexes (General availability)](/release-notes/2026/other/2026-10-26-secondary-indexes-ga)
-- [Oct 26, 2026: Autopilot for sensitive data classification (Public Preview)](/release-notes/2026/other/2026-10-26-sensitive-data-classification-autopilot-preview)
-- [Oct 26, 2026: Trust Center, Data Security scanner package (General availability)](/release-notes/2026/other/2026-10-26-trust-center-data-security-scanner-package-ga)
-- [Node.js Driver (v3.4.1)](/release-notes/clients-drivers/nodejs-2026)
-- [Python Connector (v4.8.1)](/release-notes/clients-drivers/python-connector-2026)
-- [SQLAlchemy (v2.1.0)](/release-notes/clients-drivers/sqlalchemy-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

@@ -269,6 +269,8 @@ Show lessSee more
 
 After each wave completes, the agent automatically advances to the next wave.
 
+When tables converted with no issues, the list of ready objects includes **Bulk-deploy N clean tables**. Pick it to claim and deploy a batch of those tables in one run: 200 by default, or the number you ask for. Clean tables that depend through a foreign key only on tables in the batch deploy with them, so one run can deploy more tables than that number. The agent reports how many tables deployed and failed, the deploy rate, and the estimated time left for the remaining clean tables. If clean tables remain, the agent offers another bulk deploy. Failed tables stay claimed by you so that you can fix them.
+
 #### baseline-capture
 
 Captures the expected output of source stored procedures and functions for use as test baselines. Two approaches are supported:
@@ -311,6 +313,29 @@ Expand
 Show lessSee more
 
 Rules accumulate over the lifetime of the project. Every time the agent fixes an object and extracts a rule, that rule becomes available to all subsequent objects — reducing manual effort as the migration progresses.
+
+### Working as a team
+
+A claim reserves an object for your Snowflake user, so a teammate on the same project doesn’t migrate it at the same time. Objects a teammate has claimed don’t appear in your list. Both migrate-objects and migrate-etl claim the objects you work on.
+
+**Claiming objects**
+
+Before you claim new objects, finish the objects that are done, which saves them to the main branch. Until you finish them, the agent offers to finish them instead of claiming new work.
+
+1. Ask the agent for work. It lists the next 5 ready objects, each with its object type and the step it is waiting at. To see more, ask for a number, for example “show me 20”.
+2. Pick objects by number or name, or say “first 3” or “all 5 shown”. “All” means only the objects shown, and the agent tells you how many it claimed out of the total ready.
+3. When an object is marked “deploys with” another object, claim them together so that they deploy in one step.
+
+Claim small batches. Objects you claim are hidden from your teammates until you finish or skip them. Bulk deploy claims every table it deploys, so ask for a smaller number if teammates are waiting.
+
+**Sharing a project**
+
+To share a project, everyone uses the same project and the same metadata database. Claims are kept there, not in Git. If no teammate has open claims on the project, the agent doesn’t mention teammates.
+
+**Release and sessions**
+
+- An object’s claim is released when the object finishes or when you skip it.
+- If you continue in a new session, the agent lists the objects you claimed in an earlier session. When you pick one again, its claim moves to the new session and the agent tells you which session it came from.
 
 ---
 

@@ -140,8 +140,8 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 
 | Privilege | Object | Notes |
 | --- | --- | --- |
-| OWNERSHIP | Application package | Required to modify a release directive. |
-| MANAGE VERSIONS | Account | Global privilege that allows modifying release directives on any application package. |
+| `MANAGE RELEASES` | Application package | Required to modify a release directive. |
+| `OWNERSHIP` | Application package | Alternative to `MANAGE RELEASES`. |
 
 Expand
 
@@ -154,7 +154,7 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
-- Modifying the release directive requires the OWNERSHIP privilege on the application or the global MANAGE VERSIONS privilege.
+- Modifying a release directive requires `MANAGE RELEASES` or `OWNERSHIP` on the application package.
 - If you do not specify the values for the optional properties, the command uses the values specified in the application manifest file.
 
   If you specify values for the properties in the command and in the application manifest file, the values specified in the command take

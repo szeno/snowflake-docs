@@ -49,6 +49,10 @@ Note
   inconsistency. Snowflake recommends that you avoid [disabling the update of system fields](https://developer.servicenow.com/dev.do#!/reference/api/washingtondc/server_legacy/c_GlideRecordAPI%23r_GlideRecord-autoSysFields_Boolean).
 - If a record deletion is [not audited](https://developer.servicenow.com/dev.do#!/reference/api/washingtondc/server_legacy/c_GlideRecordAPI#r_GlideRecord-setWorkFlow_Boolean), information about deleted records won’t be propagated to
   Snowflake, resulting in a data inconsistency.
+- In the “incremental updates” mode, the connector ingests only records whose `sys_updated_on` (or `sys_created_on`)
+  value is later than the end of the previous synchronization. Records that are added to ServiceNow® with older
+  timestamp values, for example by a bulk import that preserves the original timestamps, aren’t ingested. To ingest
+  these records, [reload the table](#label-servicenow-connector-reload-table-full).
 
 Note
 

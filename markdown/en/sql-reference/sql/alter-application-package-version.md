@@ -74,7 +74,7 @@ ALTER APPLICATION PACKAGE <name> ADD PATCH [<patch_number>] FOR VERSION [<versio
 
 - Version identifiers have a maximum limit of 30 characters.
 - A single version can have up to 130 patches.
-- Modifying the version requires a role with the OWNERSHIP privilege on the application or the global MANAGE VERSIONS privilege.
+- Modifying a version requires a role with `MANAGE VERSIONS` or `OWNERSHIP` on the application package.
 - If you do not specify the values for the optional properties, the command uses the values specified in the
   application manifest file.
 

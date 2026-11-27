@@ -35,7 +35,7 @@ Expand
 
 Show lessSee more
 
-These variants appear as separate connectors in Marketplace. When installing the
+These variants appear as separate connectors in the connector catalog. When installing the
 connector, choose the variant that meets your requirements.
 
 ## Rate limiting restrictions

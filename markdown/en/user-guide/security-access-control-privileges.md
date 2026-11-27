@@ -1532,8 +1532,8 @@ Show lessSee more
 | ATTACH LISTING | Associates a listing with an application package or share. |
 | DEVELOP | Grants the ability to create an application in development mode from the application package. |
 | INSTALL | Grants the ability to create an instance from the application package. |
-| MANAGE RELEASES | Grants the ability to manage release directives in the application package. |
-| MANAGE VERSIONS | Grants the ability to manage versions and release directives in the application package. |
+| MANAGE RELEASES | Grants the ability to manage release channels and release directives in the application package. |
+| MANAGE VERSIONS | Grants the ability to manage versions and patches in the application package. |
 | OWNERSHIP | Grants full control over the application package. |
 
 Expand

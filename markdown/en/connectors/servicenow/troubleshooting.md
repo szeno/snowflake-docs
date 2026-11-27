@@ -225,6 +225,22 @@ The connector uses different endpoints for retrieving information about the numb
 table. The connector uses `stats` for information about a table, including the number of rows. It uses
 `table` to ingest data into Snowflake.
 
+## Table is empty in Snowflake or doesn’t receive new records
+
+If a table in Snowflake has no rows, or fewer rows than the table in ServiceNow®, check the following:
+
+- **The initial load found no records.** If the ServiceNow® table was empty when you enabled it, or if ACLs hid all
+  of its rows from the connector user, the ServiceNow® API returns an empty result. The connector can’t tell these
+  cases apart, so it completes the initial load with zero rows. To check whether the connector user can see the rows,
+  [verify access to the table](#label-servicenow-connector-verify-table-access-v2) and
+  [compare the row counts](#label-servicenow-connector-compare-row-counts-v2).
+- **The records have older timestamps.** Incremental updates ingest only records whose `sys_updated_on` (or
+  `sys_created_on`) value is later than the previous synchronization. Records loaded into ServiceNow® with their
+  original timestamps, for example by a bulk import, aren’t ingested.
+
+In both cases, after you fix the cause, call [RELOAD\_TABLE](/connectors/servicenow/ingestion#label-servicenow-connector-reload-table-full) to
+ingest all records in the table.
+
 ## Checking the status of the ingestion of a row
 
 To check the status of the ingestion of a row in all possible places in ServiceNow® and Snowflake, call the `CHECK_RECORD_HISTORY` procedure:

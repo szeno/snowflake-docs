@@ -64,7 +64,7 @@ Show lessSee more
 
 Note
 
-Limitations affecting certain table columns can be bypassed by excluding these specific columns from replication.
+Limitations affecting certain table columns can be bypassed by excluding these specific columns from replication. To prevent column values from leaving the PostgreSQL server, see [Openflow Connector for PostgreSQL: Security](/user-guide/data-integration/openflow/connectors/postgres/security).
 
 ## Workflow
 

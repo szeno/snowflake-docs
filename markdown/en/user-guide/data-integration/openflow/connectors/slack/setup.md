@@ -12,12 +12,14 @@ This topic describes the steps to set up the Openflow Connector for Slack.
 
 ## Prerequisites
 
-1. Ensure that you have reviewed [About Openflow Connector for Slack](/user-guide/data-integration/openflow/connectors/slack/about).
+1. Ensure that you’ve reviewed [About Openflow Connector for Slack](/user-guide/data-integration/openflow/connectors/slack/about).
 2. Ensure that you have [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs) or [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc).
 3. If using Openflow - Snowflake Deployments, ensure that you’ve reviewed [configuring required domains](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list)
    and have granted access to the required domains for the [Slack](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list#label-openflow-domains-used-by-openflow-connectors-slack) connector.
 
-## Set up a Slack App
+## Set up access to Slack
+
+### Set up a Slack App
 
 Set up a Slack App in your Slack workspace. A Slack Admin is needed to
 set up access to the Slack Workspace. This is done by creating or
@@ -106,9 +108,9 @@ JSON configuration:
 
 Note
 
-Restart the processors to load the new channels. After the App is added to a new channel, the `Consume Slack Conversation` processor in the OpenFlow Runtime needs to be stopped and restarted.
+Restart the processors to load the new channels. After the App is added to a new channel, the `Consume Slack Conversation` processor in the Openflow runtime needs to be stopped and restarted.
 
-## Setup necessary ingress rules
+### Set up egress rules
 
 A Snowflake Admin should follow the [egress guide](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-egress)
 to apply egress rules to the endpoint `https://slack.com/api` and
@@ -283,7 +285,7 @@ Expand
 
 Show lessSee more
 
-## Enabling private-channel ACLs
+## Private-channel ACLs
 
 No extra steps are required beyond **inviting the Slack App** to each private channel. The connector automatically refreshes the member list and stores it in the membership table at each **Refresh Slack Members** interval.
 

@@ -4,22 +4,29 @@ You can set up Snowflake to access your Git repository over a public network. If
 uses IP-based allowlisting, see [Securing ingress of Snowflake requests with egress IP addresses](/user-guide/egress-ip/network-egress) to configure stable
 egress IPs for Snowflake Git traffic.
 
-You can have Snowflake authenticate using any of the following strategies:
+To connect to a Git repository over a public network, complete the following steps:
 
-- [Authenticate through an OAuth flow](#label-git-setup-oauth).
+1. Configure an API integration for one of the following authentication methods:
 
-  Configure an API integration to allow for an OAuth2 flow.
-- [Authenticate with a token](#label-git-setup-token), such as a personal access token.
+   - [Authenticate through an OAuth flow](#label-git-setup-oauth).
 
-  Configure a secret containing the username and token to use, then configure an API integration that allows Snowflake to use the
-  secret when authenticating.
-- [No authentication](#label-git-setup-no-auth).
+     Configure an API integration to allow for an OAuth2 flow.
+   - [Authenticate with a token](#label-git-setup-token), such as a personal access token.
 
-  Configure an API integration with details about the Git repository server.
+     Configure a secret containing the username and token to use, then configure an API integration that allows Snowflake to use the
+     secret when authenticating.
+   - [No authentication](#label-git-setup-no-auth).
+
+     Configure an API integration with details about the Git repository server.
+2. [Create a Git workspace](#label-git-create-workspace-public) connected to the repository. In a Git workspace, you can create and
+   edit files, manage branches, pull changes, and commit and push changes to the remote repository.
+
+If Snowflake code such as tasks or stored procedures needs to reference repository files, you can also
+[create a Git repository clone](#label-git-create-clone-public). A Git repository clone is a read-only object that’s owned by a role.
 
 ## Configure for authenticating with OAuth
 
-![Diagram showing components needed to configure Git connection requiring no authentication](/static/images/git-components-oauth.png)
+![Diagram showing components needed to configure Git connection with OAuth authentication](/static/images/git-components-oauth.png)
 
 You can configure Snowflake to authenticate with the remote Git repository using an OAuth2 flow.
 
@@ -45,7 +52,7 @@ require OAuth2 instead.
      API_USER_AUTHENTICATION = (TYPE = SNOWFLAKE_GITHUB_APP)
      ENABLED = TRUE;
    ```
-2. Create a workspace connected to a Git repository as described in [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace).
+2. Create a Git workspace as described in [Create a Git workspace](#label-git-create-workspace-public).
 
 For any repository provider, you can create an API integration that specifies OAuth2 parameters
 directly. Before you begin, create an OAuth application with your provider and collect the client ID, client secret,
@@ -89,11 +96,11 @@ authorization endpoint, and token endpoint. For end-to-end, provider-specific in
      )
      ENABLED = TRUE;
    ```
-3. Create a workspace connected to a Git repository as described in [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace).
+3. Create a Git workspace as described in [Create a Git workspace](#label-git-create-workspace-public).
 
 ## Configure for authenticating with a token
 
-![Diagram showing components needed to configure Git connection requiring no authentication](/static/images/git-components-token-pat.png)
+![Diagram showing components needed to configure Git connection with token authentication](/static/images/git-components-token-pat.png)
 
 To have Snowflake authenticate with the Git repository by using a username and token such as a personal access token (PAT), follow
 these steps:
@@ -144,8 +151,7 @@ these steps:
      ALLOWED_AUTHENTICATION_SECRETS = (my_git_secret)
      ENABLED = TRUE;
    ```
-3. Create a workspace connected to a Git repository as described in [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace). Alternatively, create a
-   Git repository clone as described in [Create a Snowflake Git repository clone](#label-git-create-clone-public).
+3. Create a Git workspace as described in [Create a Git workspace](#label-git-create-workspace-public).
 
 ## Configure for no authentication
 
@@ -168,18 +174,36 @@ To set up Snowflake to use a Git repository without authenticating, follow these
      API_ALLOWED_PREFIXES = ('https://example.com/my-account')
      ENABLED = TRUE;
    ```
-2. Create a workspace connected to a Git repository as described in [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace). Alternatively, create a
-   Git repository clone as described in [Create a Snowflake Git repository clone](#label-git-create-clone-public).
+2. Create a Git workspace as described in [Create a Git workspace](#label-git-create-workspace-public).
 
-## Create a Snowflake Git repository clone
+## Create a Git workspace
 
-After you configure Snowflake for access to your remote repository, create a Git repository clone in Snowflake to contain files
-fetched from the remote repository.
+After you configure the API integration, create a workspace connected to the remote repository. The Git workspace belongs to the
+user who creates it. The role selected in your Snowsight user menu determines which API integrations and secrets you can
+select. That role must have the `USAGE` privilege on the API integration.
 
-Note
+1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
+2. In the navigation menu, select **Projects** » **Workspaces**.
+3. In the **Workspaces** menu, select **From Git repository**.
+4. For **Repository URL**, paste the HTTPS URL of the remote repository.
+5. From the **API Integration** menu, select the API integration that you configured.
+6. Select the authentication method that matches your API integration:
 
-To create and edit files, manage branches, and commit and push changes from Snowsight, Snowflake recommends a Git
-workspace instead of a Git repository clone. For more information, see [Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace).
+   - **OAuth2**: Select **Sign in**, and then authorize Snowflake with your Git provider.
+   - **Personal access token**: Select the secret that contains your token.
+   - **Public repository**: Select this option for a repository that doesn’t require authentication. You can’t push changes from
+     the workspace to a public repository.
+7. Select **Create**.
+
+For details on each option, including the GitHub authorization steps and how to open the dialog with pre-filled fields, see
+[Create a Git workspace](/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace).
+
+## Create a Git repository clone for Snowflake code
+
+A Git repository clone is a read-only, schema-level object that’s owned by a role. Create one when Snowflake code such as tasks,
+stored procedures, or UDFs needs to reference repository files, for example as handler code or with
+[EXECUTE IMMEDIATE FROM](/sql-reference/sql/execute-immediate-from). You can’t create, edit, commit, or push files through a
+clone. For more information, see [How a Git repository clone works](/developer-guide/git/git-overview#label-integrating-git-repository-how-it-works).
 
 A Git repository clone in Snowflake specifies the following details:
 
